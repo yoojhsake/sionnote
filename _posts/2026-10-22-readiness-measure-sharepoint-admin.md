@@ -57,6 +57,7 @@ excerpt: "외부 공유·기본 링크·보존·동기화·메시지 센터·서
 - 근거: [OneDrive 보존·삭제](https://learn.microsoft.com/sharepoint/retention-and-deletion), [보존 기간 설정](https://learn.microsoft.com/sharepoint/set-retention), [OneDrive 개요](https://learn.microsoft.com/sharepoint/onedrive-overview), [동기화 계획](https://learn.microsoft.com/sharepoint/plan-file-sync)
 
 ### 2-4. 측정하지 못한 항목
+
 | 항목 | 이유 | 재측정 방법 |
 |---|---|---|
 | DAG(데이터 접근 거버넌스) 보고서 | 보고서 메뉴에는 OneDrive 계정만 있고, 고급 관리 화면에 DAG가 포함 서비스로 나열되며 **무료 평가판 등록 버튼만** 있음 = SharePoint Advanced Management 미활성. 평가판 등록은 관리자 결정 사항이라 누르지 않음 | 라이선스 확보 후 보고서 생성(최대 며칠) |

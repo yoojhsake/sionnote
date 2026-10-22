@@ -35,6 +35,6 @@ def main():
     os.makedirs(folder, exist_ok=True)
     name = a.name or os.path.splitext(os.path.basename(a.src))[0] + '.png'
     out = os.path.join(folder, name); im.save(out)
-    print('저장:', out); print('글에 넣기: ![설명](/%s)' % out.replace(os.sep, '/'))
+    print('저장:', out); print('글에 넣기: ![설명]({{ "/%s" | relative_url }})' % out.replace(os.sep, '/'))
 
 if __name__ == '__main__': main()

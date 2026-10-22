@@ -1,0 +1,31 @@
+---
+# Jekyll이 이 파일을 처리하려면 위 front matter(---)가 필요하다.
+---
+@charset "utf-8";
+
+// 한글이 먼저 보이도록 글꼴을 지정한다 (import 보다 먼저 선언해야 적용된다)
+$sans-serif: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+$global-font-family: $sans-serif;
+$header-font-family: $sans-serif;
+
+@import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}";
+@import "minimal-mistakes";
+
+// ---- SionNote 글자 크기 조정 ----
+// 테마 기본값은 화면이 넓어질수록 18 → 20 → 22px 로 커진다. 모든 폭에서 16px 로 고정한다.
+html { font-size: 16px; }
+@media (min-width: 37.5em) { html { font-size: 16px; } }
+@media (min-width: 63.9375em) { html { font-size: 16px; } }
+@media (min-width: 80em) { html { font-size: 16px; } }
+@media (min-width: 90em) { html { font-size: 16px; } }
+
+.page__content { line-height: 1.75; }
+.page__content h2 { font-size: 1.35em; margin-top: 2em; }
+.page__content h3 { font-size: 1.15em; }
+.page__title { font-size: 1.6em; line-height: 1.35; }
+
+// 글 속 이미지와 표
+.page__content img { display: block; margin: 1em auto; border: 1px solid #e5e7eb; border-radius: 6px; max-width: 100%; height: auto; }
+.page__content table { font-size: 0.9em; }
+.page__content th, .page__content td { padding: 0.5em 0.7em; vertical-align: top; }
+.page__content img + em { display: block; text-align: center; font-size: 0.85em; color: #6b7280; margin: -0.4em 0 1.4em; font-style: normal; }

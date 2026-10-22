@@ -19,10 +19,15 @@ html { font-size: 16px; }
 @media (min-width: 80em) { html { font-size: 16px; } }
 @media (min-width: 90em) { html { font-size: 16px; } }
 
-.page__content { line-height: 1.75; }
-.page__content h2 { font-size: 1.35em; margin-top: 2em; }
-.page__content h3 { font-size: 1.15em; }
-.page__title { font-size: 1.6em; line-height: 1.35; }
+// 본문 글자 크기: 아래 $body-size 숫자만 바꾸면 된다 (12px~16px 권장, 지금은 14px)
+$body-size: 14px;
+.page__content { font-size: $body-size; line-height: 1.8; }
+.page__content h2 { font-size: 1.3em; margin-top: 2em; }
+.page__content h3 { font-size: 1.1em; }
+.page__title { font-size: 1.45rem; line-height: 1.4; }
+.sidebar .author__bio { font-size: 0.85rem; }
+.archive__item-title { font-size: 1.05rem; }
+.archive__item-excerpt { font-size: 0.9rem; }
 
 // 글 속 이미지와 표
 .page__content img { display: block; margin: 1em auto; border: 1px solid #e5e7eb; border-radius: 6px; max-width: 100%; height: auto; }

@@ -1,11 +1,11 @@
-# SionNote — Jekyll + Minimal Mistakes (GitHub Pages remote theme)
+# Sion's History — Jekyll + Minimal Mistakes (GitHub Pages remote theme)
 remote_theme: mmistakes/minimal-mistakes
 minimal_mistakes_skin: default   # air, aqua, contrast, dark, dirt, mint, neon, plum, sunrise 중 선택 가능
 
-title: SionNote
+title: "Sion's History"
 title_separator: "-"
 subtitle: "기록하고, 검증하고, 남긴다"
-name: SionNote
+name: "Sion's History"
 description: "M365·Azure·Identity 운영 실습과 검증 기록"
 locale: ko-KR
 # 저장소 이름이 <아이디>.github.io 가 아니라서 하위 경로(/sionnote)로 열린다.
@@ -20,7 +20,7 @@ words_per_minute: 200
 timezone: Asia/Seoul
 
 author:
-  name: "SionNote"
+  name: "Sion's History"
   avatar: "/assets/images/profile.png"
   bio: "AD·인증·PKI 운영 경험을 M365·Azure 클라우드 운영으로 확장하며 실습과 검증을 기록합니다."
   location: "South Korea"

@@ -29,6 +29,3 @@ author_profile: true
 | [실무 검증] | 직접 해본 실습과 결과 |
 | [트러블슈팅] | 막힌 지점, 원인, 해결 |
 | [자격증·학습] | AZ-900 이후 학습 로드맵 |
-
-### 분류(Category)
-대분류는 `m365`, `iam`, `azure`, `study`, `blog`입니다. 트러블슈팅은 대분류 아래 하위 분류로 둡니다. 예를 들어 M365 오류 글은 `[m365, troubleshooting]`으로 적어 `/m365/troubleshooting/글주소/`에 열립니다.

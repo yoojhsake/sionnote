@@ -1,5 +1,5 @@
 ---
-title: "[M365 Readiness] D2 Identity 구조 — 동적 그룹과 그룹 라이선스 (전체 기록)"
+title: "[M365 Readiness] 02 D2 Identity 구조 — 동적 그룹과 그룹 라이선스 (전체 기록)"
 date: 2026-10-22 09:20:00 +0900
 categories: [m365]
 tags: [Readiness, D2, Entra, 동적 그룹, 그룹 라이선스, 전체 기록]

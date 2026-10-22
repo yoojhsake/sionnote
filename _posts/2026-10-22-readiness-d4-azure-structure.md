@@ -1,5 +1,5 @@
 ---
-title: "[M365 Readiness] D4 Azure 구조 — 계층, 리소스 그룹, Elevate access 전·후 (전체 기록)"
+title: "[M365 Readiness] 04 D4 Azure 구조 — 계층, 리소스 그룹, Elevate access 전·후 (전체 기록)"
 date: 2026-10-22 10:00:00 +0900
 categories: [m365]
 tags: [Readiness, D4, Azure, 리소스 그룹, Elevate access, RBAC, 전체 기록]

@@ -1,5 +1,5 @@
 ---
-title: "[M365 Readiness] 실측 ② Teams — 정책, 게스트·외부 액세스, 회의 기본값"
+title: "[M365 Readiness] 08 실측 ② Teams — 정책, 게스트·외부 액세스, 회의 기본값"
 date: 2026-10-22 11:30:00 +0900
 categories: [m365]
 tags: [Readiness, 실측, Teams, 게스트, 외부 액세스, 회의 정책, 전체 기록]

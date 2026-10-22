@@ -1,5 +1,5 @@
 ---
-title: "[M365 Readiness] 실측 ① Identity·Entra — 관리자, MFA, 조건부 액세스, 그룹·게스트 설정"
+title: "[M365 Readiness] 07 실측 ① Identity·Entra — 관리자, MFA, 조건부 액세스, 그룹·게스트 설정"
 date: 2026-10-22 11:00:00 +0900
 categories: [m365]
 tags: [Readiness, 실측, Entra, 조건부 액세스, MFA, 게스트, 전체 기록]

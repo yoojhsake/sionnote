@@ -1,5 +1,5 @@
 ---
-title: "[M365 Readiness] 운영 설정 실측 — 읽기 전용 측정 방법과 4단계 판독 (전체 기록)"
+title: "[M365 Readiness] 06 운영 설정 실측 — 읽기 전용 측정 방법과 4단계 판독 (전체 기록)"
 date: 2026-10-22 10:30:00 +0900
 categories: [m365]
 tags: [Readiness, 실측, 측정 방법, M365, Entra, Teams, SharePoint, 전체 기록]

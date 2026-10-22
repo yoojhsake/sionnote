@@ -1,5 +1,5 @@
 ---
-title: "[M365 Readiness] D1 M365 구조 — 라이선스는 서비스 플랜 묶음이다 (전체 기록)"
+title: "[M365 Readiness] 01 D1 M365 구조 — 라이선스는 서비스 플랜 묶음이다 (전체 기록)"
 date: 2026-10-22 09:10:00 +0900
 categories: [m365]
 tags: [Readiness, D1, 라이선스, 서비스 플랜, Planner, 전체 기록]

@@ -1,5 +1,6 @@
 ---
 title: "[Sion's History] 기록 방식과 블로그 운영 원칙"
+published: false   # 숨김: 사이트에는 안 보이고 저장소에만 있음
 categories: [blog]
 tags: [기록, 포트폴리오, 운영원칙]
 excerpt: "하루 작업을 같은 틀로 남기기 위한 글 구조와 공개 기준"

@@ -1,5 +1,5 @@
 ---
-title: "[M365 Readiness] 실측 ③ SharePoint·OneDrive·M365 관리 센터 — 공유, 보존, 메시지 센터, 서비스 상태"
+title: "[M365 Readiness] 09 실측 ③ SharePoint·OneDrive·M365 관리 센터 — 공유, 보존, 메시지 센터, 서비스 상태"
 date: 2026-10-22 12:30:00 +0900
 categories: [m365]
 tags: [Readiness, 실측, SharePoint, OneDrive, 메시지 센터, 서비스 상태, 전체 기록]

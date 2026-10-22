@@ -1,4 +1,6 @@
 main:
+  - title: "Readiness"
+    url: /readiness/
   - title: "Category"
     url: /categories/
   - title: "Tag"

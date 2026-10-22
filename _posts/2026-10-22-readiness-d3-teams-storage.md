@@ -1,5 +1,5 @@
 ---
-title: "[M365 Readiness] D3 Teams 저장 구조 — 채널 유형별 파일 위치 (전체 기록)"
+title: "[M365 Readiness] 03 D3 Teams 저장 구조 — 채널 유형별 파일 위치 (전체 기록)"
 date: 2026-10-22 09:40:00 +0900
 categories: [m365]
 tags: [Readiness, D3, Teams, SharePoint, 채널, 전체 기록]

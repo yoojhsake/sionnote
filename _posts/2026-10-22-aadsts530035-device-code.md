@@ -1,6 +1,6 @@
 ---
-title: "[트러블슈팅] Cloud Shell에서 Exchange Online 로그인 시 AADSTS530035 — 원인 추적과 우회하지 않은 이유 (전체 기록)"
-date: 2026-10-22 12:00:00 +0900
+title: "[M365 Readiness] 05 트러블슈팅 — Exchange Online 로그인 AADSTS530035, 원인 추적과 우회하지 않은 이유 (전체 기록)"
+date: 2026-10-22 10:10:00 +0900
 categories: [m365, troubleshooting]
 tags: [Exchange Online, PowerShell, Entra, 보안 기본값, AADSTS530035, 조건부 액세스, 전체 기록]
 excerpt: "Connect-ExchangeOnline -Device가 막힌 증상, 오류 코드 표로 좁힌 원인, 설정을 바꾸지 않고 선택할 수 있는 해결 경로와 결정권자까지 정리한 전체 기록"

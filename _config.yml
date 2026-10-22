@@ -1,0 +1,83 @@
+# SionNote — Jekyll + Minimal Mistakes (GitHub Pages remote theme)
+remote_theme: mmistakes/minimal-mistakes
+minimal_mistakes_skin: default   # air, aqua, contrast, dark, dirt, mint, neon, plum, sunrise 중 선택 가능
+
+title: SionNote
+title_separator: "-"
+subtitle: "기록하고, 검증하고, 남긴다"
+name: SionNote
+description: "M365·Azure·Identity 운영 실습과 검증 기록"
+locale: ko-KR
+# 저장소 이름이 <아이디>.github.io 가 아니라서 하위 경로(/sionnote)로 열린다.
+# 저장소를 yoojhsake.github.io 로 바꾸면 baseurl 을 "" 로 되돌린다.
+url: "https://yoojhsake.github.io"
+baseurl: "/sionnote"
+repository: "yoojhsake/sionnote"
+
+search: true
+search_full_content: true
+words_per_minute: 200
+timezone: Asia/Seoul
+
+author:
+  name: "SionNote"
+  avatar: "/assets/images/profile.png"
+  bio: "AD·인증·PKI 운영 경험을 M365·Azure 클라우드 운영으로 확장하며 실습과 검증을 기록합니다."
+  location: "South Korea"
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/yoojhsake"
+
+footer:
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/yoojhsake"
+
+# 글 목록
+paginate: 10
+paginate_path: /page:num/
+
+include: ["_pages"]
+exclude: ["tools", "README.md", "Gemfile", "Gemfile.lock", "node_modules", "vendor"]
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+highlighter: rouge
+
+plugins:
+  - jekyll-paginate
+  - jekyll-sitemap
+  - jekyll-gist
+  - jekyll-feed
+  - jekyll-include-cache
+  - jekyll-remote-theme
+
+permalink: /:categories/:title/
+category_archive:
+  type: liquid
+  path: /categories/
+tag_archive:
+  type: liquid
+  path: /tags/
+
+defaults:
+  - scope: { path: "", type: posts }
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
+      show_date: true
+      comments: false
+      share: false
+      related: true
+      toc: true
+      toc_sticky: true
+      toc_label: "목차"
+  - scope: { path: "_pages" }
+    values:
+      layout: single
+      author_profile: true

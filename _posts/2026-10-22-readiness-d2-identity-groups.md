@@ -1,8 +1,8 @@
 ---
-title: "[M365 Readiness] 02 D2 Identity 구조 — 동적 그룹과 그룹 라이선스 (전체 기록)"
+title: "[M365·Azure] 02 D2 Identity 구조 — 동적 그룹과 그룹 라이선스 (전체 기록)"
 date: 2026-10-22 09:20:00 +0900
 categories: [m365]
-tags: [Readiness, D2, Entra, 동적 그룹, 그룹 라이선스, 전체 기록]
+tags: [M365·Azure, D2, Entra, 동적 그룹, 그룹 라이선스, 전체 기록]
 excerpt: "동적 그룹 생성, 그룹에 E5 라이선스 할당, 부서 값 변경으로 자동 가입, 원복까지의 전·후 값과 막힌 곳, 근거 자료를 모두 남긴 기록"
 ---
 

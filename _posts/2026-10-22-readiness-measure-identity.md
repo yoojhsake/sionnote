@@ -1,8 +1,8 @@
 ---
-title: "[M365 Readiness] 07 실측 ① Identity·Entra — 관리자, MFA, 조건부 액세스, 그룹·게스트 설정"
+title: "[M365·Azure] 07 실측 ① Identity·Entra — 관리자, MFA, 조건부 액세스, 그룹·게스트 설정"
 date: 2026-10-22 11:00:00 +0900
 categories: [m365]
-tags: [Readiness, 실측, Entra, 조건부 액세스, MFA, 게스트, 전체 기록]
+tags: [M365·Azure, 실측, Entra, 조건부 액세스, MFA, 게스트, 전체 기록]
 excerpt: "Entra 설정을 하나도 바꾸지 않고 읽어서 정상·주의·위험·측정 불가로 판독한 결과와 근거, 개선 방안(미실행) 전체 기록"
 ---
 

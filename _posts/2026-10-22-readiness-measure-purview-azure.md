@@ -1,8 +1,8 @@
 ---
-title: "[M365 Readiness] 10 실측 ④ Purview 규정 준수·Azure 거버넌스 — 감사, 보존, DLP, 레이블, Policy, 구독 권한"
+title: "[M365·Azure] 10 실측 ④ Purview 규정 준수·Azure 거버넌스 — 감사, 보존, DLP, 레이블, Policy, 구독 권한"
 date: 2026-10-22 13:00:00 +0900
 categories: [m365]
-tags: [Readiness, 실측, Purview, 감사, DLP, 민감도 레이블, Azure Policy, 전체 기록]
+tags: [M365·Azure, 실측, Purview, 감사, DLP, 민감도 레이블, Azure Policy, 전체 기록]
 excerpt: "감사 로그·보존·DLP·민감도 레이블과 Azure Policy·구독 소유자 권한을 바꾸지 않고 읽어 판독한 결과, 측정 불가 사유, 개선 방안(미실행) 전체 기록"
 ---
 

@@ -5,7 +5,7 @@
 Jekyll + Minimal Mistakes(원격 테마). GitHub Pages에서 바로 빌드됩니다.
 
 ## 하루 기록 루틴
-1. `tools/new-post.ps1 "제목" m365 영문파일이름` (Windows) 또는 `./tools/new-post.sh "제목" m365-readiness`
+1. `tools/new-post.ps1 "제목" m365 영문파일이름` (Windows) 또는 `./tools/new-post.sh "제목" m365-azure`
 2. 생성된 `_posts/날짜-영문이름.md`는 **상단 요약 + 구분선 + 하단 풀버전** 구조로 작성. 풀버전은 **목표 → 절차 → 전·후 값 → 문제점·원인·해결 → 검증 → 원복 → 근거 자료** 순서
 3. 캡처는 `raw/`에 원본을 두고 `python tools/blur.py raw/파일.png --grid`로 좌표 확인 → `--box`로 가림 → `assets/images/YYYY/MM/`에 저장
 4. 올리기 전 체크: 테넌트 ID·구독 ID·이메일·도메인·IP·Request Id·양식 원문이 없는지 확인

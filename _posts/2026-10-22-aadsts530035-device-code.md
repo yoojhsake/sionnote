@@ -1,5 +1,5 @@
 ---
-title: "[M365 Readiness] 05 트러블슈팅 — Exchange Online 로그인 AADSTS530035, 원인 추적과 우회하지 않은 이유 (전체 기록)"
+title: "[M365·Azure] 05 트러블슈팅 — Exchange Online 로그인 AADSTS530035, 원인 추적과 우회하지 않은 이유 (전체 기록)"
 date: 2026-10-22 10:10:00 +0900
 categories: [m365, troubleshooting]
 tags: [Exchange Online, PowerShell, Entra, 보안 기본값, AADSTS530035, 조건부 액세스, 전체 기록]

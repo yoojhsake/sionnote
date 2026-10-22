@@ -1,8 +1,8 @@
 ---
-title: "[M365 Readiness] 03 D3 Teams 저장 구조 — 채널 유형별 파일 위치 (전체 기록)"
+title: "[M365·Azure] 03 D3 Teams 저장 구조 — 채널 유형별 파일 위치 (전체 기록)"
 date: 2026-10-22 09:40:00 +0900
 categories: [m365]
-tags: [Readiness, D3, Teams, SharePoint, 채널, 전체 기록]
+tags: [M365·Azure, D3, Teams, SharePoint, 채널, 전체 기록]
 excerpt: "표준·비공개·공유 채널의 파일이 실제로 어느 SharePoint 주소에 저장되는지 확인한 전체 기록. 403 응답인데 파일이 생긴 이상 현상과 정정 사항 포함"
 ---
 

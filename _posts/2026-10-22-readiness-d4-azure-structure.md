@@ -1,12 +1,12 @@
 ---
-title: "[M365 Readiness] 04 D4 Azure 구조 — 계층, 리소스 그룹, Elevate access 전·후 (전체 기록)"
+title: "[M365·Azure] 04 D4 Azure 구조 — 계층, 리소스 그룹, Elevate access 전·후 (전체 기록)"
 date: 2026-10-22 10:00:00 +0900
 categories: [m365]
-tags: [Readiness, D4, Azure, 리소스 그룹, Elevate access, RBAC, 전체 기록]
+tags: [M365·Azure, D4, Azure, 리소스 그룹, Elevate access, RBAC, 전체 기록]
 excerpt: "Azure 계층 구조를 확인하고 비용 없는 리소스 그룹을 만들었고, 전역 관리자의 Elevate access 전·후·원복 상태를 화면과 PowerShell로 비교한 전체 기록"
 ---
 
-수행일은 2026-10-22(목)이고, 프로그램 일정상 D4(Azure 구조) 주제입니다. Azure 실습이지만 Readiness 프로그램의 일부라 M365 분류에 함께 둡니다.
+수행일은 2026-10-22(목)이고, 프로그램 일정상 D4(Azure 구조) 주제입니다. Azure 실습이지만 M365·Azure 운영 사전 프로그램의 일부라 M365 분류에 함께 둡니다.
 
 > 근거 표기: **조회** = 이 테넌트 화면·PowerShell에서 직접 읽은 값 / **문서** = Microsoft Learn / **미확인** = 확인하지 못한 값. 테넌트 ID·구독 ID·도메인·계정은 가렸습니다(그림의 검은 상자). **Elevate access 토글을 켜고 끄는 일은 계정 소유자가 직접 했습니다.**
 

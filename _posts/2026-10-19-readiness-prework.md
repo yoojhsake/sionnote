@@ -1,8 +1,8 @@
 ---
-title: "[M365 Readiness] 00 사전작업 — 환경 점검 전체 기록 (조회 전용)"
+title: "[M365·Azure] 00 사전작업 — 환경 점검 전체 기록 (조회 전용)"
 date: 2026-10-19 10:00:00 +0900
 categories: [m365]
-tags: [Readiness, Sandbox, 라이선스, Azure 구독, 환경 점검, 전체 기록]
+tags: [M365·Azure, Sandbox, 라이선스, Azure 구독, 환경 점검, 전체 기록]
 excerpt: "실습을 시작하기 전에 Sandbox 테넌트와 Azure 구독의 현재 값을 읽기만 해서 남긴 전체 기록. 문서 기준과 실제 값의 차이, 막힌 곳, 근거 자료 포함"
 ---
 

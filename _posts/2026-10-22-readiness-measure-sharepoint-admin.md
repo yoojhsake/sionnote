@@ -1,6 +1,7 @@
 ---
 title: "[M365·Azure] 09 실측 ③ SharePoint·OneDrive·M365 관리 센터 — 공유, 보존, 메시지 센터, 서비스 상태"
 date: 2026-10-22 12:30:00 +0900
+last_modified_at: 2026-10-23 12:00:00 +0900
 categories: [m365]
 tags: [M365·Azure, 실측, SharePoint, OneDrive, 메시지 센터, 서비스 상태, 전체 기록]
 excerpt: "외부 공유·기본 링크·보존·동기화·메시지 센터·서비스 상태 알림 등을 바꾸지 않고 읽어 판독한 결과와 근거, 개선 방안(미실행) 전체 기록"
@@ -42,7 +43,7 @@ excerpt: "외부 공유·기본 링크·보존·동기화·메시지 센터·서
 - **조회**: SharePoint와 OneDrive 슬라이더 모두 "누구나(Anyone)", Anyone 링크 만료 체크 해제. 기본 링크 유형 "링크가 있는 모든 사용자", 권한 "편집", 파일 "보기 및 편집", 폴더 "보기, 편집 및 업로드".
 - **왜 문제인가**: 링크만 알면 로그인 없이 편집까지 가능한 링크가 **기본으로** 만들어집니다. 사용자는 보통 기본값을 그대로 쓰므로 실수로 넓게 공유될 가능성이 가장 큽니다. 슬라이더는 조직 최대치이고, 사이트별로 더 좁힐 수는 있지만 더 넓힐 수는 없습니다(문서).
 - **개선 방안(미실행)**: 조직 수준을 "새 게스트와 기존 게스트"로 낮추거나, 최소한 Anyone 링크에 만료일(예: 수 주)과 "보기" 권한을 설정합니다. 기본 링크는 "특정 사용자"로 바꿉니다. 민감 사이트는 사이트별로 더 엄격하게, 민감도 레이블에 기본 공유 링크 동작을 묶는 방법도 있습니다.
-- **주의**: 기본 링크 유형을 바꿔도 이미 만든 링크는 그대로입니다. 이미 만든 링크 점검은 별도 작업입니다(문서 설명, 이번에는 링크 목록을 측정하지 않음 → **확인 불가**, 사유: 이번 측정에서 하지 않았음, 재측정 항목).
+- **주의**: 기본 링크 유형을 바꾸면 이미 만든 링크에 영향이 있는지는 관련 문서에서 명시한 문장을 찾지 못했습니다 → **확인 불가**(시도: Microsoft Learn 문서 검색, 사유: 해당 설명 없음. 설정을 바꿔 시험하는 것은 이번 범위 밖). 이미 만든 링크 점검도 이번에는 링크 목록을 측정하지 않아 **확인 불가**(사유: 이번 측정에서 하지 않았음, 재측정 항목)입니다.
 - 근거: [외부 공유 켜기·끄기](https://learn.microsoft.com/sharepoint/turn-external-sharing-on-or-off), [공동 작업 옵션](https://learn.microsoft.com/sharepoint/collaboration-options), [기본 공유 링크 변경](https://learn.microsoft.com/sharepoint/change-default-sharing-link), [사이트별 외부 공유](https://learn.microsoft.com/sharepoint/change-external-sharing-site), [민감도 레이블의 기본 공유 링크](https://learn.microsoft.com/purview/sensitivity-labels-default-sharing-link)
 
 ### 2-2. 저장소와 사이트
@@ -52,8 +53,8 @@ excerpt: "외부 공유·기본 링크·보존·동기화·메시지 센터·서
 
 ### 2-3. 퇴사자 OneDrive와 동기화
 - **조회**: 삭제된 사용자 OneDrive 보존 30일(설정 범위의 최소), OneDrive 동기화는 특정 도메인 컴퓨터로 제한하는 옵션이 꺼져 있고 업로드 차단 파일 형식도 없음.
-- **문제점**: 30일이 지나면 퇴사자 파일이 복구되지 않습니다. 인수인계 기간이 길거나 법적 보존 요구가 있으면 짧습니다. 동기화 도메인 제한이 없으면 개인 PC에도 회사 파일이 동기화될 수 있습니다.
-- **개선 방안(미실행)**: 보존 기간을 업무 기준에 맞게 늘리고(범위 30~3650일), 조건부 액세스나 도메인 제한으로 동기화 가능한 기기를 한정합니다. 삭제 후 사이트·파일은 휴지통 단계(93일)가 별도로 있습니다.
+- **문제점**: 보존 기간 30일이 끝나면 OneDrive는 사이트 모음 휴지통으로 옮겨져 93일 동안 남고, 그 기간에는 PowerShell로 복원할 수 있습니다(문서). 그래도 일반 사용자가 되살릴 수 있는 기간은 30일뿐입니다. 인수인계 기간이 길거나 법적 보존 요구가 있으면 짧습니다. 동기화 도메인 제한이 없으면 개인 PC에도 회사 파일이 동기화될 수 있습니다.
+- **개선 방안(미실행)**: 보존 기간을 업무 기준에 맞게 늘리고(범위 30~3650일), 조건부 액세스나 도메인 제한으로 동기화 가능한 기기를 한정합니다. 30일 보존이 끝난 뒤에는 사이트 모음 휴지통 단계(93일)가 이어집니다(위 문제점 참고).
 - 근거: [OneDrive 보존·삭제](https://learn.microsoft.com/sharepoint/retention-and-deletion), [보존 기간 설정](https://learn.microsoft.com/sharepoint/set-retention), [OneDrive 개요](https://learn.microsoft.com/sharepoint/onedrive-overview), [동기화 계획](https://learn.microsoft.com/sharepoint/plan-file-sync)
 
 ### 2-4. 측정하지 못한 항목
@@ -61,7 +62,7 @@ excerpt: "외부 공유·기본 링크·보존·동기화·메시지 센터·서
 | 항목 | 이유 | 재측정 방법 |
 |---|---|---|
 | DAG(데이터 접근 거버넌스) 보고서 | 보고서 메뉴에는 OneDrive 계정만 있고, 고급 관리 화면에 DAG가 포함 서비스로 나열되며 **무료 평가판 등록 버튼만** 있음 = SharePoint Advanced Management 미활성. 평가판 등록은 관리자 결정 사항이라 누르지 않음 | 라이선스 확보 후 보고서 생성(최대 며칠) |
-| Restricted SharePoint Search | PowerShell 전용이고, 필요한 SPO 관리 셸이 Windows PowerShell 5.1 전용이라 Cloud Shell(PowerShell 7·Linux)에서 실행 불가 | 로컬 Windows PowerShell에서 SPO 관리자로 연결 후 조회 |
+| Restricted SharePoint Search | PowerShell 전용이고, SPO 관리 셸은 Windows용이라 Linux 기반 Cloud Shell(PowerShell 7)에서는 실행하지 못한 것으로 판단(Windows의 PowerShell 7에서는 `-UseWindowsPowerShell` 옵션으로 불러올 수 있음, 문서) | 로컬 Windows PowerShell에서 SPO 관리자로 연결 후 조회 |
 
 참고로 Restricted SharePoint Search는 **중단 예정**이며 2026-07-31부터 새로 켤 수 없고, 대안으로 Restricted Content Discovery를 쓰라는 안내가 문서에 있습니다. 이 테넌트는 측정 불가이므로 현재 값은 확인 불가입니다(사유: 위의 측정 불가 사유와 같음).
 - 근거: [Restricted SharePoint Search](https://learn.microsoft.com/sharepoint/restricted-sharepoint-search), [데이터 접근 거버넌스 보고서](https://learn.microsoft.com/sharepoint/data-access-governance-reports), [SharePoint Advanced Management](https://learn.microsoft.com/sharepoint/advanced-management)
@@ -91,7 +92,7 @@ excerpt: "외부 공유·기본 링크·보존·동기화·메시지 센터·서
 - Copilot 라이선스는 없음(해당 없음). Agent 365 개요에서 에이전트 레지스트리 346(작성자별 내역은 화면 해석이 불확실해 적지 않음), 소유자 없는 에이전트 0, 보류 요청 0, 예외 0 → 정상. 에이전트 사용 허용 대상 설정 화면은 **확인 불가**(사유: 이번 측정에서 이 화면을 열어 보지 않음, 재측정 항목).
 
 ### 3-5. 보고서와 기기 영역
-- 사용 현황 보고서(Teams, Office 정품 인증)는 "이 보고서에 대한 데이터가 없습니다" → **측정 불가**. 원인 후보는 보고서 생성 지연(약 48시간)과 샌드박스 활동 부족이며 확정하지 못했습니다.
+- 사용 현황 보고서(Teams, Office 정품 인증)는 "이 보고서에 대한 데이터가 없습니다" → **측정 불가**. 원인 후보는 보고서 생성 지연(문서 기준 통상 24~72시간)과 샌드박스 활동 부족이며 확정하지 못했습니다.
 - 이름 익명화(사용자·그룹·사이트 이름 숨기기)가 **켜져 있습니다.** 설정은 바꾸지 않았습니다.
 - Intune Windows 장치 0, Windows 업데이트 링 0 → 측정 대상 없음. M365 Apps 관리 센터는 두 번 시도 모두 로딩에서 멈춰 측정 불가(원인 확인 불가, 사유: 화면이 로딩 단계에서 멈추는 원인을 화면에서 알 수 없음).
 

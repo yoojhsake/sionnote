@@ -1,6 +1,7 @@
 ---
 title: "[M365·Azure] 05 트러블슈팅 — Exchange Online 로그인 AADSTS530035, 원인 추적과 우회하지 않은 이유 (전체 기록)"
 date: 2026-10-22 10:10:00 +0900
+last_modified_at: 2026-10-23 12:00:00 +0900
 categories: [m365, troubleshooting]
 tags: [Exchange Online, PowerShell, Entra, 보안 기본값, AADSTS530035, 조건부 액세스, 전체 기록]
 excerpt: "Connect-ExchangeOnline -Device가 막힌 증상, 오류 코드 표로 좁힌 원인, 설정을 바꾸지 않고 선택할 수 있는 해결 경로와 결정권자까지 정리한 전체 기록"
@@ -58,7 +59,7 @@ Microsoft Learn의 인증 오류 코드 표에서 AADSTS530035는 **BlockedBySec
 
 | 항목 | 상태 |
 |---|---|
-| 보안 기본값이 **device-code 흐름 자체를 막는다**는 문서 문장 | 오류 코드 정의에서 추론했을 뿐, 보안 기본값 문서 본문에서 해당 문장을 이번에 재확인하지 못함 → **확인 불가**(시도: 오류 코드 정의에서 추론, 사유: 이번에 보안 기본값 문서 본문을 다시 확인하지 못함) |
+| 보안 기본값이 **device-code 흐름 자체를 막는다**는 문서 문장 | 10/23에 Microsoft Learn 보안 기본값 문서에서 해당 내용을 확인함 → **확인됨(문서)**. 다만 이번 로그인 시도가 실제로 이 규칙 때문에 막혔는지는 아래 "적용된 정책" 행에서 로그인 로그로 확정해야 함 |
 | 이 로그인 시도에 실제 적용된 정책 | 로그인 로그의 해당 요청을 열어 "적용된 정책"을 확인하는 단계를 하지 않음 → **확인 불가**(사유: 이번 글에서 이 단계를 하지 않았음. 이후 로그인 로그에서 확인할 항목) |
 | Graph 정책 조회에 필요한 최소 읽기 역할 | **확인 불가**(사유: 확정할 근거를 찾지 못함, 질문으로 남김) |
 
@@ -123,7 +124,7 @@ Microsoft Learn의 인증 오류 코드 표에서 AADSTS530035는 **BlockedBySec
 | 문서 | 530035 대응 시 보안 정책을 끄지 말라는 안내 | [Agent 365 troubleshooting](https://learn.microsoft.com/microsoft-agent-365/developer/troubleshooting) |
 | 조회 | 오류 화면, 앱 이름, 디바이스 상태 | Entra 로그인 화면 |
 | 조회 | 조건부 액세스 0개, Graph 403 | Entra 포털, Cloud Shell |
-| 확인 불가 | device-code 흐름 차단에 대한 문서 본문 문장, 적용된 정책 상세, 최소 읽기 역할(각 사유는 3-3 표) | - |
+| 확인 불가 | 적용된 정책 상세, 최소 읽기 역할(각 사유는 3-3 표) | - |
 | 조회(10/23 추가) | Exchange 관리 센터(GUI)에서 사서함 20개(전부 사용자), Microsoft 365 그룹 9개. PowerShell은 10/23에도 같은 보안 기본값 때문에 막힘 | Exchange 관리 센터 |
 
 ## 10. 정리·남은 일

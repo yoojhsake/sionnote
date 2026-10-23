@@ -1,6 +1,7 @@
 ---
 title: "[M365·Azure] 03 D3 Teams 저장 구조 — 채널 유형별 파일 위치 (전체 기록)"
 date: 2026-10-22 09:40:00 +0900
+last_modified_at: 2026-10-23 12:00:00 +0900
 categories: [m365]
 tags: [M365·Azure, D3, Teams, SharePoint, 채널, 전체 기록]
 excerpt: "표준·비공개·공유 채널의 파일이 실제로 어느 SharePoint 주소에 저장되는지 확인한 전체 기록. 403 응답인데 파일이 생긴 이상 현상과 정정 사항 포함"
@@ -123,7 +124,7 @@ $id = ($t | ? displayName -eq 'Practice-Team-01').id
 - **교훈**: 403 = "아무 일도 안 일어남"이 아닙니다. 실패로 보이는 응답 뒤에 데이터가 남아 있을 수 있습니다.
 
 ### 문제 2 — 공유 채널이 `unknownFutureValue`로 보인다
-- **원인(문서)**: 개발자 문서는 채널 유형 값에 의존하지 말고, 파일 폴더는 `GET /teams/{teamId}/channels/{channelId}/filesFolder`로 얻으라고 안내합니다. 공유 채널은 이 API 버전에서 유형 값이 이름 있는 값으로 나오지 않는 것으로 보입니다.
+- **원인(문서)**: 개발자 문서는 채널 유형 값에 의존하지 말고, 파일 폴더는 `GET /teams/{teamId}/channels/{channelId}/filesFolder`로 얻으라고 안내합니다. 채널 유형 값은 evolvable enum이라, v1.0에서 새 값(공유 채널의 `shared`)은 기본적으로 `unknownFutureValue`로 반환됩니다(문서). 요청에 `Prefer: include-unknown-enum-members` 헤더를 붙이면 `shared`로 나옵니다(문서). 이 헤더로 이 테넌트에서 다시 조회해 보지는 않았으므로 실제 동작은 **확인 불가**(사유: 이번에 헤더를 붙여 시험하지 않음, 재측정 항목)입니다.
 - **해결 방안**: 채널 유형 문자열로 분기하지 말고, 채널마다 `filesFolder`로 실제 주소를 얻어 씁니다.
 
 ### 문제 3 — 관리 센터 숫자와 Graph 채널 수가 다르게 보인다

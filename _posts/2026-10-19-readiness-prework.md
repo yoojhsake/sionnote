@@ -1,6 +1,7 @@
 ---
 title: "[M365·Azure] 00 사전작업 — 환경 점검 전체 기록 (조회 전용)"
 date: 2026-10-19 10:00:00 +0900
+last_modified_at: 2026-10-23 12:00:00 +0900
 categories: [m365]
 tags: [M365·Azure, Sandbox, 라이선스, Azure 구독, 환경 점검, 전체 기록]
 excerpt: "실습을 시작하기 전에 Sandbox 테넌트와 Azure 구독의 현재 값을 읽기만 해서 남긴 전체 기록. 문서 기준과 실제 값의 차이, 막힌 곳, 근거 자료 포함"
@@ -54,12 +55,12 @@ $o = ((Invoke-AzRestMethod -Uri https://graph.microsoft.com/v1.0/organization).C
 | 내 역할 | 전역 관리자, 범위=테넌트, 멤버 자격=직접, 상태=Active, 종료=영구 |
 | 경고 카드 | 레거시 MFA/SSPR 정책에서 인증 방법 정책으로 마이그레이션하라는 안내 |
 
-- **의미**: 관리자 계정 하나가 전역 관리자를 **영구**로 쥐고 있습니다. 운영 환경이라면 상시 권한(영구 활성)은 줄이고 필요할 때만 올려 쓰는 방식(적격 할당)을 권합니다. (문서: [Entra 역할 개념](https://learn.microsoft.com/entra/identity/role-based-access-control/concept-understand-roles))
+- **의미**: 관리자 계정 하나가 전역 관리자를 **영구**로 쥐고 있습니다. 운영 환경이라면 상시 권한(영구 활성)은 줄이고 필요할 때만 올려 쓰는 방식(적격 할당)을 권합니다. (문서: [PIM 구성](https://learn.microsoft.com/entra/id-governance/privileged-identity-management/pim-configure))
 - 가이드는 "관리 센터 6종"을 언급하지만 본문에 목록이 없어, 10/19에 접속을 확인한 포털은 M365 · Entra · Azure 3개입니다. 10/23에는 Teams · SharePoint · Exchange · Purview 관리 센터도 직접 열어 값을 조회했습니다(조회). 다만 가이드의 6종이 정확히 어느 것인지는 **확인 불가**입니다(시도: 가이드 본문에서 목록 찾기, 사유: 본문에 목록이 없음, 질문으로 남김).
 
 ### 3-2. MFA와 보안 기본값
 
-**GUI 경로**: Entra > 보호 > 인증 방법 > 모니터링 > 사용자 등록 세부 정보 / Entra ID > 개요 > 속성 > 보안 기본값
+**GUI 경로**: Entra ID > 인증 방법 > 활동 > 사용자 등록 세부 정보 (영문 문서 표기: Entra ID > Authentication methods > Activity. 10/19에는 "보호 > 인증 방법 > 모니터링"으로 적었으나 현재 문서 기준 경로로 고침. 포털 메뉴 이름은 개편으로 달라질 수 있음) / Entra ID > 개요 > 속성 > 보안 기본값
 
 | 항목 | 조회한 값 |
 |---|---|
@@ -118,11 +119,11 @@ Get-AzVMUsage -Location koreacentral | ? { $_.Name.Value -in 'cores','standardBS
 | 지출 한도 | **Off(해제)** |
 | 부모 관리 그룹 | Tenant Root Group, 현재 비용 0.00 |
 | 내 역할 | Owner(구독 범위, 영구 활성). Owner가 1건 더 있음(서비스 사용자, 10/23 조회: 이름 Microsoft-Developer Program-Sample Data Packs, 유형 Application, 생성 2026-08-23(테넌트 생성 시점), 앱 소유 조직은 외부. 용도는 **확인 불가**(시도: 서비스 사용자 상세 열기, 사유: 설명 항목이 비어 있음)) |
-| vCPU(Korea Central) | 전체 0/10, BS 계열 0/10, DSv5 계열 0/0. 다수 계열 0/10, 일부(Confidential 등) 0/0 |
+| vCPU(Korea Central) | 전체 0/10, BS 계열 0/10, DSv5 계열 0/0. 다수 계열 0/10, 일부(Confidential 등) 0/0 (표기는 "현재 사용/한도" 순서: 0/10 = 사용 0, 한도 10) |
 | 리소스 그룹 수 | 1개(Southeast Asia) |
 
 - **문제점**: 종량제인데 지출 한도가 꺼져 있으면, 리소스를 잘못 만들었을 때 비용이 그대로 청구될 수 있습니다. 문서에도 종량제 구독에는 지출 한도 기능이 없다고 적혀 있습니다. ([Spending limit](https://learn.microsoft.com/azure/cost-management-billing/manage/spending-limit))
-- **해결 방안(원칙)**: 가이드의 "비용 발생 금지" 규칙대로 **VM은 만들지 않고**, 리소스 그룹처럼 비용이 없는 객체만 만들기로 했습니다. vCPU 여유도 사실상 없어 VM 실습 자체가 불가능합니다.
+- **해결 방안(원칙)**: 가이드의 "비용 발생 금지" 규칙대로 **VM은 만들지 않고**, 리소스 그룹처럼 비용이 없는 객체만 만들기로 했습니다. 할당량이 부족해서가 아닙니다. 위 값처럼 지역 전체와 BS 계열은 한도 10에 사용 0이라 vCPU 여유가 있고, 한도가 0인 것은 DSv5 등 일부 계열뿐입니다. VM을 만들지 않은 이유는 "비용 발생 금지" 원칙입니다.
 - vCPU 할당량은 지역별·VM 계열별로 따로 걸립니다. ([Regional quota](https://learn.microsoft.com/azure/quotas/regional-quota-requests), [VM quotas](https://learn.microsoft.com/azure/virtual-machines/quotas))
 - 구독과 테넌트 관계 ([구독이 디렉터리에 연결되는 방식](https://learn.microsoft.com/entra/fundamentals/how-subscriptions-associated-directory))
 
@@ -132,12 +133,12 @@ Get-AzVMUsage -Location koreacentral | ? { $_.Name.Value -in 'cores','standardBS
 |---|---|
 | Az.Accounts | 5.5.3 발견 |
 | MicrosoftTeams | 8.0.0 발견 |
-| Microsoft.Graph | 발견되지 않음 |
+| Microsoft.Graph | 발견되지 않음(통합 모듈만 없다는 뜻. 문서상 Cloud Shell에는 하위 모듈 8개가 미리 설치됨: Applications, Authentication, Groups, Identity.DirectoryManagement, Identity.Governance, Identity.SignIns, Users.Actions, Users.Functions. 이 테넌트의 Cloud Shell에서 하위 모듈을 따로 조회한 값은 없음 → **확인 불가**, 사유: 이번 조회는 통합 모듈 이름만 확인) |
 | SharePoint Online 관리 모듈 | 발견되지 않음 |
 
-- **해결 방안**: Graph 모듈이 없어도 `Invoke-AzRestMethod`로 Graph REST를 직접 호출하면 같은 조회가 됩니다. 이후 모든 PowerShell 검증은 이 방식으로 했습니다.
+- **해결 방안**: 필요한 Graph 하위 모듈이 없을 때는 `Invoke-AzRestMethod`로 Graph REST를 직접 호출하면 같은 조회가 됩니다. 이후 모든 PowerShell 검증은 이 방식으로 했습니다.
 
-## 4. 보완 항목 4가지 (10/23 17:00까지 팀장 확인용)
+## 4. 보완 항목 4가지 (제출 전 확인용)
 
 ### 4-1. 메시지 센터 ↔ Planner 동기화
 

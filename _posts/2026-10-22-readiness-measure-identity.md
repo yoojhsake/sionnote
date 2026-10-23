@@ -1,6 +1,7 @@
 ---
 title: "[M365·Azure] 07 실측 ① Identity·Entra — 관리자, MFA, 조건부 액세스, 그룹·게스트 설정"
 date: 2026-10-22 11:00:00 +0900
+last_modified_at: 2026-10-23 12:00:00 +0900
 categories: [m365]
 tags: [M365·Azure, 실측, Entra, 조건부 액세스, MFA, 게스트, 전체 기록]
 excerpt: "Entra 설정을 하나도 바꾸지 않고 읽어서 정상·주의·위험·측정 불가로 판독한 결과와 근거, 개선 방안(미실행) 전체 기록"
@@ -55,7 +56,7 @@ excerpt: "Entra 설정을 하나도 바꾸지 않고 읽어서 정상·주의·�
 
 ### 2-3. 조건부 액세스와 보안 기본값
 - **GUI 경로**: Entra > 보호 > 조건부 액세스 > 정책
-- **조회**: 정책 목록이 비어 있고 예시 템플릿 안내만 표시. PowerShell로 정책 목록을 조회하면 **HTTP 403**(읽기 권한 부족).
+- **조회**: 정책 목록이 비어 있고 예시 템플릿 안내만 표시. PowerShell로 정책 목록을 조회하면 **HTTP 403**. 원인 후보는 두 가지입니다: ① 사용자 역할 부족, ② `Invoke-AzRestMethod`가 쓰는 Azure PowerShell 앱 토큰에 `Policy.Read.All` 범위가 없음(역할이 충분해도 403 가능). 어느 쪽인지는 **확인 불가**(사유: 역할을 바꾸거나 토큰 범위를 바꿔 시험하는 것은 설정 변경이라 하지 않음).
 
 ```powershell
 $ca = Invoke-AzRestMethod -Uri 'https://graph.microsoft.com/v1.0/identity/conditionalAccess/policies'
@@ -107,7 +108,7 @@ $ca = Invoke-AzRestMethod -Uri 'https://graph.microsoft.com/v1.0/identity/condit
 |---|---|---|
 | 90일 미로그인 사용자 | 사용자 목록 기본 열에 "마지막 로그인"이 없고 열 편집 메뉴를 열지 못함 | 사용자 > 열 편집에서 마지막 로그인 추가 후 재측정 |
 | 소유자 없는 Team | 팀 목록·활성 팀 화면에 소유자 수 열이 없음 | 팀별 상세 또는 Graph로 조회 |
-| 조건부 액세스 정책 상세 | Graph 조회 403 | 읽기 역할 확보 또는 GUI 정책 목록·제외 대상 직접 확인 |
+| 조건부 액세스 정책 상세 | Graph 조회 403 | 읽기 역할 또는 토큰 범위 확보, 또는 GUI 정책 목록·제외 대상 직접 확인 |
 | 하이브리드 항목 전반 | 클라우드 전용 테넌트(동기화 안 함) | 하이브리드 환경에서 측정 |
 
 ### 3-1. 10/23 재확인

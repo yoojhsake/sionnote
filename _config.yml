@@ -1,5 +1,6 @@
 # Sion's History — Jekyll + Minimal Mistakes (GitHub Pages remote theme)
-remote_theme: mmistakes/minimal-mistakes
+# 테마를 릴리스 태그로 고정(마스터 최신본을 자동으로 받아 오지 않도록)
+remote_theme: mmistakes/minimal-mistakes@4.28.0
 minimal_mistakes_skin: default   # air, aqua, contrast, dark, dirt, mint, neon, plum, sunrise 중 선택 가능
 
 title: "Sion's History"
@@ -44,7 +45,7 @@ paginate: 10
 paginate_path: /page:num/
 
 include: ["_pages"]
-exclude: ["_private", "tools", "README.md", "Gemfile", "Gemfile.lock", "node_modules", "vendor"]
+exclude: ["_private", "raw", ".gitignore", "tools", "README.md", "Gemfile", "Gemfile.lock", "node_modules", "vendor"]
 
 markdown: kramdown
 kramdown:

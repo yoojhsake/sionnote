@@ -1,6 +1,7 @@
 ---
 title: "[M365·Azure] 04 D4 Azure 구조 — 계층, 리소스 그룹, Elevate access 전·후 (전체 기록)"
 date: 2026-10-22 10:00:00 +0900
+last_modified_at: 2026-10-23 12:00:00 +0900
 categories: [m365]
 tags: [M365·Azure, D4, Azure, 리소스 그룹, Elevate access, RBAC, 전체 기록]
 excerpt: "Azure 계층 구조를 확인하고 비용 없는 리소스 그룹을 만들었고, 전역 관리자의 Elevate access 전·후·원복 상태를 화면과 PowerShell로 비교한 전체 기록"
@@ -43,7 +44,7 @@ excerpt: "Azure 계층 구조를 확인하고 비용 없는 리소스 그룹을 
 ### 3-2. Elevate access 전 상태 기록 (09:52)
 
 1. 포털 > 관리 그룹 > **Tenant Root Group** 클릭
-2. Entra > 개요 > 속성 > "Azure 리소스에 대한 액세스 관리" 토글 확인(저장 안 함)
+2. Entra > 개요 > 속성 > "Azure 리소스에 대한 액세스 관리" 토글 확인(저장 안 함). 영문 문서 표기는 Microsoft Entra ID > Manage > Properties
 
 ![Elevate 전. 관리 그룹 화면의 권한 없음 안내와 Entra 속성의 토글 아니요]({{ "/assets/images/2026/10/d4-elevate-before.png" | relative_url }})
 *그림 3. Elevate 전 (왼쪽: Tenant Root Group을 눌렀을 때의 안내, 오른쪽: 토글 = 아니요)*
@@ -57,7 +58,7 @@ excerpt: "Azure 계층 구조를 확인하고 비용 없는 리소스 그룹을 
 
 ```powershell
 Get-AzRoleAssignment -Scope '/' | Select DisplayName,RoleDefinitionName,Scope,ObjectType
-# 출력: ROOT | User Access Administrator | / | User
+# 출력(재구성): ROOT | User Access Administrator | / | User   ← 첫 열은 계정 이름을 게시하지 않으려고 "ROOT"로 바꿔 적은 표기이며 실제 출력 그대로가 아닙니다
 ```
 
 ![Elevate 후. 루트 IAM 역할 할당 탭에 User Access Administrator가 범위 / 로 보이고, PowerShell도 같은 값]({{ "/assets/images/2026/10/d4-elevate-after.png" | relative_url }})
@@ -156,7 +157,7 @@ Get-AzRoleAssignment -Scope '/' | Select DisplayName,RoleDefinitionName,Scope,Ob
 | 구분 | 내용 | 출처 |
 |---|---|---|
 | 문서 | Elevate access: 루트 `/`에서 User Access Administrator, 로그아웃·재로그인, 토글 끄기로 제거, 배너 | [Elevate access](https://learn.microsoft.com/azure/role-based-access-control/elevate-access-global-admin) |
-| 문서 | 관리 그룹: 루트 "Tenant root group", 기본 접근 없음, 전역 관리자만 상승, 계층 6단계, RBAC 상속 | [Management groups](https://learn.microsoft.com/azure/governance/management-groups/overview) |
+| 문서 | 관리 그룹: 루트 "Tenant root group", 기본 접근 없음, 전역 관리자만 상승, 계층 6단계(루트와 구독 단계는 제외), RBAC 상속 | [Management groups](https://learn.microsoft.com/azure/governance/management-groups/overview) |
 | 문서 | 관리 범위 4단계와 상속 | [Resource Manager 개요](https://learn.microsoft.com/azure/azure-resource-manager/management/overview) |
 | 문서 | Azure 역할 vs Entra 역할 | [RBAC와 디렉터리 관리자 역할](https://learn.microsoft.com/azure/role-based-access-control/rbac-and-directory-admin-roles), [Entra 역할 개념](https://learn.microsoft.com/entra/identity/role-based-access-control/concept-understand-roles) |
 | 문서 | 구독은 하나의 테넌트를 신뢰, Azure 역할 ≠ Entra 역할 | [구독과 디렉터리](https://learn.microsoft.com/entra/fundamentals/how-subscriptions-associated-directory) |

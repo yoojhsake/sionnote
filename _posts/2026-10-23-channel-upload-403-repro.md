@@ -2,7 +2,7 @@
 title: "[M365·Azure] 13 트러블슈팅 — Teams 채널 파일 업로드 403 재현 (표준·비공개·공유 채널 비교, 전체 기록)"
 date: 2026-10-23 10:20:00 +0900
 categories: [m365, troubleshooting]
-tags: [Teams, SharePoint, Graph, 403, 비공개 채널, 공유 채널, 전체 기록]
+tags: [Teams, SharePoint, Graph, "403", 비공개 채널, 공유 채널, 전체 기록]
 excerpt: "10/22에 비공개·공유 채널 업로드가 403이었던 현상을 같은 방식으로 다시 시도한 결과와, 지금 말할 수 있는 것·없는 것의 구분"
 ---
 

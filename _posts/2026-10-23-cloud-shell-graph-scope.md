@@ -2,7 +2,7 @@
 title: "[M365·Azure] 14 Cloud Shell에서 Graph를 호출할 때 되는 것과 안 되는 것 (토큰 범위 정리, 전체 기록)"
 date: 2026-10-23 10:30:00 +0900
 categories: [m365, troubleshooting]
-tags: [Cloud Shell, Graph, 토큰, 403, 전체 기록]
+tags: [Cloud Shell, Graph, 토큰, "403", 전체 기록]
 excerpt: "Cloud Shell의 Azure 로그인으로 받은 Graph 토큰으로 읽은 것과 읽지 못한 것을 나누고, 보안 설정을 바꾸지 않고 쓸 수 있는 방법과 막혔을 때의 선택지를 정리한 기록"
 ---
 

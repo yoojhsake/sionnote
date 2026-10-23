@@ -2,7 +2,7 @@
 title: "[M365·Azure] 12 트러블슈팅 — 관리 그룹 설정이 403일 때, Elevate access 뒤 토큰 갱신으로 읽기 (전체 기록)"
 date: 2026-10-23 10:10:00 +0900
 categories: [m365, troubleshooting]
-tags: [Azure, 관리 그룹, Elevate access, 토큰, 403, 전체 기록]
+tags: [Azure, 관리 그룹, Elevate access, 토큰, "403", 전체 기록]
 excerpt: "10/19에 HTTP 403으로 못 읽은 관리 그룹 설정을 Elevate access를 켠 뒤 포털 토큰을 갱신해 읽은 과정과, 끈 뒤 화면 복귀까지의 기록"
 ---
 

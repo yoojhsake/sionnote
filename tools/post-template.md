@@ -1,7 +1,7 @@
 ---
 title: "[말머리] 제목"
 categories: [m365]   # 대분류: m365 / iam / azure / study / blog. 트러블슈팅은 [m365, troubleshooting]처럼 뒤에 붙인다
-tags: [태그1, 태그2]
+tags: [태그1, 태그2]   # 403 같은 숫자 태그는 반드시 "403"처럼 따옴표로 감싼다(숫자로 읽히면 사이트 빌드가 실패한다)
 excerpt: "한 줄 요약"
 ---
 

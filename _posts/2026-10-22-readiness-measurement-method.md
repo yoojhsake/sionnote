@@ -114,3 +114,13 @@ Teams 관리 센터의 **게스트 액세스** 화면을 열어 값만 읽었습
 | 문서 | 오류 코드 표 | [Authentication and authorization error codes](https://learn.microsoft.com/entra/identity-platform/reference-error-codes) |
 | 문서 | 감사 활성화와 상태 확인 | [Turn auditing on or off](https://learn.microsoft.com/purview/audit-log-enable-disable) |
 | 문서 | 그 밖의 항목별 근거 | 각 실측 글의 근거 절 |
+
+## 담당별 기록
+
+이 글은 유재홍이 실습·측정한 내용입니다. 같은 주제에서 대원·현준이 맡은 부분은 각자 직접 채웁니다(칸만 마련).
+
+| 담당 | 기록 | 상태 |
+|---|---|---|
+| 유재홍 | 이 글의 실습·측정·정리 | 작성함 |
+| 대원 | (대원이 맡은 부분을 여기에 직접 작성) | 작성 대기 |
+| 현준 | (현준이 맡은 부분을 여기에 직접 작성) | 작성 대기 |

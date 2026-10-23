@@ -47,12 +47,20 @@ excerpt: "Entra 설정을 하나도 바꾸지 않고 읽어서 정상·주의·�
 - **개선 방안(미실행)**: 클라우드 전용 비상 계정 2개를 만들고 조건부 액세스 정책에서 제외하며 암호는 분리 보관합니다. 업무 계정은 적격 할당(PIM)으로 전환합니다. **비상 계정 생성은 본인이 직접 할 작업**이며 아직 하지 않았습니다.
 - 근거: [Entra 역할 개념](https://learn.microsoft.com/entra/identity/role-based-access-control/concept-understand-roles), [비상 접근 계정](https://learn.microsoft.com/entra/identity/role-based-access-control/security-emergency-access) (후자는 이번에 URL 재검증 못 함)
 
+![전역 관리자 활성 할당 화면]({{ "/assets/images/2026/10/m07-1-ga-active.png" | relative_url }})
+*그림 1. Entra > 역할 및 관리자 > 전역 관리자 > 활성 할당 탭. 전역 관리자 아래 2명이 "사용자 / 직접"으로 보이고 범위는 테넌트이다(이름·계정·범위는 가렸다). 적격 할당 탭은 결과가 없었다.*
+
+
 ### 2-2. MFA 등록 현황
 - **GUI 경로**: Entra > 보호 > 인증 방법 > 모니터링 > 사용자 등록 세부 정보
 - **조회**: "다단계 인증 가능" 2명 / 20명(90%가 미등록).
 - **해석**: 보안 기본값이 켜져 있으므로 미등록 사용자는 **다음 로그인 때 등록을 요구받습니다**(문서). 즉 "아직 등록 안 한 것"이지 "보호가 꺼진 것"은 아닙니다. 다만 등록 전까지는 실제 보호가 없다고 봐야 합니다.
 - **확인 불가**: 실제 로그인 프롬프트 동작(사유: 본인 계정의 인증 정보 입력이 필요해 대행하지 않음).
 - 근거: [Security defaults](https://learn.microsoft.com/entra/fundamentals/security-defaults)
+
+![인증 방법 사용자 등록 세부 정보]({{ "/assets/images/2026/10/m07-5-mfa-registration.png" | relative_url }})
+*그림 2. Entra > 인증 방법 > 사용자 등록 세부 정보. "다단계 인증 가능" 열이 대부분 "불가능"이고 "사용 가능"은 20명 중 2명이다. 사용자 계정·이름 열과 테넌트 이름은 가렸다.*
+
 
 ### 2-3. 조건부 액세스와 보안 기본값
 - **GUI 경로**: Entra > 보호 > 조건부 액세스 > 정책
@@ -67,6 +75,10 @@ $ca = Invoke-AzRestMethod -Uri 'https://graph.microsoft.com/v1.0/identity/condit
 - **해결 방안(미실행)**: 보안 기본값을 끄고 조건부 액세스로 전환하는 것은 **보안 설정 변경**이므로 관리자·보안팀이 결정할 사항입니다. 비상 계정을 먼저 만든 뒤, 모든 사용자에게 MFA를 요구하는 정책부터 "보고 전용"으로 시험합니다.
 - **확인 불가**: Graph 조회에 필요한 최소 읽기 역할은 무엇인가(시도: Graph 정책 목록 조회(HTTP 403), 사유: 역할을 바꿔 시험하는 것은 권한 변경이라 하지 않음, 질문으로 남김).
 
+![조건부 액세스 정책 화면]({{ "/assets/images/2026/10/m07-3-ca-policies.png" | relative_url }})
+*그림 3. Entra > 조건부 액세스 > 정책. 목록이 비어 있고 "조건부 액세스란 무엇인가요?" 예시 안내만 표시된다(정책 0개). 계정 표시는 가렸다.*
+
+
 ### 2-4. 그룹 만료·생성·명명 정책
 - **GUI 경로**: Entra > 그룹 > 만료 / 일반(그룹 설정) / 명명 정책
 - **조회**: 만료 정책 없음(Teams 관리 센터의 팀 목록에서도 만료일 열이 모두 "-"), 사용자 그룹 생성 허용, 명명 정책 없음.
@@ -74,9 +86,18 @@ $ca = Invoke-AzRestMethod -Uri 'https://graph.microsoft.com/v1.0/identity/condit
 - **개선 방안(미실행)**: 만료 정책(활동이 있으면 자동 갱신, 소유자에게 알림, 갱신 안 하면 삭제 후 30일 복구), 이름 접두어·차단 단어, 그룹 생성 권한 제한. 명명 정책에는 Entra ID P1 라이선스가 필요하며 이 테넌트는 P2 포함입니다.
 - 근거: [그룹 만료](https://learn.microsoft.com/entra/identity/users/groups-lifecycle), [명명 정책](https://learn.microsoft.com/entra/identity/users/groups-naming-policy), [M365 그룹 관리 작업](https://learn.microsoft.com/troubleshoot/exchange/groups-and-distribution-lists/o365-group-tasks)
 
+![그룹 만료 설정 화면]({{ "/assets/images/2026/10/m07-4-group-expiration.png" | relative_url }})
+*그림 4. Entra > 그룹 > 만료. "그룹 수명(일)" 값이 비어 있고 "다음 Microsoft 365 그룹에 만료 적용"이 "없음"으로 선택되어 있어 만료 정책이 설정되어 있지 않다. 이 화면에서 아무 값도 저장하지 않았다. 계정·테넌트 이름은 가렸다.*
+
+
 ### 2-5. 게스트·외부 공동 작업 설정
 - **GUI 경로**: Entra > External Identities > 외부 협업 설정
 - **조회**: 게스트 초대 = 모든 사용자 허용(가장 포괄적), 게스트 접근 = 디렉터리 개체 속성·멤버 자격 제한. 테넌트 간 액세스는 기본값. 현재 Guest는 0명.
+- **보충(10/23 재조회)**: 협업 제한 화면까지 읽었습니다. "모든 도메인에 초대를 보낼 수 있도록 허용(가장 포괄적)"이 선택되어 있어 허용·차단 도메인 목록은 쓰지 않는 상태입니다. 게스트 셀프 서비스 등록은 "아니요", 외부 사용자 나가기 허용은 "예"입니다.
+
+![Entra 외부 협업 설정 화면]({{ "/assets/images/2026/10/m13-ext-collab.png" | relative_url }})
+*그림. Entra > External Identities > 외부 협업 설정(아래쪽). 게스트 초대 제한, 셀프 서비스 등록, 나가기 설정, 협업 제한 사항 모두 값만 읽고 바꾸지 않았다.*
+
 - **왜 문제인가**: 문서에 따르면 기본값은 "게스트를 포함한 조직의 모든 사용자가 초대 가능"입니다. 누가 초대했는지 책임이 흩어집니다. 권장은 관리자와 Guest Inviter 역할만 초대하게 하는 것입니다.
 - **개선 방안(미실행)**: 초대 권한을 Guest Inviter·User Administrator로 제한하고, 필요한 도메인만 허용 목록으로 관리합니다. 값을 바꾸더라도 Teams·SharePoint 설정은 Entra보다 느슨해질 수 없습니다(Entra 설정이 우선).
 - 근거: [외부 협업 설정](https://learn.microsoft.com/entra/external-id/external-collaboration-settings-configure), [게스트 권한 제한](https://learn.microsoft.com/entra/identity/users/users-restrict-guest-permissions), [Governed collaboration](https://learn.microsoft.com/entra/architecture/5-secure-access-b2b), [Teams·SharePoint 외부 접근](https://learn.microsoft.com/entra/architecture/9-secure-access-teams-sharepoint)
@@ -91,6 +112,10 @@ $ca = Invoke-AzRestMethod -Uri 'https://graph.microsoft.com/v1.0/identity/condit
 ### 2-7. 액세스 검토·진단 설정
 - **조회**: 액세스 검토 정의 0, 진단 설정 "정의된 설정 없음". Guest 거버넌스 화면은 구독 연결이 필요하다는 안내가 나왔습니다.
 - **문제점**: 권한을 정기적으로 점검하는 장치와 로그를 보관·내보내는 장치가 모두 없습니다. 감사 로그는 포털에서 최근 기간만 보이므로 장기 보관은 진단 설정이 필요합니다(문서 일반 설명, 보존 기간 수치는 이번에 확인하지 못함).
+
+![액세스 검토 화면]({{ "/assets/images/2026/10/m07-2-access-review.png" | relative_url }})
+*그림 5. Entra > Identity Governance > 액세스 검토. 목록에 "표시할 액세스 검토가 없음"이 나오고, 위쪽 안내는 Guest 거버넌스 기능에 Azure 구독 연결이 필요하다는 내용이다. 계정 표시는 가렸다.*
+
 
 ### 2-8. 권장 사항과 ID 보안 점수
 - **조회**: 권장 사항 7건(보안 7, 모범 사례 0) — 조건부 액세스의 내부 위험 조건(P2), 신뢰할 수 없는 앱 동의 허용 안 함, 둘 이상의 전역 관리자 지정, 하이브리드 암호 해시 동기화, 암호 만료 안 함, 최소 권한 관리자 역할, 셀프 서비스 암호 재설정. **ID 보안 점수 60.40%**.
@@ -126,3 +151,13 @@ $ca = Invoke-AzRestMethod -Uri 'https://graph.microsoft.com/v1.0/identity/condit
 ## 5. 정리
 - 이 글의 모든 값은 읽기 전용 조회입니다. 설정은 하나도 바꾸지 않았습니다.
 - 비상 계정 생성과 조건부 액세스 전환은 사람이 결정하고 수행해야 하는 작업으로 남겨 두었습니다.
+
+## 담당별 기록
+
+이 글은 유재홍이 실습·측정한 내용입니다. 같은 주제에서 대원·현준이 맡은 부분은 각자 직접 채웁니다(칸만 마련).
+
+| 담당 | 기록 | 상태 |
+|---|---|---|
+| 유재홍 | 이 글의 실습·측정·정리 | 작성함 |
+| 대원 | (대원이 맡은 부분을 여기에 직접 작성) | 작성 대기 |
+| 현준 | (현준이 맡은 부분을 여기에 직접 작성) | 작성 대기 |

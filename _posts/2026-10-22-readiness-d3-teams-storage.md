@@ -29,8 +29,10 @@ excerpt: "표준·비공개·공유 채널의 파일이 실제로 어느 SharePo
 | 비공개 채널 | 구성원이 제한된 채널. **별도의 SharePoint 사이트**가 생김 |
 | 공유 채널 | 다른 팀·조직과 공유할 수 있는 채널. **별도의 SharePoint 사이트**가 생김 |
 | 1:1·그룹 채팅 파일 | 보낸 사람의 OneDrive에 저장(문서 기준, 이 테넌트에서 확인 안 함) |
-| 회의 녹화 | 회의 종류에 따라 OneDrive 또는 SharePoint(문서 기준, 확인 안 함) |
-| 일정 | Team의 일정은 Exchange(그룹 사서함)에 의존 |
+| 회의 녹화 | 일반 회의: 주최자의 OneDrive > Recordings 폴더 / 채널 회의: 팀 SharePoint 사이트 > Documents > Recordings 폴더(문서: Teams 회의 녹화 저장 문서) |
+| **Team 일정**(채널 일정·채널 회의) | **그룹 사서함**(Microsoft 365 그룹 캘린더)에 저장. 팀을 만들 때 같이 생긴 사서함입니다(문서·Q&A 기준, 이 테넌트 시험 결과는 6-2번 참고) |
+| **개인 회의 일정**(Teams·Outlook에서 만든 일반 회의) | **사용자 사서함**에 저장. 주최자 사서함에 원본이, 참석자 각자의 사서함에 복사본이 생깁니다(문서 기준) |
+| 회의 채팅 | 일반 회의는 참석자 각자의 사서함, 채널 회의는 팀의 그룹 사서함(문서: Purview eDiscovery의 Teams 콘텐츠 저장 위치 표) |
 
 ## 3. 절차
 
@@ -151,6 +153,36 @@ $id = ($t | ? displayName -eq 'Practice-Team-01').id
 | 시험 파일 존재 | 3개 모두 SharePoint 화면에서 확인 |
 | 활성 사이트 목록 | 팀 사이트 1행 + 채널 사이트 2개 표시 |
 
+### 6-2. 일정 저장 위치 시험 (10/23 추가)
+
+Team 일정은 그룹 사서함, 개인 회의 일정은 사용자 사서함이라는 설명을 이 테넌트에서 실제로 나눠 보았습니다. 시험 일정 2개를 만들었고, 확인한 뒤 삭제했습니다.
+
+| 일정 종류 | 만든 방법 | 보인 곳 | 보이지 않은 곳 |
+|---|---|---|---|
+| 팀 일정 `zz-test-team-event` (10/27 10:00) | Cloud Shell에서 Graph로 팀(그룹) 캘린더에 생성(HTTP 201) | 팀(그룹) 캘린더 목록(조회) | 관리자의 개인 Outlook 캘린더 10/27 10:00(조회) |
+| 개인 일정 `zz-test-personal-event` (10/28 10:00) | Outlook 웹에서 새 이벤트 저장 | 관리자의 개인 Outlook 캘린더 10/28 10:00(조회) | 팀(그룹) 캘린더 목록(조회) |
+
+
+![팀 캘린더에 일정 생성]({{ "/assets/images/2026/10/m03-1-team-event-created.png" | relative_url }})
+*그림 5. Cloud Shell 출력. 1) 팀(그룹) 캘린더에 일정 생성 HTTP 201, 2) 그룹 캘린더 목록에 zz-test-team-event가 보임, 3) 내 개인 캘린더를 같은 토큰으로 읽으면 403(토큰에 Calendars 범위가 없음).*
+
+![팀 캘린더 목록]({{ "/assets/images/2026/10/m03-2-team-calendar-list.png" | relative_url }})
+*그림 6. 개인 일정을 만든 뒤 다시 읽은 팀(그룹) 캘린더 목록. zz-test-team-event 한 건만 있고 개인 일정은 없다.*
+
+![개인 Outlook 캘린더]({{ "/assets/images/2026/10/m03-3-personal-calendar.png" | relative_url }})
+*그림 7. Outlook 웹의 관리자 개인 캘린더(10/26~10/30주). 10/28(수) 10:00에 개인 일정 zz-test-personal-event만 있고, 팀 일정을 넣은 10/27(화) 10:00 칸은 비어 있다.*
+
+- **해석**: 팀 일정은 팀(그룹) 캘린더에만, 개인 일정은 개인 캘린더에만 들어갔습니다. 저장 단위가 서로 다르다는 문서·Q&A의 설명과 같은 결과입니다.
+- **한계(확인 불가)**: 사서함 내부를 직접 열어 "그룹 사서함에 들어 있다"는 물리 저장 위치까지 본 것은 아닙니다. 캘린더가 어느 쪽에 속하는지(그룹 캘린더 vs 사용자 캘린더)만 확인했습니다. 사서함 내부 확인은 Exchange PowerShell(`Get-MailboxFolderStatistics`)이 필요한데, 보안 기본값(AADSTS530035) 때문에 막혀 있어 월요일 해제 후 시도합니다.
+- **참고**: 같은 토큰으로 개인 캘린더(`/me/events`)를 읽으면 403이 났습니다. 비공개 채널 403과 같은 계열의 원인(토큰 범위 부족)으로 보이며, 토큰에 Calendars 범위가 없다는 점은 앞의 토큰 범위 출력과 일치합니다.
+
+### 6-3. OneDrive 위치 다시 확인 (10/23 오후 추가)
+
+오전에는 관리자 OneDrive가 "기본 문서 라이브러리를 찾을 수 없음" 오류로 열리지 않아 회의 녹화·1:1 채팅 파일이 저장되는 위치를 확인하지 못했습니다. 오후에 OneDrive 웹을 다시 열었더니 홈과 My files가 정상으로 열렸습니다(조회). My files에는 **Meetings, Microsoft Copilot Chat Files, Recordings** 폴더가 있고 모두 0개였습니다. 문서가 설명하는 "개인 회의 녹화는 진행자의 OneDrive에 저장"되는 대상 폴더는 있는 것이고, 실제 녹화가 거기에 들어가는지는 녹화를 해 봐야 합니다(아직 수행하지 않음).
+
+![OneDrive My files 화면. Meetings, Microsoft Copilot Chat Files, Recordings 폴더, 모두 0 items]({{ "/assets/images/2026/10/m03-4-onedrive.png" | relative_url }})
+*그림. 관리자 OneDrive의 My files. 수정한 사람 이름 칸은 가렸다.*
+
 ## 7. 운영에서는 이렇게 판단한다
 
 - **"이 파일이 어디 있나"에 대한 답이 채널 유형마다 다릅니다.** 표준 채널은 팀 사이트, 비공개·공유는 별도 사이트이므로, 보존·검색·외부 공유·백업 정책을 세울 때 **사이트 단위로 대상을 따로 잡아야** 합니다.
@@ -164,15 +196,29 @@ $id = ($t | ? displayName -eq 'Practice-Team-01').id
 | 문서 | 표준 채널은 팀 사이트 공유(채널별 폴더), 비공개·공유 채널은 각각 별도 사이트 | [Teams connected sites](https://learn.microsoft.com/sharepoint/teams-connected-sites) |
 | 문서 | 채널 유형과 개요 | [Teams 채널 개요](https://learn.microsoft.com/microsoftteams/teams-channels-overview), [표준 채널](https://learn.microsoft.com/microsoftteams/standard-channels) |
 | 문서 | Team은 M365 그룹 + SharePoint + 사서함 | [Teams와 M365 그룹](https://learn.microsoft.com/microsoftteams/office-365-groups) |
+| 문서 | 채널 메시지·채널 회의 채팅은 팀의 사서함, 일반 회의 채팅은 참석자 사서함, 녹화는 주최자 OneDrive | [Finding content in Microsoft Teams in eDiscovery](https://learn.microsoft.com/purview/edisc-search-teams#where-teams-content-is-stored) |
+| 문서 | 회의 녹화 저장 위치(일반 회의=주최자 OneDrive, 채널 회의=팀 사이트 Recordings) | [Teams meeting recording and transcript storage and permissions](https://learn.microsoft.com/microsoftteams/tmr-meeting-recording-change#recording-storage) |
+| 참고(커뮤니티 답변) | 채널 캘린더 항목은 팀에 연결된 Microsoft 365 그룹 캘린더에 있는 채널 회의 | [Microsoft Q&A 답변](https://learn.microsoft.com/answers/a/12452933) |
 | 문서 | 채널 유형 값에 의존하지 말고 filesFolder 사용 | [공유·비공개 채널용 앱](https://learn.microsoft.com/microsoftteams/platform/build-apps-for-shared-private-channels) |
 | 문서 | 채널 사이트는 활성 사이트의 "채널 사이트" 열 링크로 들어가 사이트별 공유 설정을 바꿈 | [Change sharing settings for a site](https://learn.microsoft.com/sharepoint/change-external-sharing-site) |
 | 문서 | SharePoint 파일 협업 배포 | [File collaboration](https://learn.microsoft.com/sharepoint/deploy-file-collaboration) |
 | 조회 | Team 7→8, 채널 4개와 유형 값, 폴더 주소 패턴, 업로드 응답, 파일 존재, 활성 사이트 | Teams·SharePoint 화면 + Graph |
 | 확인 불가 | 403인데 파일이 생긴 원인(10/22 요청·응답 미보존) / 공유 채널의 관리 센터 집계 / 직접 업로드와 Graph 업로드의 차이(파일 선택창 사용 불가) | - |
-| 확인 불가 | 1:1 채팅 파일의 OneDrive 위치 / 회의 녹화 위치 — 시도: OneDrive 열기, Graph `/me/drive` 조회. 사유: 관리자 OneDrive가 만들어져 있지 않고(기본 문서 라이브러리 오류) 조회는 HTTP 403, 녹화는 마이크·카메라가 필요한 조작이라 하지 않음 | - |
+| 조회(10/23 재시도) | 관리자 OneDrive가 열림. My files에 Meetings, Microsoft Copilot Chat Files, Recordings 폴더(모두 0개). 오전에 나던 "기본 문서 라이브러리를 찾을 수 없음" 오류는 이번엔 재현되지 않음(원인은 확인 불가, 프로비저닝 지연으로 추정) | OneDrive 웹 |
+| 확인 불가 | 회의 녹화가 실제로 Recordings 폴더에 저장되는지, 1:1 채팅 파일의 OneDrive 위치 — 시도: 폴더 존재 확인. 사유: 녹화·파일 전송은 마이크·카메라와 두 번째 사용자가 필요한 조작이라 아직 수행하지 않음(재홍님 또는 시험 사용자와 함께 가능) | - |
 
 ## 9. 정리·남은 일
 
 - Practice-Team-01(채널 사이트 2개와 시험 파일 3개 포함)은 **삭제하지 않았습니다.** 정리 목록에 올려 두었고 본인이 직접 삭제합니다(삭제 후 30일간 복구 가능).
 
 > 오늘 입력한 PowerShell 원문은 복구하지 못해, 같은 출력 줄이 나오는 형태로 정리했습니다. 화면 확인 값은 실제와 같습니다.
+
+## 담당별 기록
+
+이 글은 유재홍이 실습·측정한 내용입니다. 같은 주제에서 대원·현준이 맡은 부분은 각자 직접 채웁니다(칸만 마련).
+
+| 담당 | 기록 | 상태 |
+|---|---|---|
+| 유재홍 | 이 글의 실습·측정·정리 | 작성함 |
+| 대원 | (대원이 맡은 부분을 여기에 직접 작성) | 작성 대기 |
+| 현준 | (현준이 맡은 부분을 여기에 직접 작성) | 작성 대기 |

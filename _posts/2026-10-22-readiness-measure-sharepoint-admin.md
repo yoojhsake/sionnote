@@ -86,7 +86,7 @@ excerpt: "외부 공유·기본 링크·보존·동기화·메시지 센터·서
 - **GUI 경로**: M365 관리 센터 > 상태 > 메시지 센터
 - **조회**: 총 469건(수집 464건 기준 집계), 조치 기한이 있는 게시물 31건, **기한 경과 16건**(기한 범위 2026-06-29 ~ 2026-10-05), 30일 내 임박 7건. 조직 내 "예약됨 2, 시작됨 1"의 상태 기록 3건. 10/19 사전 조회 때는 451건이었습니다.
 - **문제점**: 기한이 지난 변경 안내를 아무도 처리하지 않았습니다. 메시지 센터는 변경이 **오기 전 알려 주는** 채널이어서, 놓치면 사용자 문의로 먼저 알게 됩니다.
-- **개선 방안(미실행)**: 담당자를 정하고 주 1회 검토, 메시지를 Planner 작업으로 보내 추적, 변경 영향이 큰 건은 변경 관리 문서로 연결. 환경 점검 보완 항목(메시지 센터 → Planner 연동)은 사용자 작업으로 남아 있습니다.
+- **개선 방안(미실행)**: 담당자를 정하고 주 1회 검토, 메시지를 Planner 작업으로 보내 추적, 변경 영향이 큰 건은 변경 관리 문서로 연결. 환경 점검 보완 항목(메시지 센터 → Planner 연동)은 이번에는 하지 않았습니다.
 - 근거: [메시지 센터](https://learn.microsoft.com/microsoft-365/admin/manage/message-center), [메시지 센터 작업을 Planner로 추적](https://learn.microsoft.com/planner/track-message-center-tasks-planner), [M365 변경 가이드](https://learn.microsoft.com/microsoft-365-apps/best-practices/microsoft-365-change-guide)
 
 ![메시지 센터 화면]({{ "/assets/images/2026/10/m09-3-message-center.png" | relative_url }})

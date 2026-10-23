@@ -78,7 +78,7 @@ Teams 관리 센터의 **게스트 액세스** 화면을 열어 값만 읽었습
 |---|---|---|
 | 라이선스 필요 | SharePoint 데이터 접근 거버넌스 보고서는 SharePoint Advanced Management가 필요(평가판 버튼은 누르지 않음) | 라이선스 확보 후 보고서 생성 |
 | 보고서 데이터 없음 | Teams·Office 활성화 사용 현황이 비어 있음 | 활동 발생 후 24~72시간(문서 기준) 뒤 재조회 |
-| 로그인 방식 차단 | Cloud Shell의 device-code 로그인이 보안 기본값에 막힘 | 본인 PC에서 브라우저 로그인 |
+| 로그인 방식 차단 | Cloud Shell의 device-code 로그인이 보안 기본값에 막힘 | 내 PC에서 브라우저 로그인 |
 | 대상 없음 | 클라우드 전용 테넌트라 Entra Connect 항목이 없음 | 하이브리드 환경에서 측정 |
 | API/PowerShell 전용 | Restricted SharePoint Search는 포털 화면이 없고 Windows PowerShell 5.1 모듈 전용 | 로컬 Windows PowerShell에서 SPO 관리자로 연결 |
 | 화면 오류·정체 | M365 Apps 관리 센터가 두 번 모두 로딩에서 멈춤 | 시간을 두고 재시도 |

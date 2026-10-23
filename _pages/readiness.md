@@ -26,3 +26,12 @@ M365·Azure 운영 사전 프로그램의 기록을 **작업 순서대로** 모�
 | 08 | [실측 ② Teams]({{ "/m365/readiness-measure-teams/" | relative_url }}) | 정책, 외부 액세스, 회의 |
 | 09 | [실측 ③ SharePoint·관리 센터]({{ "/m365/readiness-measure-sharepoint-admin/" | relative_url }}) | 공유, 보존, 메시지 센터 |
 | 10 | [실측 ④ Purview·Azure 거버넌스]({{ "/m365/readiness-measure-purview-azure/" | relative_url }}) | 감사, DLP, Policy, 구독 권한 |
+
+## 3. 재확인과 트러블슈팅 (10/23)
+
+| 번호 | 글 | 다루는 내용 |
+|---|---|---|
+| 11 | [10/23 재확인 기록]({{ "/m365/readiness-recheck/" | relative_url }}) | "확인 불가"로 남겼던 항목을 다시 시도한 결과, 변경 4건과 원복 방법 |
+| 12 | [트러블슈팅 관리 그룹 설정 403]({{ "/m365/troubleshooting/mg-settings-403-elevate-refresh/" | relative_url }}) | Elevate를 켜도 안 읽힐 때 토큰 갱신 |
+| 13 | [트러블슈팅 채널 파일 업로드 403 재현]({{ "/m365/troubleshooting/channel-upload-403-repro/" | relative_url }}) | 표준·비공개·공유 채널 결과 비교 |
+| 14 | [Cloud Shell에서 Graph 호출, 되는 것과 안 되는 것]({{ "/m365/troubleshooting/cloud-shell-graph-scope/" | relative_url }}) | 토큰 범위에 따라 갈리는 조회 결과 |

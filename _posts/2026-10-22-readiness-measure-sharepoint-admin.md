@@ -8,7 +8,7 @@ excerpt: "외부 공유·기본 링크·보존·동기화·메시지 센터·서
 
 측정일은 2026-10-22(목)이며 **모든 측정은 읽기 전용**입니다. 방법과 판독 기준은 [측정 방법 글]({{ "/m365/readiness-measurement-method/" | relative_url }})에 있습니다.
 
-> 근거 표기: **조회** = 화면에서 직접 읽음 / **문서** = Microsoft Learn / **미확인** = 확인하지 못함. 테넌트 도메인과 사이트 주소는 게시하지 않았습니다. 개선 방안은 권고이며 **이번에 실행하지 않았습니다.**
+> 근거 표기: **조회** = 화면에서 직접 읽음 / **문서** = Microsoft Learn / **확인 불가** = 시도했으나 확인하지 못함(시도 방법·사유 병기, 2026-10-23 재확인 반영). 테넌트 도메인과 사이트 주소는 게시하지 않았습니다. 개선 방안은 권고이며 **이번에 실행하지 않았습니다.**
 
 ## 1. 결과 한눈에
 
@@ -42,7 +42,7 @@ excerpt: "외부 공유·기본 링크·보존·동기화·메시지 센터·서
 - **조회**: SharePoint와 OneDrive 슬라이더 모두 "누구나(Anyone)", Anyone 링크 만료 체크 해제. 기본 링크 유형 "링크가 있는 모든 사용자", 권한 "편집", 파일 "보기 및 편집", 폴더 "보기, 편집 및 업로드".
 - **왜 문제인가**: 링크만 알면 로그인 없이 편집까지 가능한 링크가 **기본으로** 만들어집니다. 사용자는 보통 기본값을 그대로 쓰므로 실수로 넓게 공유될 가능성이 가장 큽니다. 슬라이더는 조직 최대치이고, 사이트별로 더 좁힐 수는 있지만 더 넓힐 수는 없습니다(문서).
 - **개선 방안(미실행)**: 조직 수준을 "새 게스트와 기존 게스트"로 낮추거나, 최소한 Anyone 링크에 만료일(예: 수 주)과 "보기" 권한을 설정합니다. 기본 링크는 "특정 사용자"로 바꿉니다. 민감 사이트는 사이트별로 더 엄격하게, 민감도 레이블에 기본 공유 링크 동작을 묶는 방법도 있습니다.
-- **주의**: 기본 링크 유형을 바꿔도 이미 만든 링크는 그대로입니다. 이미 만든 링크 점검은 별도 작업입니다(문서 설명, 이번에는 링크 목록을 측정하지 않음 → **미확인**).
+- **주의**: 기본 링크 유형을 바꿔도 이미 만든 링크는 그대로입니다. 이미 만든 링크 점검은 별도 작업입니다(문서 설명, 이번에는 링크 목록을 측정하지 않음 → **확인 불가**, 사유: 이번 측정에서 하지 않았음, 재측정 항목).
 - 근거: [외부 공유 켜기·끄기](https://learn.microsoft.com/sharepoint/turn-external-sharing-on-or-off), [공동 작업 옵션](https://learn.microsoft.com/sharepoint/collaboration-options), [기본 공유 링크 변경](https://learn.microsoft.com/sharepoint/change-default-sharing-link), [사이트별 외부 공유](https://learn.microsoft.com/sharepoint/change-external-sharing-site), [민감도 레이블의 기본 공유 링크](https://learn.microsoft.com/purview/sensitivity-labels-default-sharing-link)
 
 ### 2-2. 저장소와 사이트
@@ -63,7 +63,7 @@ excerpt: "외부 공유·기본 링크·보존·동기화·메시지 센터·서
 | DAG(데이터 접근 거버넌스) 보고서 | 보고서 메뉴에는 OneDrive 계정만 있고, 고급 관리 화면에 DAG가 포함 서비스로 나열되며 **무료 평가판 등록 버튼만** 있음 = SharePoint Advanced Management 미활성. 평가판 등록은 관리자 결정 사항이라 누르지 않음 | 라이선스 확보 후 보고서 생성(최대 며칠) |
 | Restricted SharePoint Search | PowerShell 전용이고, 필요한 SPO 관리 셸이 Windows PowerShell 5.1 전용이라 Cloud Shell(PowerShell 7·Linux)에서 실행 불가 | 로컬 Windows PowerShell에서 SPO 관리자로 연결 후 조회 |
 
-참고로 Restricted SharePoint Search는 **중단 예정**이며 2026-07-31부터 새로 켤 수 없고, 대안으로 Restricted Content Discovery를 쓰라는 안내가 문서에 있습니다. 이 테넌트는 측정 불가이므로 현재 값은 미확인입니다.
+참고로 Restricted SharePoint Search는 **중단 예정**이며 2026-07-31부터 새로 켤 수 없고, 대안으로 Restricted Content Discovery를 쓰라는 안내가 문서에 있습니다. 이 테넌트는 측정 불가이므로 현재 값은 확인 불가입니다(사유: 위의 측정 불가 사유와 같음).
 - 근거: [Restricted SharePoint Search](https://learn.microsoft.com/sharepoint/restricted-sharepoint-search), [데이터 접근 거버넌스 보고서](https://learn.microsoft.com/sharepoint/data-access-governance-reports), [SharePoint Advanced Management](https://learn.microsoft.com/sharepoint/advanced-management)
 
 ## 3. M365 관리 센터 상세
@@ -83,17 +83,17 @@ excerpt: "외부 공유·기본 링크·보존·동기화·메시지 센터·서
 
 ### 3-3. 릴리스 기본 설정, 지원 요청, Customer Lockbox
 - **릴리스 기본 설정**: "모두에게 공개하는 표준 릴리스". 화면 배너에 **대상 릴리스는 2027년 1월 사용 중지**라는 안내가 있어, 대상 릴리스 사용자 지정 계획이 있다면 영향이 있습니다. 판독 정상.
-- **지원 요청**: 서비스 요청 기록 0건("표시할 티켓이 없습니다"). 에스컬레이션 경로와 지원 계약(Services Hub)은 **미확인**.
-- **Customer Lockbox**: "모든 데이터 액세스 요청에 승인 필요"가 해제. 이 기능은 승인자 역할과 라이선스 조건(문서상 E5 수준 서비스 설명 참고)이 있으며, 이 테넌트의 조건 충족 여부는 **미확인**. 설정 변경은 하지 않았습니다.
+- **지원 요청**: 서비스 요청 기록 0건("표시할 티켓이 없습니다"). 에스컬레이션 경로와 지원 계약(Services Hub)은 **확인 불가**(시도: 지원 요청 화면 확인, 사유: 화면에 서비스 요청 0건만 표시되고 지원 계약 정보는 보이지 않음).
+- **Customer Lockbox**: "모든 데이터 액세스 요청에 승인 필요"가 해제. 이 기능은 승인자 역할과 라이선스 조건(문서상 E5 수준 서비스 설명 참고)이 있으며, 이 테넌트의 조건 충족 여부는 **확인 불가**(시도: 문서 확인, 사유: 문서의 조건과 이 테넌트의 라이선스·역할을 대조하지 못함). 10/23에 다시 열어 해제 상태를 재확인했고 저장 없이 닫았습니다. 설정 변경은 하지 않았습니다.
 - 근거: [릴리스 옵션](https://learn.microsoft.com/microsoft-365/admin/manage/release-options-in-office-365), [릴리스 옵션 구성](https://learn.microsoft.com/microsoft-365/admin/manage/configure-release-options), [대상 릴리스 중지](https://learn.microsoft.com/microsoft-365/admin/manage/targeted-release-retirement), [Customer Lockbox 요청](https://learn.microsoft.com/purview/customer-lockbox-requests)
 
 ### 3-4. 에이전트와 Copilot
-- Copilot 라이선스는 없음(해당 없음). Agent 365 개요에서 에이전트 레지스트리 346(작성자별 내역은 화면 해석이 불확실해 적지 않음), 소유자 없는 에이전트 0, 보류 요청 0, 예외 0 → 정상. 에이전트 사용 허용 대상 설정 화면은 **미확인**.
+- Copilot 라이선스는 없음(해당 없음). Agent 365 개요에서 에이전트 레지스트리 346(작성자별 내역은 화면 해석이 불확실해 적지 않음), 소유자 없는 에이전트 0, 보류 요청 0, 예외 0 → 정상. 에이전트 사용 허용 대상 설정 화면은 **확인 불가**(사유: 이번 측정에서 이 화면을 열어 보지 않음, 재측정 항목).
 
 ### 3-5. 보고서와 기기 영역
 - 사용 현황 보고서(Teams, Office 정품 인증)는 "이 보고서에 대한 데이터가 없습니다" → **측정 불가**. 원인 후보는 보고서 생성 지연(약 48시간)과 샌드박스 활동 부족이며 확정하지 못했습니다.
 - 이름 익명화(사용자·그룹·사이트 이름 숨기기)가 **켜져 있습니다.** 설정은 바꾸지 않았습니다.
-- Intune Windows 장치 0, Windows 업데이트 링 0 → 측정 대상 없음. M365 Apps 관리 센터는 두 번 시도 모두 로딩에서 멈춰 측정 불가(원인 미확인).
+- Intune Windows 장치 0, Windows 업데이트 링 0 → 측정 대상 없음. M365 Apps 관리 센터는 두 번 시도 모두 로딩에서 멈춰 측정 불가(원인 확인 불가, 사유: 화면이 로딩 단계에서 멈추는 원인을 화면에서 알 수 없음).
 
 ## 4. 배운 점
 - 외부 공유는 **조직 최대치 + 기본 링크 + 만료** 세 가지를 함께 봐야 합니다. 최대치가 Anyone이어도 기본 링크가 "특정 사용자"면 실수가 줄어듭니다.

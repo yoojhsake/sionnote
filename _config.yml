@@ -13,7 +13,6 @@ locale: ko-KR
 # 저장소를 yoojhsake.github.io 로 바꾸면 baseurl 을 "" 로 되돌린다.
 url: "https://yoojhsake.github.io"
 baseurl: "/sionnote"
-repository: "yoojhsake/sionnote"
 
 # RSS/Atom 피드(feed.xml)는 만들지 않고 하단·머리말의 Feed 링크도 숨김
 atom_feed:
@@ -29,16 +28,7 @@ author:
   avatar: "/assets/images/profile.png"
   bio: "AD·인증·PKI 운영 경험을 M365·Azure 클라우드 운영으로 확장하며 실습과 검증을 기록합니다."
   location: "South Korea"
-  links:
-    - label: "GitHub"
-      icon: "fab fa-fw fa-github"
-      url: "https://github.com/yoojhsake"
-
-footer:
-  links:
-    - label: "GitHub"
-      icon: "fab fa-fw fa-github"
-      url: "https://github.com/yoojhsake"
+# 작성자 소개와 하단에 GitHub 등 외부 링크를 두지 않는다(links·footer 항목 없음).
 
 # 글 목록
 paginate: 10

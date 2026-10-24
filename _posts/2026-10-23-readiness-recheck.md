@@ -28,6 +28,9 @@ excerpt: "10/22까지 확인 불가로 남긴 항목을 직접 다시 시도해 
 | 리소스 공급자 등록 | Microsoft.OperationalInsights, Microsoft.Insights를 Registered로 | 구독 > 리소스 공급자에서 등록 취소(선택, 비용 없음) |
 | 시험 사용자 부서 변경·원복 | 부서 변경 → 동적 그룹 가입 → 원복 (원복 10:12, 감사 로그) | 이미 원복함 |
 | 시험 파일 업로드 | 채널 파일 폴더에 zz-test*.txt 추가 | 팀 삭제 시 함께 삭제 |
+| 시험 사용자 부서 변경·원복(저녁 재측정) | 부서 Practice02 → 비움 (12:29~12:30 UTC), 비워진 것을 스크립트로 확인 | 이미 원복함 |
+| 팀 일정 추가 | 팀(그룹) 캘린더에 zz-test-team-event-r2(10/28 11:00) 생성 | 팀 삭제 시 함께 삭제 |
+| 시험 파일 정리 대상 | 표준 채널 폴더·팀 문서함 루트에 생긴 zz-x.txt, 팀 문서함의 ch-private·ch-shared 폴더(경로를 잘못 지정한 시험으로 생김) | 팀 삭제 시 함께 삭제 |
 
 삭제는 영구 삭제에 해당해 하지 않았고, 실습을 마무리할 때 정리할 항목으로 남겼습니다.
 
@@ -35,7 +38,14 @@ excerpt: "10/22까지 확인 불가로 남긴 항목을 직접 다시 시도해 
 *그림 1. Planner에서 만든 계획 MC-Tracking의 보드 화면. 버킷 MC-Bucket-01이 보이고, 왼쪽 "내 플랜" 아래 계획이 만들어져 있다(10/22에는 만들지 않은 상태). 계정 표시는 가렸다.*
 
 ![리소스 공급자 등록 확인]({{ "/assets/images/2026/10/m11-2-resource-provider.png" | relative_url }})
-*그림 2. Cloud Shell에서 리소스 공급자 상태를 읽은 화면. 위쪽 출력은 Microsoft.OperationalInsights가 Registered, microsoft.insights가 NotRegistered이고, 아래쪽은 Register-AzResourceProvider 실행 뒤 microsoft.insights가 Registering으로 바뀐 것을 보여 준다(이후 Registered 확인). 중간의 "User Access Administrator /"는 Elevate를 켠 상태라 루트 범위에 보이는 역할 할당이다. 계정 이름은 가렸다.*
+*그림 2. Cloud Shell에서 두 리소스 공급자의 등록 상태를 읽은 화면(10/23 저녁 재조회, 위쪽은 실행한 명령). Microsoft.OperationalInsights와 microsoft.insights가 모두 Registered이다. 10/23 낮에 NotRegistered였던 microsoft.insights를 Register-AzResourceProvider로 등록한 직후의 Registering 화면은 이번에 다시 만들지 않았고(되돌려 등록 취소하는 변경이 필요해서), 처음 값과 변경 과정은 글 본문 표에 적었다. 계정 부분은 가렸다.*
+
+**실행한 스크립트** (읽기 전용. 등록할 때는 `Register-AzResourceProvider -ProviderNamespace microsoft.insights`를 썼습니다)
+
+```powershell
+'Microsoft.OperationalInsights','microsoft.insights' | ForEach-Object { Get-AzResourceProvider -ProviderNamespace $_ } |
+  Select-Object ProviderNamespace, RegistrationState -Unique | Format-Table -AutoSize
+```
 
 ## 3. 다시 확인해서 값이 나온 것
 
@@ -59,10 +69,29 @@ excerpt: "10/22까지 확인 불가로 남긴 항목을 직접 다시 시도해 
 | 관리 센터 접속 | M365·Entra·Azure 3곳 | Teams·SharePoint·Exchange·Purview 관리 센터도 열어 값 조회 | 조회 |
 
 ![라이선스 사용 수 확인]({{ "/assets/images/2026/10/m11-7-license-check.png" | relative_url }})
-*그림 3. Cloud Shell 출력. users=20, licensed=20으로 사용자 20명이 모두 라이선스를 받은 상태이고, 그룹 할당 항목이 모두 Active로 보인다(그룹 번호는 가림). 라이선스 20/25 확인에 쓴 화면이다.*
+*그림 3. Cloud Shell 출력(10/23 저녁 재조회, 위쪽은 실행한 명령). users=20, licensed=20으로 사용자 20명이 모두 라이선스를 갖고 있고, 라이선스 할당 상태는 모두 Active(20건)이며 **전부 직접 할당(direct 20)**이다. 10/23 낮에 동적 그룹으로 겹쳐 들어왔던 그룹 할당은 원복 때 회수되어 지금은 없다. 계정 부분은 가렸다.*
+
+**실행한 스크립트** (준비 코드: [13 글]({{ "/m365/troubleshooting/channel-upload-403-repro/" | relative_url }})의 "공통 준비 코드" 중 토큰·`$h`·`$B` 3줄)
+
+```powershell
+$u = (Invoke-RestMethod -Headers $h -Uri "$B/users?`$select=id,assignedLicenses,licenseAssignmentStates&`$top=999").value
+"users=$($u.Count) licensed=$(($u | Where-Object { $_.assignedLicenses.Count -gt 0 }).Count)"
+$u.licenseAssignmentStates | Group-Object state | ForEach-Object { "state=$($_.Name) count=$($_.Count)" }
+$u.licenseAssignmentStates | Group-Object { if ($_.assignedByGroup) {'group'} else {'direct'} } | ForEach-Object { "assigned=$($_.Name) count=$($_.Count)" }
+```
 
 ![구독 Owner 서비스 사용자 상세]({{ "/assets/images/2026/10/m11-3-service-principal.png" | relative_url }})
-*그림 4. 구독 Owner로 등록된 서비스 사용자의 상세. 이름 Microsoft-Developer Program-Sample Data Packs, 유형 Application, 생성 2026-08-23이 나오고 notes(설명)는 비어 있다. ID 두 줄은 가렸다.*
+*그림 4. 구독 Owner로 등록된 서비스 사용자의 상세(위쪽은 실행한 명령). 이름 Microsoft-Developer Program-Sample Data Packs, 유형 Application, 생성 8/23/2026 7:38:51 PM이 나오고 notes(설명)는 비어 있다. ID 줄과 계정 부분은 가렸다.*
+
+**실행한 스크립트** (Azure 역할 할당은 `Get-AzRoleAssignment`, 서비스 사용자 상세는 Graph로 읽음)
+
+```powershell
+$sp = Get-AzRoleAssignment -RoleDefinitionName Owner | Where-Object ObjectType -eq 'ServicePrincipal'
+foreach ($a in $sp) {
+  Invoke-RestMethod -Headers $h -Uri "$B/servicePrincipals/$($a.ObjectId)?`$select=id,displayName,servicePrincipalType,createdDateTime,notes" |
+    Format-List id,displayName,servicePrincipalType,createdDateTime,notes
+}
+```
 
 ![PIM 활성 역할 목록]({{ "/assets/images/2026/10/m11-4-pim-active.png" | relative_url }})
 *그림 5. Entra PIM의 활성 역할 목록. Teams 관리자·전역 관리자·청구 관리자 아래 항목이 모두 멤버 자격 "직접", 상태 "할당됨", 종료 시간 "영구"이다. 이름·계정·범위는 가렸다.*
@@ -90,7 +119,7 @@ excerpt: "10/22까지 확인 불가로 남긴 항목을 직접 다시 시도해 
 | 직접+그룹 중복의 운영 기준 | (실험으로 동작은 확인) | 팀 기준이 정해져 있지 않음 | 팀 기준 확인 |
 
 ![앱 인벤토리 프로비전 안내]({{ "/assets/images/2026/10/m11-apps-provisioning.png" | relative_url }})
-*그림. config.office.com 앱 인벤토리의 프로비전 안내 화면. 인벤토리가 준비되는 동안에는 목록을 읽을 수 없다.*
+*그림. config.office.com 앱 인벤토리(GUI 경로: config.office.com → 재고)의 프로비전 안내 화면. 10/24 01:15경 다시 열어 선명하게 촬영했고, 이 시점에도 "서비스를 설정하고 있습니다"와 "이 정보 가져오는 중…"이 그대로여서 목록을 읽을 수 없다(월요일 재확인 항목).*
 
 ## 5. 정리 후 확인
 

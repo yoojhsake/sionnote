@@ -89,7 +89,7 @@ $id = ($t | ? displayName -eq 'Practice-Team-01').id
 | ch-shared | `…/sites/Practice-Team-01-ch-shared/Shared Documents` | **별도 사이트** |
 
 ![세 채널의 SharePoint 문서 라이브러리. 표준은 팀 사이트 안 폴더, 비공개와 공유는 별도 사이트의 루트]({{ "/assets/images/2026/10/d3-sharepoint-files.png" | relative_url }})
-*그림 3. 채널별 SharePoint 화면 (빨간 상자: 시험 파일 위치, 사용자·도메인은 가림)*
+*그림 3. 채널별 SharePoint 문서 화면(GUI: 각 주소를 브라우저에서 열어 캡처, 10/24 01시경). 위: 팀 사이트 Practice-Team-01의 `Documents > ch-standard` 폴더(파일 4개: D3-test-ch-standard.txt와 이후 시험 파일 3개). 가운데: 별도 사이트 Practice-Team-01-ch-private의 문서(D3-test-ch-private.txt). 아래: 별도 사이트 Practice-Team-01-ch-shared의 문서(D3-test-ch-shared.txt). 사용자 이름은 가렸다. 이전 그림의 빨간 상자와 도메인 가림은 이번 캡처에서는 주소 표시줄을 포함하지 않아 필요 없다.*
 
 **시험 업로드 응답과 SharePoint 화면 결과**
 
@@ -163,13 +163,39 @@ Team 일정은 그룹 사서함, 개인 회의 일정은 사용자 사서함이�
 
 
 ![팀 캘린더에 일정 생성]({{ "/assets/images/2026/10/m03-1-team-event-created.png" | relative_url }})
-*그림 5. Cloud Shell 출력. 1) 팀(그룹) 캘린더에 일정 생성 HTTP 201, 2) 그룹 캘린더 목록에 zz-test-team-event가 보임, 3) 내 개인 캘린더를 같은 토큰으로 읽으면 403(토큰에 Calendars 범위가 없음).*
+*그림 5. Cloud Shell 출력(10/23 저녁 재실행, 위쪽 줄은 실행한 명령). 1) 팀(그룹) 캘린더에 일정 zz-test-team-event-r2(10/28 11:00 KST) 생성 HTTP 201, 2) 그룹 캘린더 목록에 그 일정이 보임(시작 시각은 UTC 표기라 02:00:00), 3) 내 개인 캘린더(`/me/events`)를 같은 토큰으로 읽으면 403(토큰에 Calendars 범위가 없음). 계정 부분은 가렸다.*
+
+**실행한 스크립트** (준비 코드: [13 글]({{ "/m365/troubleshooting/channel-upload-403-repro/" | relative_url }})의 "공통 준비 코드". 팀의 id가 곧 그룹 id라 `$tid`를 그대로 씁니다)
+
+```powershell
+$ev = @{ subject = 'zz-test-team-event-r2'; start = @{ dateTime = '2026-10-28T11:00:00'; timeZone = 'Korea Standard Time' }; end = @{ dateTime = '2026-10-28T11:30:00'; timeZone = 'Korea Standard Time' } } | ConvertTo-Json -Depth 3
+$null = Invoke-RestMethod -Method Post -Headers $h -Uri "$B/groups/$tid/events" -ContentType 'application/json' -Body $ev -StatusCodeVariable sc; "1) create group event: HTTP $sc"
+(Invoke-RestMethod -Headers $h -Uri "$B/groups/$tid/events?`$select=subject,start").value | ForEach-Object { "2) group calendar: $($_.subject)  $($_.start.dateTime)" }
+try { Invoke-RestMethod -Headers $h -Uri "$B/me/events?`$top=1" | Out-Null; '3) personal calendar: OK' } catch { "3) personal calendar: HTTP $($_.Exception.Response.StatusCode.value__) ($($_.Exception.Response.ReasonPhrase))" }
+```
+
+*위 표의 `zz-test-team-event`(10/27)는 오전 시험에서 만들고 확인한 뒤 삭제했습니다. 이 그림은 같은 시험을 이름만 바꿔(`-r2`) 다시 실행해 화면을 선명하게 남긴 것이고, 새로 만든 일정은 정리 목록에 넣었습니다.*
 
 ![팀 캘린더 목록]({{ "/assets/images/2026/10/m03-2-team-calendar-list.png" | relative_url }})
-*그림 6. 개인 일정을 만든 뒤 다시 읽은 팀(그룹) 캘린더 목록. zz-test-team-event 한 건만 있고 개인 일정은 없다.*
+*그림 6. 개인 일정(zz-test-personal-event)을 Outlook에서 만든 뒤 다시 읽은 팀(그룹) 캘린더 목록. zz-test-team-event-r2 한 건만 있고, 아래 줄에서 개인 일정이 이 목록에 있는지 검사한 결과가 False이다. 계정 부분은 가렸다.*
+
+**실행한 스크립트**
+
+```powershell
+$ev = (Invoke-RestMethod -Headers $h -Uri "$B/groups/$tid/events?`$select=subject,start").value
+$ev | Format-Table subject, @{ n = 'start (UTC)'; e = { $_.start.dateTime } } -AutoSize
+'zz-test-personal-event in group calendar: ' + [bool]($ev | Where-Object subject -eq 'zz-test-personal-event')
+```
+
+**재확인과 재생성 (10/24 새벽)**: 그림 7을 선명하게 다시 찍으려고 Outlook 웹(`outlook.office.com` → 캘린더 → 주 보기/월 보기)을 열었더니 10/28에 개인 일정이 **없었습니다**. 일정 검색(`zz-test`)도 0건이었고, 월 보기에서도 10월 전체가 비어 있었습니다. 일정이 사라진 원인은 확인 불가입니다(시도한 방법: 주·월 보기, 일정 검색, 필터 확인 — 필터는 "예약"만 꺼져 있어 원인이 아니었음. Graph로 `/me/events`를 읽는 방법은 토큰에 Calendars 범위가 없어 403이라 쓰지 못함. 다음 방법: 월요일 토큰 범위 재시도 후 조회). 이 일정을 지운 작업은 한 적이 없습니다. 그래서 같은 이름·같은 시각으로 GUI에서 다시 만들어 그 과정을 남겼습니다.
+
+**GUI 경로**: Outlook 웹 → 캘린더 → 새 이벤트 → 제목 `zz-test-personal-event`, 날짜 2026-10-28, 시작 오전 10:00(끝 10:30) → 저장 → 주 보기에서 확인.
+
+![개인 일정 만들기]({{ "/assets/images/2026/10/m03-3a-personal-event-create.png" | relative_url }})
+*그림 7-1. Outlook 웹에서 개인 일정을 만드는 화면(10/24 재생성). 제목 zz-test-personal-event, 2026-10-28 오전 10:00~10:30을 넣고 저장 직전.*
 
 ![개인 Outlook 캘린더]({{ "/assets/images/2026/10/m03-3-personal-calendar.png" | relative_url }})
-*그림 7. Outlook 웹의 관리자 개인 캘린더(10/26~10/30주). 10/28(수) 10:00에 개인 일정 zz-test-personal-event만 있고, 팀 일정을 넣은 10/27(화) 10:00 칸은 비어 있다.*
+*그림 7. Outlook 웹의 관리자 개인 캘린더(10/25~10/31주, 10/24 새벽 재생성 후 촬영). 10/28(수) 10:00에 개인 일정 zz-test-personal-event만 있고, 팀 일정을 넣었던 10/27(화) 10:00 칸은 비어 있다. 팀(그룹) 캘린더에 넣은 일정이 개인 캘린더에 보이지 않는다는 점은 이 화면과 그림 5·6으로 함께 확인한다.*
 
 - **해석**: 팀 일정은 팀(그룹) 캘린더에만, 개인 일정은 개인 캘린더에만 들어갔습니다. 저장 단위가 서로 다르다는 문서·Q&A의 설명과 같은 결과입니다.
 - **한계(확인 불가)**: 사서함 내부를 직접 열어 "그룹 사서함에 들어 있다"는 물리 저장 위치까지 본 것은 아닙니다. 캘린더가 어느 쪽에 속하는지(그룹 캘린더 vs 사용자 캘린더)만 확인했습니다. 사서함 내부 확인은 Exchange PowerShell(`Get-MailboxFolderStatistics`)이 필요한데, 보안 기본값(AADSTS530035) 때문에 막혀 있어 월요일 해제 후 시도합니다.
@@ -180,7 +206,7 @@ Team 일정은 그룹 사서함, 개인 회의 일정은 사용자 사서함이�
 오전에는 관리자 OneDrive가 "기본 문서 라이브러리를 찾을 수 없음" 오류로 열리지 않아 회의 녹화·1:1 채팅 파일이 저장되는 위치를 확인하지 못했습니다. 오후에 OneDrive 웹을 다시 열었더니 홈과 My files가 정상으로 열렸습니다(조회). My files에는 **Meetings, Microsoft Copilot Chat Files, Recordings** 폴더가 있고 모두 0개였습니다. 문서가 설명하는 "개인 회의 녹화는 진행자의 OneDrive에 저장"되는 대상 폴더는 있는 것이고, 실제 녹화가 거기에 들어가는지는 녹화를 해 봐야 합니다(아직 수행하지 않음).
 
 ![OneDrive My files 화면. Meetings, Microsoft Copilot Chat Files, Recordings 폴더, 모두 0 items]({{ "/assets/images/2026/10/m03-4-onedrive.png" | relative_url }})
-*그림. 관리자 OneDrive의 My files. 수정한 사람 이름 칸은 가렸다.*
+*그림 8. 관리자 OneDrive의 My files(GUI 경로: Microsoft 365 앱 시작 관리자 → OneDrive → My files, 10/24 새벽에 선명하게 다시 촬영, 폴더 3개 모두 0 items 그대로). 계정 이름 부분은 가렸다.*
 
 ## 7. 운영에서는 이렇게 판단한다
 

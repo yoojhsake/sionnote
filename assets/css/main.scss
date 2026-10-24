@@ -8,6 +8,9 @@ $sans-serif: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic
 $global-font-family: $sans-serif;
 $header-font-family: $sans-serif;
 
+// 화면 폭 활용: 테마 기본 최대 폭(1280px)을 넓혀 넓은 화면에서 좌우 여백을 줄인다
+$max-width: 1920px;
+
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}";
 @import "minimal-mistakes";
 
@@ -34,3 +37,23 @@ $body-size: 14px;
 .page__content table { font-size: 0.9em; }
 .page__content th, .page__content td { padding: 0.5em 0.7em; vertical-align: top; }
 .page__content img + em { display: block; text-align: center; font-size: 0.85em; color: #6b7280; margin: -0.4em 0 1.4em; font-style: normal; }
+
+
+// ---- 좌우 여백 줄이기 (v2.5) ----
+// 목차(TOC)를 오른쪽에 따라다니는 칸으로 두지 않고, 본문 맨 위에 한 번만 보이는 상자로 둔다.
+// 그러면 본문이 오른쪽 칸까지 넓게 쓰인다.
+@include breakpoint($large) {
+  .page { padding-right: 0; }
+  .sidebar__right,
+  .sidebar__right.sticky {
+    position: static; float: none; width: auto;
+    margin: 0 0 1.2em; padding: 0; z-index: auto;
+  }
+  .sidebar__right .toc { width: 100%; }
+  .sidebar__right .toc__menu { column-count: 3; column-gap: 1.5em; padding: 0.3em 0.6em; }
+  .sidebar__right .toc__menu li { break-inside: avoid; }
+}
+// 글 본문과 이미지 사이 여백
+.page__inner-wrap { padding-left: 0.2em; padding-right: 0.2em; }
+.page__content img { margin: 0.6em auto; }
+.page__content table { width: 100%; display: table; }

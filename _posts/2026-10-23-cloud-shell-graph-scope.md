@@ -21,11 +21,21 @@ Azure Cloud Shell(PowerShell)에서 이미 로그인된 Azure 세션으로 Graph
 | 서비스 사용자 목록 | 성공 |
 | 팀 > 채널 목록(`allChannels` 포함) | 성공 |
 | 채널 파일 폴더 정보 | 표준 채널 성공, 비공개·공유 채널은 403 ([13 글]({{ "/m365/troubleshooting/channel-upload-403-repro/" | relative_url }})) |
-| 내 OneDrive(`/me/drive`) | HTTP 403 (이 계정에는 OneDrive가 만들어져 있지 않음) |
+| 내 OneDrive(`/me/drive`) | HTTP 403 (처음에는 OneDrive가 없어서라고 추정했으나 나중에 OneDrive가 존재함을 확인해 정정, §4 참고) |
 | 조건부 액세스 정책 목록 | HTTP 403 (읽기 권한 부족, 최소 읽기 역할은 확인 불가) |
 
 ![Graph로 읽은 팀 목록]({{ "/assets/images/2026/10/m14-2-group-list.png" | relative_url }})
-*그림 1. `joinedTeams`를 호출해 읽은 팀 표(displayName, id). 호출이 성공해 팀 8개가 나온다. 첫 이름(테넌트 이름과 같은 팀)과 id 열 전체, 계정 이름은 가렸다.*
+*그림 1. 위쪽 세 줄은 토큰·헤더·주소 변수를 만드는 줄이고, 네 번째 줄이 `joinedTeams`를 호출해 팀 표(displayName, id)를 출력한다. 호출이 성공해 팀 8개가 나온다. 테넌트 이름과 같은 팀·다른 조직 이름 팀의 이름, id 열 전체, 계정 이름은 가렸다.*
+
+**실행한 스크립트**
+
+```powershell
+# 1~3줄: 토큰·헤더·주소 변수 (그림 1의 위쪽 세 줄)
+$tk = [System.Net.NetworkCredential]::new('', (Get-AzAccessToken -ResourceUrl 'https://graph.microsoft.com').Token).Password
+$h  = @{ Authorization = "Bearer $tk" }
+$B  = 'https://graph.microsoft.com/v1.0'
+(Invoke-RestMethod -Headers $h -Uri "$B/me/joinedTeams").value | Select-Object displayName,id | Format-Table -AutoSize
+```
 
 ## 3. 막혔던 일과 해결
 
@@ -34,10 +44,28 @@ Azure Cloud Shell(PowerShell)에서 이미 로그인된 Azure 세션으로 Graph
 - **시작 중 입력**: 셸이 준비되기 전에 명령을 붙여 넣으면 두 번 실행되거나 구문 오류가 났습니다. 준비된 것을 확인한 뒤 입력합니다.
 
 ![채널 경로로 바로 올렸을 때의 400 오류]({{ "/assets/images/2026/10/m14-1-badrequest.png" | relative_url }})
-*그림 2. 채널 경로로 바로 올렸을 때의 오류. 표준·비공개·공유 채널 모두 "400 (Bad Request)"와 "This API is not supported for AAD accounts"가 출력된다. 요청 ID는 가렸다.*
+*그림 2. 채널 경로(`filesFolder/content`)로 바로 올렸을 때의 오류(위쪽은 실행한 명령). ch-standard·ch-private·ch-shared 모두 "HTTP 400 - This API is not supported for AAD accounts"가 출력된다. 프롬프트의 계정 부분은 가렸다.*
+
+**실행한 스크립트** (준비 코드: [13 글]({{ "/m365/troubleshooting/channel-upload-403-repro/" | relative_url }})의 "공통 준비 코드")
+
+```powershell
+foreach ($c in $ch | Where-Object displayName -ne 'General') {
+  $u = "$B/teams/$tid/channels/$($c.id)/filesFolder/content"
+  try { Invoke-RestMethod -Method Put -Headers $h -Uri $u -ContentType 'text/plain' -Body 'x' | Out-Null; "OK $($c.displayName)" }
+  catch { "$($c.displayName): HTTP $($_.Exception.Response.StatusCode.value__) - $(($_.ErrorDetails.Message | ConvertFrom-Json).error.message)" }
+}
+```
+
+해결은 같은 글의 방식입니다. 채널의 파일 폴더 정보에서 `driveId`·`itemId`를 읽은 뒤 `PUT drives/{driveId}/items/{itemId}:/파일명:/content`로 올리면 표준 채널은 성공합니다.
 
 ![셸 시작 중 붙여 넣은 명령의 구문 오류]({{ "/assets/images/2026/10/m14-3-parse-error.png" | relative_url }})
-*그림 3. Cloud Shell이 준비되기 전에 명령을 붙여 넣어 같은 명령이 이어 붙어 실행된 화면. 빨간 글씨로 ParserError(Unexpected token 'clear' in expression or statement)가 나온다. 계정 이름은 가렸다.*
+*그림 3. 구문 오류 재현. 처음 겪은 상황(셸이 준비되기 전에 붙여 넣은 명령이 이어 붙음)은 같은 순간을 다시 만들 수 없어, 명령 뒤에 다른 글자가 바로 붙은 `(Get-Date) clear`를 입력해 **같은 종류의 오류**를 재현했다. 빨간 글씨로 ParserError(Unexpected token 'clear' in expression or statement)가 나온다. 계정 부분은 가렸다.*
+
+**재현에 쓴 명령**
+
+```powershell
+(Get-Date) clear   # 명령이 끝난 뒤 공백만 두고 다른 단어가 붙으면 ParserError
+```
 
 ## 4. 판단
 

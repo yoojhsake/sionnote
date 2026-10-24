@@ -30,6 +30,10 @@ author:
   location: "South Korea"
 # 작성자 소개와 하단에 GitHub 등 외부 링크를 두지 않는다(links·footer 항목 없음).
 
+# 링크 미리보기(카카오톡·슬랙 등)와 검색 결과에 쓰이는 대표 이미지
+og_image: /assets/images/og-image.png
+logo: /assets/images/profile.png
+
 # 글 목록
 paginate: 10
 paginate_path: /page:num/
@@ -69,7 +73,7 @@ defaults:
       share: false
       related: true
       toc: true
-      toc_sticky: true
+      toc_sticky: false   # 목차는 본문 맨 위에 한 번만 표시(따라다니지 않음)
       toc_label: "목차"
   - scope: { path: "_pages" }
     values:

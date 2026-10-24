@@ -28,7 +28,7 @@ device-code 방식은 화면에 나오는 코드를 다른 브라우저 창에�
 코드를 입력하고 관리자 계정을 선택하자 "이에 대한 액세스 권한이 없습니다" 화면이 나오고 **오류 코드 530035**가 표시됐습니다.
 
 ![로그인 후 이에 대한 액세스 권한이 없습니다 화면과 문제 해결 세부 정보. 오류 코드 530035]({{ "/assets/images/2026/10/530035-error.png" | relative_url }})
-*그림 1. 오류 화면 (계정·Request Id·Correlation Id·IP는 가림)*
+*그림 1. 오류 화면과 "추가 정보" 펼침(10/24 01:19경 같은 명령 `Connect-ExchangeOnline -Device`로 다시 재현해 선명하게 촬영. 위 카드와 아래 카드를 이어 붙인 그림이고 앱 이름은 Microsoft Exchange REST API Based Powershell, 오류 코드 530035. 계정·Request Id·Correlation Id·IP는 가림)*
 
 | 항목 | 화면에 나온 값(조회) |
 |---|---|
@@ -75,17 +75,29 @@ Microsoft Learn의 인증 오류 코드 표에서 AADSTS530035는 **BlockedBySec
 | 인증 요구 사항 | 단일 요소 인증 |
 
 ![로그인 로그 기본 정보. 상태 실패, 오류 코드 530035, 실패 이유 보안 기본값에 의해 차단]({{ "/assets/images/2026/10/530035-signin-log-1.png" | relative_url }})
-*그림 4. 로그인 로그 기본 정보 탭. 요청 ID, 상관관계 ID, 계정, 사용자 ID, 세션 ID는 가렸다.*
+*그림 4. GUI 경로: Entra 관리 센터 > 모니터링 및 상태 > 로그인 로그 > 항목 열기 > 기본 정보 탭(10/22 06:52:33 UTC의 Microsoft Exchange 원격 PowerShell 로그인). 상태 실패, 로그인 오류 코드 530035, 실패 이유 "Access has been blocked by security defaults."가 보인다. 요청 ID와 상관관계 ID는 가렸다.*
+
+![로그인 로그 목록. 상태 실패로 거른 결과에 10/22 Exchange 원격 PowerShell과 10/23 Azure CLI 항목]({{ "/assets/images/2026/10/530035-signin-list.png" | relative_url }})
+*그림 4-1. 같은 화면에서 상태를 "실패"로 거르고 날짜 범위를 지난 7일로 넓힌 목록(UTC 표시). 맨 아래 두 줄이 10/22 06:52:33의 Microsoft Exchange 원격 PowerShell과 10/23 07:45:57의 Microsoft Azure CLI다. 요청 ID·계정 열은 가렸다.*
 
 ![로그인 로그 조건부 액세스 탭. Security Defaults, Block, 실패]({{ "/assets/images/2026/10/530035-signin-log-2.png" | relative_url }})
-*그림 5. 같은 기록의 조건부 액세스 탭. 적용된 것은 조건부 액세스 정책이 아니라 Security Defaults다.*
+*그림 5. 같은 기록의 조건부 액세스 탭. 정책 이름 Security Defaults, 컨트롤 권한 부여 Block, 결과 실패. 적용된 것은 조건부 액세스 정책이 아니라 Security Defaults다.*
 
 이로써 직접 원인은 오류 코드 표에서 추정한 것이 아니라 **로그인 로그가 보안 기본값 차단이라고 직접 기록한 것**으로 확정됩니다. 조건부 액세스 정책은 0개이므로 이 차단은 정책을 하나 만들어 예외를 주는 방식으로는 풀 수 없고, 보안 기본값 자체를 다뤄야 합니다.
 
-**같은 오류가 다른 앱에서도 났습니다(10/23).** 채널 403 원인을 확정하려고 Cloud Shell에서 Files.ReadWrite.All 범위를 붙인 `az login` 장치 코드 로그인을 시도했을 때도 앱 이름 Microsoft Azure CLI로 오류 530035가 났습니다(그림 6). 포털 밖 클라이언트 로그인이 전반적으로 같은 규칙에 막히는 것으로 보입니다. 다만 이 두 번째 시도의 로그인 로그 기록은 확인하지 못했습니다(시도: 같은 오류 코드 필터, 사유: 목록에 아직 나타나지 않았음, 로그 반영 지연으로 추정되며 확인 불가).
+**같은 오류가 다른 앱에서도 났습니다(10/23).** 채널 403 원인을 확정하려고 Cloud Shell에서 Files.ReadWrite.All 범위를 붙인 `az login` 장치 코드 로그인을 시도했을 때도 앱 이름 Microsoft Azure CLI로 오류 530035가 났습니다(그림 6). 포털 밖 클라이언트 로그인이 전반적으로 같은 규칙에 막히는 것으로 보입니다. 이 두 번째 시도의 로그인 로그 기록은 처음에는 목록에 없었는데(반영 지연으로 추정), 10/23 저녁에 다시 열어 **찾았습니다**: 10/23 07:45:57 UTC, 앱 Microsoft Azure CLI, 상태 실패, 오류 코드 530035, 실패 이유 "Access has been blocked by security defaults.", 조건부 액세스 탭의 정책은 Security Defaults(Block)였습니다(그림 6-1~6-3). 즉 10/22 Exchange 로그인과 **같은 원인**이 로그로 확인됩니다.
 
 ![Azure CLI 장치 코드 로그인이 530035로 막힌 화면]({{ "/assets/images/2026/10/530035-azcli.png" | relative_url }})
-*그림 6. Azure CLI 장치 코드 로그인의 530035 오류 화면. 계정, 요청 ID, 접속 IP는 가렸다.*
+*그림 6. Azure CLI 장치 코드 로그인(`az login --use-device-code`)의 530035 오류 화면(10/24 01:22경 재현해 선명하게 촬영, 위·아래 카드를 이어 붙임, 앱 이름 Microsoft Azure CLI). 계정, 요청 ID, 접속 IP는 가렸다.*
+
+![로그인 로그 기본 정보. Microsoft Azure CLI, 오류 코드 530035]({{ "/assets/images/2026/10/530035-azcli-signin-1.png" | relative_url }})
+*그림 6-1. 10/23 07:45:57 UTC의 Azure CLI 로그인 실패 기록(기본 정보 탭). 로그인 오류 코드 530035, 실패 이유 "Access has been blocked by security defaults." 요청 ID와 상관관계 ID는 가렸다.*
+
+![로그인 로그 조건부 액세스 탭. Security Defaults Block 실패]({{ "/assets/images/2026/10/530035-azcli-signin-2.png" | relative_url }})
+*그림 6-2. 같은 기록의 조건부 액세스 탭. Security Defaults, Block, 실패.*
+
+![로그인 로그 목록의 Azure CLI 행]({{ "/assets/images/2026/10/530035-azcli-signin-list.png" | relative_url }})
+*그림 6-3. 상태 "실패" 필터(지난 24시간, UTC)의 목록. 맨 아래 줄이 Microsoft Azure CLI 실패이고, 위쪽 Azure Portal·OfficeHome 실패 6건 중 첫 건을 열어 보니 오류 코드가 530035가 아니라 50197("Sorry, we could not find the user, please sign-in again.")이었다(나머지 5건은 열어 보지 않음). 요청 ID·계정 열은 가렸다.*
 
 ## 4. 문제점 정리
 

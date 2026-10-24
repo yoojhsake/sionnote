@@ -26,10 +26,42 @@ excerpt: "10/22에 비공개·공유 채널 업로드가 403이었던 현상을 
 - 응답 본문은 accessDenied 계열이었습니다.
 
 ![채널별 업로드 결과]({{ "/assets/images/2026/10/m13-1-upload-result.png" | relative_url }})
-*그림 1. Cloud Shell(PowerShell)에서 세 채널에 올린 결과. 표준 채널과 General은 "UPLOAD OK zz-test.txt", 비공개(ch-private)와 공유(ch-shared)는 "403 (Forbidden)" 및 accessDenied가 출력된다. 요청 ID와 계정 이름은 가렸다.*
+*그림 1. Cloud Shell(PowerShell)에서 세 채널과 General에 시험 파일을 올린 결과(위쪽은 실행한 명령, 아래는 출력). ch-standard와 General은 "UPLOAD OK zz-test.txt", 비공개(ch-private)와 공유(ch-shared)는 "403 (Forbidden) accessDenied"가 출력된다. 프롬프트의 계정 부분은 가렸다.*
+
+**실행한 스크립트** (아래 "공통 준비 코드"는 이 글의 모든 스크립트 앞에서 한 번 실행했고, Cloud Shell 세션이 유지되는 동안 변수가 남습니다. 팀 이름 Practice-Team-01은 시험용으로 만든 팀입니다.)
+
+```powershell
+# 공통(1~5줄): Cloud Shell(PowerShell)의 Azure 로그인 세션으로 Graph 토큰을 받아 호출 (조회·시험용)
+$tk = [System.Net.NetworkCredential]::new('', (Get-AzAccessToken -ResourceUrl 'https://graph.microsoft.com').Token).Password
+$h  = @{ Authorization = "Bearer $tk" }
+$B  = 'https://graph.microsoft.com/v1.0'
+$tid = (Invoke-RestMethod -Headers $h -Uri "$B/me/joinedTeams").value | Where-Object displayName -eq 'Practice-Team-01' | Select-Object -ExpandProperty id
+$ch  = (Invoke-RestMethod -Headers $h -Uri "$B/teams/$tid/allChannels").value
+```
+
+```powershell
+foreach ($c in $ch) {
+  $ff = Invoke-RestMethod -Headers $h -Uri "$B/teams/$tid/channels/$($c.id)/filesFolder"
+  $u  = "$B/drives/$($ff.parentReference.driveId)/items/$($ff.id):/zz-test.txt:/content"
+  try { Invoke-RestMethod -Method Put -Headers $h -Uri $u -ContentType 'text/plain' -Body 'zz-test' | Out-Null; "UPLOAD OK zz-test.txt -> $($c.displayName)" }
+  catch { "UPLOAD $($c.displayName): $($_.Exception.Response.StatusCode.value__) ($($_.Exception.Response.ReasonPhrase)) $(($_.ErrorDetails.Message | ConvertFrom-Json).error.code)" }
+}
+```
+
+*이 스크립트는 채널마다 파일 폴더의 driveId·itemId를 읽은 뒤 `PUT .../content`로 시험 파일을 올리고, 실패하면 HTTP 코드와 오류 코드만 출력합니다(Graph 문서의 업로드 방식). 같은 파일명으로 다시 올리면 표준 채널과 General의 기존 zz-test.txt가 덮어써집니다.*
 
 ![채널 폴더 읽기 결과]({{ "/assets/images/2026/10/m13-2-read-403.png" | relative_url }})
-*그림 2. 폴더 읽기 결과. 표준 채널은 파일 목록(03-test-ch-standard.txt, zz-test.txt)이 나오고, 비공개·공유 채널은 둘 다 "READ … 403 (Forbidden)"이다.*
+*그림 2. 폴더 읽기 결과(위쪽은 실행한 명령). 표준 채널(ch-standard)은 파일 목록 D3-test-ch-standard.txt, zz-test.txt, zz-test2-ch-standard.txt, zz-x.txt가 나오고, 비공개·공유 채널은 둘 다 "READ … 403 (Forbidden)", General은 zz-test.txt, zz-x.txt가 나온다. zz-x.txt는 제가 채널 폴더 경로를 잘못 지정해 시험하다 팀 문서함에 생긴 파일로 정리 목록에 넣었다.*
+
+**실행한 스크립트**
+
+```powershell
+foreach ($c in $ch) {
+  $ff = Invoke-RestMethod -Headers $h -Uri "$B/teams/$tid/channels/$($c.id)/filesFolder"
+  try { $r = (Invoke-RestMethod -Headers $h -Uri "$B/drives/$($ff.parentReference.driveId)/items/$($ff.id)/children").value.name -join ', '; "READ $($c.displayName): $r" }
+  catch { "READ $($c.displayName): $($_.Exception.Response.StatusCode.value__) ($($_.Exception.Response.ReasonPhrase))" }
+}
+```
 
 ## 3. 원인 확인: 멤버십인가, 권한 범위인가 (10/23 16:30경)
 
@@ -38,12 +70,32 @@ excerpt: "10/22에 비공개·공유 채널 업로드가 403이었던 현상을 
 **① 채널 구성원 여부**: 관리자 계정이 세 채널의 구성원인지 Graph로 읽었습니다. 세 채널(ch-standard, ch-private, ch-shared) 모두 구성원은 1명이고, 그 한 명이 관리자 계정이며 역할은 owner였습니다(조회). 문서는 비공개 채널 사이트에 채널 구성원만 접근할 수 있다고 설명하지만(문서: Private channels), 이 계정은 이미 구성원이라 **멤버십 때문은 아닙니다.**
 
 ![채널별 구성원 확인 결과]({{ "/assets/images/2026/10/m13-4-channel-members.png" | relative_url }})
-*그림 3. 채널별 구성원 조회 결과. 세 채널 모두 http=200, members=1, admin_is_member=True, roles=owner로 관리자 계정이 소유자 구성원이다.*
+*그림 3. 채널별 구성원 조회 결과(위쪽은 실행한 명령). 세 채널 모두 http=200, members=1, admin_is_member=True, roles=owner로 관리자 계정이 소유자 구성원이다. 채널 이름 중 General은 표준 채널이라 같은 결과다. 계정 부분은 가렸다.*
+
+**실행한 스크립트**
+
+```powershell
+$myid = (Invoke-RestMethod -Headers $h -Uri "$B/me").id
+foreach ($c in $ch) {
+  $m  = (Invoke-RestMethod -Headers $h -Uri "$B/teams/$tid/channels/$($c.id)/members" -StatusCodeVariable sc).value
+  $me = $m | Where-Object userId -eq $myid
+  "$($c.displayName): http=$sc members=$($m.Count) admin_is_member=$([bool]$me) roles=$($me.roles -join ',')"
+}
+```
 
 **② Cloud Shell이 받은 Graph 토큰의 권한 범위**: 업로드에 쓴 토큰을 해독해 허용된 범위(scp)만 출력했습니다(토큰 본문은 출력하지 않음). 범위는 AppCatalog.Read.All, AuditLog.Read.All, Channel.Create, Channel.ReadBasic.All, ChannelMember.ReadWrite.All, Directory.ReadWrite.All, Group.ReadWrite.All, IdentityProvider.ReadWrite.All, Team.Create, Team.ReadBasic.All, TeamSettings.ReadWrite.All, User.Invite.All 등이었고, **Files.* 와 Sites.* 범위는 없었습니다**(조회). Azure CLI(`az account get-access-token`)로 받은 토큰도 같은 앱·같은 범위였습니다.
 
 ![토큰 범위 확인 결과]({{ "/assets/images/2026/10/m13-3-token-scope.png" | relative_url }})
-*그림 4. 토큰 범위 출력(SCP). Files.ReadWrite나 Sites.ReadWrite.All 같은 파일·사이트 범위가 목록에 없다.*
+*그림 4. 토큰 범위 출력(SCP). Files.ReadWrite나 Sites.ReadWrite.All 같은 파일·사이트 범위가 목록에 없다. APPID는 Cloud Shell이 쓰는 앱의 ID, IDTYP=user는 사용자 위임 토큰이라는 뜻이다. 토큰 본문은 출력하지 않았다.*
+
+**실행한 스크립트** (토큰 본문은 화면에 출력하지 않고 payload의 scp 등만 읽습니다)
+
+```powershell
+# 토큰 본문은 출력하지 않고 범위(scp)·앱 ID·주체 유형만 읽는다
+$p = $tk.Split('.')[1].Replace('-','+').Replace('_','/'); while ($p.Length % 4) { $p += '=' }
+$c = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($p)) | ConvertFrom-Json
+"SCP:   $($c.scp)"; "APPID: $($c.appid)"; "IDTYP: $($c.idtyp)"
+```
 
 문서에 따르면 파일 업로드(`PUT .../content`)에는 Files.ReadWrite, Files.ReadWrite.All, Sites.ReadWrite.All 중 하나가 필요합니다(문서: driveItem 업로드). Group.ReadWrite.All은 하위 호환용으로만 지원되고(문서: Get filesFolder), 팀 사이트처럼 **그룹에 연결된 드라이브**는 이 범위로 열렸지만 비공개·공유 채널의 **별도 사이트 드라이브**는 열리지 않는 것으로 보입니다. 그래서 표준 채널만 성공하고 비공개·공유 채널은 쓰기·읽기 모두 403이 난 결과와 맞습니다.
 
@@ -53,7 +105,7 @@ excerpt: "10/22에 비공개·공유 채널 업로드가 403이었던 현상을 
 - Cloud Shell의 `az login --scope https://graph.microsoft.com/Files.ReadWrite.All --use-device-code`: 장치 코드를 입력하고 이미 로그인된 계정을 골랐더니 **오류 코드 530035, "이에 대한 액세스 권한이 없습니다"** 로 막혔습니다. 화면에는 앱 이름 Microsoft Azure CLI, 디바이스 상태 Unregistered가 표시됐습니다. 코드를 처음에 잘못 읽어(G와 Q 혼동) 두 번 거절됐고, 코드를 글자별 숫자로 출력해 정확히 읽은 뒤에 위 결과가 나왔습니다.
 
 ![az login 장치 코드 로그인 530035 오류]({{ "/assets/images/2026/10/530035-azcli.png" | relative_url }})
-*그림 5. Files.ReadWrite.All 범위를 붙인 az login 장치 코드 로그인이 오류 530035로 막힌 화면. 계정, 요청 ID, 접속 IP는 가렸다.*
+*그림 5. az login 장치 코드 로그인이 오류 530035로 막힌 화면. 10/23에는 Files.ReadWrite.All 범위를 붙인 명령으로 막혔고, 이 그림은 10/24 01:22경 선명하게 다시 찍은 것으로 범위 없이 `az login --use-device-code`만 실행했다(같은 앱 Microsoft Azure CLI, 같은 오류 코드 530035). 계정, 요청 ID, 접속 IP는 가렸다.*
 
 같은 530035가 Exchange PowerShell 로그인에서도 났으므로(관련 글: 530035 장치 코드 로그인), 이 테넌트는 포털 밖 클라이언트 로그인을 전반적으로 막고 있는 것으로 보입니다. 그래서 채널 403의 마지막 증명도 **월요일 530035 해제 작업이 끝난 뒤** 같은 명령으로 다시 시도합니다. 이번 시도로 바뀐 설정이나 권한은 없습니다(로그인이 실패해 동의도 부여되지 않았습니다).
 

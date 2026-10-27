@@ -4,7 +4,7 @@ date: 2026-10-27 19:40:00 +0900
 categories: [m365, troubleshooting]
 area: 보고서·감사·청구
 seq: 1
-tags: [Troubleshooting, 사용 현황 보고서, UnknownTenantId, Graph, 404, Teams 보고서]
+tags: [Troubleshooting, 사용 현황 보고서, UnknownTenantId, Graph, "404", Teams 보고서]
 excerpt: "활동 보고서가 비어 있을 때 권한 오류(403)와 데이터 부재(404)를 나눠 보고, 시각을 달리해 반복 확인한 기록"
 toc: true
 ---

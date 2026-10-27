@@ -95,7 +95,7 @@ $toc-size: 10pt;
 
 // ---- 캡처 그림: 왼쪽 정렬, 설명은 그림 아래 왼쪽 (v2.7) ----
 .page__content img {
-  display: block; margin: 0.8em 0 0.3em; max-width: min(100%, 960px); height: auto;
+  display: block; margin: 0.8em 0 0.3em; max-width: unquote("min(100%, 960px)"); height: auto;
   border: 1px solid #e5e7eb; border-radius: 6px; cursor: zoom-in;
 }
 .page__content img + em, .page__content em.figcap {

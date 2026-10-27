@@ -4,7 +4,7 @@ date: 2026-10-26 15:00:00 +0900
 categories: [m365, troubleshooting]
 area: Graph·Cloud Shell·스크립트
 seq: 5
-tags: [Troubleshooting, PowerShell, null, 날짜 계산, 결과 표, 앱 등록]
+tags: [Troubleshooting, PowerShell, "null", 날짜 계산, 결과 표, 앱 등록]
 excerpt: "화면에서는 빈 칸이던 값을 스크립트가 계산하다 예외가 나거나 누락되는 경우와, 한 열이 두 개체를 가리켜 표가 헷갈리는 경우를 고친 기록"
 toc: true
 ---

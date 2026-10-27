@@ -1,5 +1,7 @@
 ---
 title: "[말머리] 제목"
+phase: 구조 이해 실습   # 작업 글만: 준비 / 구조 이해 실습 / 운영 설정 실측 (트러블슈팅 글은 phase 대신 area: 로그인·권한 등)
+seq: 1   # 같은 phase(area) 안의 순서. 제목에는 번호를 쓰지 않는다
 categories: [m365]   # 대분류: m365 / iam / azure / study / blog. 트러블슈팅은 [m365, troubleshooting]처럼 뒤에 붙인다
 tags: [태그1, 태그2]   # 403 같은 숫자 태그는 반드시 "403"처럼 따옴표로 감싼다(숫자로 읽히면 사이트 빌드가 실패한다)
 excerpt: "한 줄 요약"

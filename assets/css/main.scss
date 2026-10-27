@@ -22,13 +22,21 @@ html { font-size: 16px; }
 @media (min-width: 80em) { html { font-size: 16px; } }
 @media (min-width: 90em) { html { font-size: 16px; } }
 
-// 본문 글자 크기: 아래 $body-size 숫자만 바꾸면 된다 (12px~16px 권장, 지금은 14px)
-$body-size: 14px;
-.page__content { font-size: $body-size; line-height: 1.8; }
+// 본문 글자 크기(pt): PC(넓은 화면) 12pt, 좁은 화면 11pt. 아래 두 숫자만 바꾸면 된다 (11pt~12pt 권장)
+$body-size-pc: 12pt;
+$body-size-small: 11pt;
+.page__content { font-size: $body-size-small; line-height: 1.8; }
+@media (min-width: 64em) { .page__content { font-size: $body-size-pc; } }
+.page__content p, .page__content li, .page__content dl { font-size: 1em; }
 .page__content h2 { font-size: 1.3em; margin-top: 2em; }
 .page__content h3 { font-size: 1.1em; }
 .page__title { font-size: 1.45rem; line-height: 1.4; }
-.sidebar .author__bio { font-size: 0.85rem; }
+// 왼쪽 프로필(Sion's History) 글자: 이름·소개·위치를 읽기 편하게 키움 (v3.0)
+.sidebar .author__name { font-size: 1.35rem; }
+.sidebar .author__bio { font-size: 1rem; line-height: 1.6; }
+.sidebar .author__urls li, .sidebar .author__urls a, .sidebar .author__urls .btn { font-size: 1rem; }
+.masthead .site-title { font-size: 1.2rem; }
+.masthead .site-subtitle { font-size: 0.85rem; }
 .archive__item-title { font-size: 1.05rem; }
 .archive__item-excerpt { font-size: 0.9rem; }
 

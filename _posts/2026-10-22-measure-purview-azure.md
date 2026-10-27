@@ -32,7 +32,6 @@ excerpt: "감사 로그·보존·DLP·민감도 레이블과 Azure Policy·구�
 | 상황 | 한 줄 대처 | 글 |
 |---|---|---|
 | Cloud Shell에서 Exchange Online 로그인이 AADSTS530035로 막혀 감사 상태를 못 읽음 | 우회하지 않고 내 PC의 브라우저 로그인으로 읽음 | [AADSTS530035 트러블슈팅]({{ "/m365/troubleshooting/aadsts530035-device-code/" | relative_url }}) |
-| 감사 로그를 켜는 명령이 서버 오류로 거부됨 | 4회 시도 후 멈추고 지원 요청·대체 근거를 다음 방법으로 남김 | [감사 로그 켜기 거부 트러블슈팅]({{ "/m365/troubleshooting/audit-log-enable-rejected/" | relative_url }}) |
 | 청구 범위 목록이 비어 EA/MCA 역할을 못 읽음 | 역할을 부여받지 않고 측정 불가로 남김 | [청구 범위 트러블슈팅]({{ "/m365/troubleshooting/billing-scope-not-visible/" | relative_url }}) |
 | DLP 화면이 두 번 "Loading"에서 멈춤 | 세 번째 시도에 열려 값을 읽음 | [관리 센터 로딩 정체 트러블슈팅]({{ "/m365/troubleshooting/admin-center-loading-stuck/" | relative_url }}) |
 
@@ -48,7 +47,7 @@ excerpt: "감사 로그·보존·DLP·민감도 레이블과 Azure Policy·구�
   1. 시도: 오류 문구만으로는 감사가 꺼져 있다고 확정할 수 없습니다. 문서에 따르면 감사가 켜져 있는지는 Exchange Online PowerShell(`UnifiedAuditLogIngestionEnabled`)로 확인합니다.
   2. 막힘: Cloud Shell에서 Exchange Online 로그인이 막혔습니다([AADSTS530035 글]({{ "/m365/troubleshooting/aadsts530035-device-code/" | relative_url }})).
   3. 다른 방법: 내 PC의 PowerShell에서 브라우저 로그인으로 `Get-AdminAuditLogConfig`의 감사 수집 항목을 읽었습니다.
-  4. 결과: 수집 상태는 **꺼짐(False)** 이었습니다(10/26, 조회). 켜는 명령은 서버 오류로 거부됐습니다. 과정과 대처는 [감사 로그를 켜는 명령이 거부됨]({{ "/m365/troubleshooting/audit-log-enable-rejected/" | relative_url }})에 정리했습니다.
+  4. 결과: 수집 상태는 **꺼짐(False)** 이었습니다(10/26, 조회).
 - **판독**: 화면만으로는 측정 불가였고, PowerShell 값으로 수집이 꺼져 있음을 확인했습니다. 문서에 따르면 감사를 켠 직후에는 반영까지 최대 60분이 걸립니다.
 - **왜 중요한가**: 감사가 꺼져 있으면 사고가 나도 "누가 무엇을 했는지" 찾을 수 없습니다. 반대로 Entra 감사 로그는 별도로 있어, Identity 실측 글에서 Elevate access 기록을 확인할 수 있었습니다.
 - 근거: [감사 활성화·비활성화](https://learn.microsoft.com/purview/audit-log-enable-disable), [감사 시작하기](https://learn.microsoft.com/purview/audit-get-started), [감사 로그 검색](https://learn.microsoft.com/purview/audit-search), [감사 솔루션 개요](https://learn.microsoft.com/purview/audit-solutions-overview) (감사 Standard 보관 180일은 문서 설명)
@@ -138,7 +137,6 @@ foreach ($a in $sp) {
 
 | 항목 | 시도 방법 | 막힌 이유 | 다음 방법 |
 |---|---|---|---|
-| 감사 로그 켜기 | `Set-AdminAuditLogConfig` 4회(내 PC PowerShell) | 서버 오류로 거부(조직 상태 오류, 권한 오류가 아님). 역할을 올리거나 보안 설정을 바꾸는 방향으로는 가지 않음 | 시간을 두고 재시도, 계속되면 지원 요청([감사 로그 켜기 거부 글]({{ "/m365/troubleshooting/audit-log-enable-rejected/" | relative_url }})) |
 | 보존 정책 0건이 "실제 0개"인지 | 보존 정책 화면과 배너 확인 | 역할 그룹이 제한되어 보이지 않을 수 있다는 배너 문구만으로 구분할 수 없음 | 필요한 역할 그룹 권한을 확인한 뒤 같은 화면 재조회 |
 | DLP 정책 배포 상태·적용 워크로드 범위 | 정책 목록 읽기 | 정책 상세를 열어 보지 않음 | 각 정책 상세를 열어 읽기 |
 | 민감도 레이블의 숫자 열 의미 | 목록 화면 읽기 | 화면만 읽고 의미를 확인하는 단계를 하지 않음 | 열 이름·도움말을 열어 확인 |

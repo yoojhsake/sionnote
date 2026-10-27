@@ -180,7 +180,6 @@ Graph 탐색기(Graph Explorer)에서 캘린더 읽기 범위(Calendars.Read)를
 
 - 팀 일정은 팀(그룹) 캘린더에만, 개인 일정은 개인 캘린더에만 들어갔습니다. 달력 소유자 기준으로 **팀 일정은 그룹 사서함, 개인 일정은 사용자 사서함의 달력**에 저장됩니다.
 - 개인 회의 일정이 이 개인 달력에 쌓인다는 점은 문서 기준입니다.
-- **확인 불가**: 사서함 내부를 직접 열어 "그룹 사서함에 들어 있다"는 물리 저장 위치까지 본 것은 아닙니다. 캘린더가 어느 쪽에 속하는지(그룹 캘린더 vs 사용자 캘린더)만 확인했습니다. 시도: 사서함 내부 확인에 필요한 Exchange PowerShell(`Get-MailboxFolderStatistics`) 연결. 사유: 보안 기본값(AADSTS530035)으로 장치 코드 로그인이 막힘([Exchange 장치 코드 로그인이 AADSTS530035로 막힘]({{ "/m365/troubleshooting/aadsts530035-device-code/" | relative_url }})). 다음 방법: 로그인 방식을 바꿔 Exchange PowerShell에 연결.
 
 #### 3-5. OneDrive 위치 확인
 
@@ -241,7 +240,6 @@ GUI 경로: Microsoft 365 앱 시작 관리자 → OneDrive → My files.
 | 개인 달력이 403 | Calendars.Read를 동의한 뒤 다시 조회 | [개인 달력이 403일 때]({{ "/m365/troubleshooting/personal-calendar-403-calendars-read/" | relative_url }}) |
 | 만들어 둔 개인 일정이 사라짐 | 같은 이름·시각으로 GUI에서 다시 만들고 경위를 기록 | [만들어 둔 개인 일정이 사라졌을 때]({{ "/m365/troubleshooting/personal-event-disappeared/" | relative_url }}) |
 | 관리자 OneDrive가 "기본 문서 라이브러리를 찾을 수 없음" | 시간을 두고 다시 열어 확인 | [관리자 OneDrive가 열리지 않을 때]({{ "/m365/troubleshooting/onedrive-default-library-not-found/" | relative_url }}) |
-| Exchange PowerShell로 사서함 내부를 못 봄 | 보안 기본값 변경은 하지 않고 확인 불가로 남김 | [Exchange 장치 코드 로그인이 AADSTS530035로 막힘]({{ "/m365/troubleshooting/aadsts530035-device-code/" | relative_url }}) |
 
 ### 6. 검증
 
@@ -284,7 +282,6 @@ GUI 경로: Microsoft 365 앱 시작 관리자 → OneDrive → My files.
 | 조회 | 관리자 OneDrive My files에 Meetings, Microsoft Copilot Chat Files, Recordings 폴더(모두 0개) | OneDrive 웹 |
 | 확인 불가 | 403인데 파일이 생긴 원인 — 시도: 같은 방식으로 다시 시험(새 파일은 생기지 않음). 사유: 처음 요청·응답을 저장하지 않아 대조할 수 없음. 다음 방법: 재현할 때 요청·응답 전체를 저장 | - |
 | 확인 불가 | 직접 업로드와 Graph 업로드의 차이 — 시도: 없음. 사유: 브라우저 파일 선택창을 쓸 수 없어 직접 업로드를 시도하지 못함. 다음 방법: 파일 선택창을 쓸 수 있는 환경에서 Teams로 직접 올려 비교 | - |
-| 확인 불가 | 사서함 내부의 물리 저장 위치 — 시도: Exchange PowerShell 장치 코드 로그인. 사유: AADSTS530035(보안 기본값). 다음 방법: 다른 로그인 방식 | - |
 | 확인 불가 | 회의 녹화가 Recordings 폴더에 저장되는지, 1:1 채팅 파일의 OneDrive 위치 — 시도: 폴더 존재 확인. 사유: 마이크·카메라와 두 번째 사용자가 필요. 다음 방법: 시험 사용자와 회의를 열어 녹화 | - |
 
 ### 9. 정리·남은 일

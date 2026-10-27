@@ -75,7 +75,6 @@ excerpt: "막혔던 상황을 작업 영역별로 모은 목록. 상황마다 �
 | 상황 | 한 줄 요약 |
 |---|---|
 | [사용 현황 보고서가 '데이터 없음'이고 Graph는 404 UnknownTenantId]({{ "/m365/troubleshooting/usage-report-no-data/" | relative_url }}) | 활동 보고서가 비어 있을 때 권한 오류(403)와 데이터 부재(404)를 나눠 보고, 시각을 달리해 반복 확인한 기록 |
-| [감사 로그를 켜는 명령이 InvalidOperationInDehydratedContextException으로 거부됨]({{ "/m365/troubleshooting/audit-log-enable-rejected/" | relative_url }}) | 통합 감사 로그 수집이 꺼져 있고 켜는 명령이 서버 오류로 거부될 때, 권한 부족과 조직 상태 문제를 나눠 보고 어디까지 확인했는지 정리한 기록 |
 | [청구 범위와 청구 역할이 보이지 않음 — 청구 범위 목록이 0건]({{ "/m365/troubleshooting/billing-scope-not-visible/" | relative_url }}) | Azure 비용 관리 + 청구에서 청구 범위가 0건이라 청구 계정 유형과 청구 역할을 읽지 못했을 때, 어디까지 확인하고 무엇을 하지 않았는지 정리한 기록 |
 | [관리 센터 화면이 로딩에서 멈추거나 "프로비전 중" 안내만 나옴]({{ "/m365/troubleshooting/admin-center-loading-stuck/" | relative_url }}) | M365 Apps 관리 센터가 두 번 로딩에서 멈추고, 다시 열자 앱 인벤토리에 프로비전 안내만 나올 때 값과 도구 문제를 나눠 본 기록 |
 

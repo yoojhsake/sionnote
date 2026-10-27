@@ -68,7 +68,6 @@ Graph 탐색기(Graph Explorer)에서 캘린더 읽기 범위 **Calendars.Read**
 
 - **의미**: 팀 일정은 그룹 사서함의 달력에, 개인 일정은 사용자 사서함의 달력에 저장된다는 것을 **달력 소유자 기준**으로 확인했습니다. 팀 일정은 팀(그룹) 캘린더에만, 개인 일정은 개인 캘린더에만 보였습니다(조회).
 - 동의 전 403은 비공개 채널 파일 403과 같은 계열의 원인(토큰 범위 부족)입니다([비공개·공유 채널 파일 403]({{ "/m365/troubleshooting/channel-upload-403-membership-or-scope/" | relative_url }})).
-- **확인 불가**: 사서함 내부를 직접 열어 "그룹 사서함에 들어 있다"는 물리 저장 위치를 보는 것. 시도: Exchange PowerShell(`Get-MailboxFolderStatistics`) 연결 시도. 사유: 보안 기본값(AADSTS530035)으로 장치 코드 로그인이 막힘. 다음 방법: 다른 로그인 방식으로 Exchange PowerShell 연결([Exchange 장치 코드 로그인이 AADSTS530035로 막힘]({{ "/m365/troubleshooting/aadsts530035-device-code/" | relative_url }})).
 - 개인 회의 일정이 이 달력에 쌓인다는 점은 문서 기준입니다.
 
 ### 4. 대처·원복
@@ -90,6 +89,5 @@ Graph 탐색기(Graph Explorer)에서 캘린더 읽기 범위 **Calendars.Read**
 | 조회 | 팀 일정은 팀(그룹) 캘린더에만, 개인 일정은 개인 캘린더에만 보임 | Cloud Shell(Graph), Outlook 웹 |
 | 문서 | 채널 캘린더 항목은 팀에 연결된 Microsoft 365 그룹 캘린더에 있는 채널 회의 | [Microsoft Q&A 답변](https://learn.microsoft.com/answers/a/12452933) |
 | 문서 | 채널 회의 채팅은 팀의 사서함, 일반 회의 채팅은 참석자 사서함 | [Finding content in Microsoft Teams in eDiscovery](https://learn.microsoft.com/purview/edisc-search-teams#where-teams-content-is-stored) |
-| 확인 불가 | 사서함 내부의 물리 저장 위치 | 시도·사유·다음 방법은 3절 |
 
 관련 글: [Teams 저장 구조 — 채널 유형별 파일·일정 위치]({{ "/m365/d3-teams-storage/" | relative_url }}), [만들어 둔 개인 일정이 사라졌을 때]({{ "/m365/troubleshooting/personal-event-disappeared/" | relative_url }}), [Cloud Shell에서 Graph 호출 — 되는 호출과 안 되는 호출]({{ "/m365/troubleshooting/cloud-shell-graph-token-scope/" | relative_url }})

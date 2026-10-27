@@ -33,7 +33,6 @@ excerpt: "샌드박스 테넌트의 설정을 건드리지 않고 값으로 읽�
 | [트러블슈팅: AADSTS530035]({{ "/m365/troubleshooting/aadsts530035-device-code/" | relative_url }}) | PowerShell 측정이 막힌 원인과 선택지 |
 | [트러블슈팅: 사용 현황 보고서가 비어 있음]({{ "/m365/troubleshooting/usage-report-no-data/" | relative_url }}) | 활동 보고서가 "데이터 없음"일 때 나눠 보는 순서 |
 | [트러블슈팅: 관리 센터 화면이 로딩에서 멈춤]({{ "/m365/troubleshooting/admin-center-loading-stuck/" | relative_url }}) | 화면 정체와 "프로비전 중" 안내 |
-| [트러블슈팅: 감사 로그를 켜는 명령이 거부됨]({{ "/m365/troubleshooting/audit-log-enable-rejected/" | relative_url }}) | 감사 수집이 꺼져 있고 켜기가 거부된 경과 |
 | [트러블슈팅: 청구 범위·청구 역할이 보이지 않음]({{ "/m365/troubleshooting/billing-scope-not-visible/" | relative_url }}) | 청구 범위 0건 |
 
 ---

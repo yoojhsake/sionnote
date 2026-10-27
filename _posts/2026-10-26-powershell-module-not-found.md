@@ -51,6 +51,14 @@ toc: true
 | SharePoint·Teams 관리 명령이 Cloud Shell의 Azure 토큰으로는 접속되지 않음 | 그 토큰으로는 해당 서비스 PowerShell에 접속할 수 없었음(`AudienceNotSupported`, 조회) | 내 PC의 **Windows PowerShell 5.1**에서 각 모듈로 직접 로그인해 읽음(10/26, 조회). PowerShell 7에서는 호환 모드가 필요하다는 안내가 있음(문서, 직접 확인 아님) |
 | Teams·Exchange 명령 | 각각 별도 연결이 필요 | `Connect-MicrosoftTeams`, `Connect-ExchangeOnline`을 서비스별로 먼저 실행 |
 
+![Get-MgServiceAnnouncementMessage가 인식되지 않는다는 오류와 Teams 세션 미접속 오류]({{ "/assets/images/2026/10/cmdlet-not-recognized-graph.png" | relative_url }})
+*그림 1. Cloud Shell 실행 결과. 위 줄: `Get-MgServiceAnnouncementMessage`가 "인식되지 않는다"(모듈 없음). 아래 줄들: `AccessDenied`(토큰 범위 부족), `Session is not established`(연결 없음). 오류 문구가 서로 달라 모듈·연결·권한 문제를 구분할 수 있다. 줄 앞 항목 번호는 가렸다.*
+
+![Get-SPOTenant가 인식되지 않는다는 오류]({{ "/assets/images/2026/10/cmdlet-not-recognized-spo.png" | relative_url }})
+*그림 2. 같은 실행의 다른 항목. `Get-SPOTenant`도 모듈이 없는 환경에서는 같은 "인식되지 않는다" 문구가 나왔다.*
+
+이 글에서 `AudienceNotSupported` 오류 화면과 내 PC Windows PowerShell 5.1에서 로그인해 읽은 화면은 넣지 못했습니다. 두 장면은 남아 있는 캡처가 없어, 본문에는 읽은 값과 결과만 적었습니다.
+
 PowerShell 7에서의 호환 모드 동작은 직접 실행해 보지 않아 **확인 불가**입니다(시도: 문서 확인만 / 막힌 이유: 실행 환경으로 5.1을 사용 / 다음 방법: PowerShell 7에서 같은 명령을 실행해 결과 대조).
 
 ### 4. 대처와 원복

@@ -43,6 +43,14 @@ excerpt: "실습 환경에서 브라우저의 파일 선택 대화상자를 쓸 
 | ch-private | **403** | **있음**(별도 사이트) |
 | ch-shared | **403** | **있음**(별도 사이트) |
 
+![채널별 시험 파일 업로드 결과 출력]({{ "/assets/images/2026/10/m13-1-upload-result.png" | relative_url }})
+*그림 1. Cloud Shell에서 채널마다 시험 파일을 올린 결과. 표준 채널과 General은 `UPLOAD OK`, 비공개·공유 채널은 `403 (Forbidden) accessDenied`. 계정이 보이던 프롬프트 부분은 가렸다.*
+
+![채널별 SharePoint 문서 화면]({{ "/assets/images/2026/10/d3-sharepoint-files.png" | relative_url }})
+*그림 2. 같은 시험 뒤 SharePoint 문서 화면. 위: 팀 사이트의 ch-standard 폴더, 가운데: 별도 사이트(ch-private), 아래: 별도 사이트(ch-shared). 사용자 이름은 가렸다.*
+
+파일 선택창을 쓸 수 없는 상태 자체는 대화상자가 열리지 않는 것이라 따로 캡처할 화면이 없었습니다.
+
 아래는 같은 방식의 스크립트입니다(준비 코드와 업로드 부분. 팀 이름 Practice-Team-01은 시험용으로 만든 팀입니다).
 
 ```powershell

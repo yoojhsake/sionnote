@@ -29,6 +29,11 @@ toc: true
 
 같은 설정인데 화면과 PowerShell 값이 다르게 읽혔습니다. SharePoint 공유 설정에서 기본 링크 권한이 **화면에서는 "편집"**, `Get-SPOTenant`의 `DefaultLinkPermission`은 **None**이었습니다(조회, 10/26).
 
+![SharePoint 관리 센터 공유 설정의 파일 및 폴더 링크 항목]({{ "/assets/images/2026/10/spo-sharing-default-link.png" | relative_url }})
+*그림 1. SharePoint 관리 센터 > 정책 > 공유의 "파일 및 폴더 링크". 기본 사용 권한은 "편집"이 선택되어 있다. 같은 화면의 링크 유형은 두 항목에 선택 표시가 있는 것처럼 보여, 표시만으로는 선택 상태를 단정하기 어렵다.*
+
+`Get-SPOTenant`가 `DefaultLinkPermission` = None을 돌려준 PowerShell 출력은 캡처가 남아 있지 않아 값만 적었습니다.
+
 ### 2. 먼저 확인할 것
 
 - 두 값이 정말 **같은 항목**을 가리키는지 봅니다. 화면의 이름과 속성 이름이 1:1이 아닐 수 있습니다.
@@ -40,6 +45,9 @@ toc: true
 2. **`None`이 "편집"에 대응하는지 확인 시도**: `Get-SPOTenant` 문서를 봤으나 대응 관계에 대한 설명이 없었습니다. **확인 불가**입니다(시도: 문서 확인 / 막힌 이유: 설명 없음 / 다음 방법: 같은 설정의 다른 속성으로 판단).
 3. **다른 속성으로 판단**: 같은 설정을 나타내는 다른 속성(익명 링크의 파일·폴더 권한 값)을 판단에 썼습니다.
 4. **Graph로 교차 읽기**: 같은 설정을 Graph(`/admin/sharepoint/settings`)로도 읽어 나머지 속성이 화면과 일치하는 것을 확인했습니다(조회).
+
+![Graph Explorer에서 admin/sharepoint/settings를 조회한 응답]({{ "/assets/images/2026/10/graph-sharepoint-settings.png" | relative_url }})
+*그림 2. Graph Explorer의 `GET /v1.0/admin/sharepoint/settings` 응답(200 OK). 테넌트 표시는 가렸다. 이 응답의 속성을 화면 값과 비교했다.*
 
 **화면 선택 표시가 헷갈릴 때**: 라디오 버튼·슬라이더 표시만으로 어느 값이 선택됐는지 불분명하면 브라우저에서 해당 요소의 선택 상태를 직접 읽어 확인했습니다. 눈으로 읽은 값에 근거가 약하면 그렇게 적습니다.
 

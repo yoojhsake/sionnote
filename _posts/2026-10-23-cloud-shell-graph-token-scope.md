@@ -64,9 +64,15 @@ $B  = 'https://graph.microsoft.com/v1.0'
 
 **`/me/drive`의 403**: 처음에는 관리자 계정에 OneDrive가 없어서 나는 오류라고 추정했습니다. 그런데 OneDrive 웹을 다시 열었더니 **OneDrive가 존재했습니다**(Meetings·Recordings 폴더 확인). 그래서 "대상이 없음"이라는 추정은 정정하고, 이 403은 토큰에 Files 범위가 없는 쪽으로 읽는 것이 맞아 보입니다. 같은 토큰의 범위를 읽어 보니 Files.*·Sites.* 가 없었고(조회, [채널 403 글]({{ "/m365/troubleshooting/channel-upload-403-membership-or-scope/" | relative_url }})), Graph 탐색기에서 Files.Read.All·Sites.Read.All을 동의하자 채널 전용 사이트의 파일 목록이 200으로 열렸습니다(조회). 다만 `/me/drive` 자체는 범위를 동의한 뒤에 다시 조회하지 않았습니다.
 
+![토큰의 허용 범위 목록을 출력한 Cloud Shell 화면]({{ "/assets/images/2026/10/m13-3-token-scope.png" | relative_url }})
+*그림 2. 같은 토큰의 내용을 풀어 허용 범위(`SCP`)를 출력한 Cloud Shell 화면. AppCatalog, AuditLog, Channel, Directory, Group, Team 계열 범위는 있고 Files.\*·Sites.\* 범위는 보이지 않는다. 계정이 보이던 프롬프트 부분은 가렸다.*
+
 - **확인 불가**: 동의 후 `/me/drive`가 열리는지. 시도: 동의 전 조회 → 403. 사유: 동의 후에 `/me/drive`를 다시 조회하지 않음. 다음 방법: 읽기 범위를 동의한 토큰으로 `GET /me/drive`를 한 번 더 실행.
 
 **조건부 액세스 정책 목록의 403**: 정책 목록 호출이 읽기 권한 부족으로 막혔습니다. 읽기 역할이 부족한 항목은 화면(GUI)으로 대체해 읽었고, 조건부 액세스 정책은 GUI에서 0건이었습니다.
+
+![정책이 없을 때 표시되는 조건부 액세스 정책 화면]({{ "/assets/images/2026/10/ca-policies.png" | relative_url }})
+*그림 3. Entra 관리 센터 > 조건부 액세스 > 정책. 정책 목록 대신 "조건부 액세스란 무엇인가요?" 안내와 예시만 나와 정책이 0건임을 보여 준다. 계정 표시는 가렸다.*
 
 - **확인 불가**: 이 호출을 읽기만으로 하려면 필요한 최소 읽기 역할. 시도: 정책 목록 호출 → 403. 사유: 필요한 역할을 조회나 시험으로 가려내지 못함(역할 부여는 하지 않음). 다음 방법: Microsoft Learn의 해당 API 문서에서 필요한 권한·역할을 확인.
 

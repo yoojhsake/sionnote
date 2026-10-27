@@ -45,6 +45,14 @@ toc: true
 | 정책의 "수정 시각"이 비어 있는 경우 | 수정 시각 기준 비교가 거짓이 되어 **누락** | 수정 시각이 없으면 **생성 시각**을 대신 사용 |
 | 로그인 기록이 한 번도 없는 사용자 | "오래 로그인하지 않음"과 **섞여 집계** | null(기록 없음)을 따로 세어 구분 |
 
+![null 값 계산 예외가 포함된 실패 사유 목록]({{ "/assets/images/2026/10/script-failure-types.png" | relative_url }})
+*그림 1. 날짜 값이 null이거나 배열일 때 나온 예외(`Cannot convert null to type "System.DateTime"`, `Cannot convert the "System.Object[]" value ... to type "System.DateTime"`). 두 줄 외에는 다른 유형의 실패다. 항목 번호와 일부 안내 문구는 가렸다.*
+
+![온프레미스 동기화 실행 이력이 없는 Microsoft Entra Connect 동기화 화면]({{ "/assets/images/2026/10/sync-never-run.png" | relative_url }})
+*그림 2. Microsoft Entra Connect > 동기화 연결. "마지막 동기화"가 "동기화 실행된 적 없음"이라 시각 값 자체가 비어 있다. 이 값에서 현재 시각을 빼는 계산이 위 예외의 원인이었다.*
+
+수정 시각이 비어 누락된 경우, 로그인 기록이 없는 사용자 집계, 결과 표의 이름 열 혼동은 화면에 나타나는 값이 아니라 스크립트가 만든 계산·표 형태의 문제이고, 당시 출력 화면이 남아 있지 않아 캡처를 넣지 못했습니다.
+
 ```powershell
 # null 검사 예: 마지막 동기화 시각이 없으면 경과 시간을 계산하지 않는다
 $last = $org.OnPremisesLastSyncDateTime

@@ -3,7 +3,7 @@ title: "[M365·Azure] 13 트러블슈팅 — Teams 채널 파일 업로드 403 �
 date: 2026-10-23 10:20:00 +0900
 categories: [m365, troubleshooting]
 tags: [Teams, SharePoint, Graph, "403", 비공개 채널, 공유 채널, 전체 기록]
-excerpt: "10/22에 비공개·공유 채널 업로드가 403이었던 현상을 같은 방식으로 다시 시도한 결과와, 지금 말할 수 있는 것·없는 것의 구분"
+excerpt: "10/22에 비공개·공유 채널 업로드가 403이었던 현상을 다시 시도한 결과와, 10/27에 읽기 범위를 동의해 원인(토큰 범위)을 확인한 기록"
 ---
 
 > 근거 표기: **조회** = 이 테넌트 화면·PowerShell에서 직접 읽은 값 / **문서** = Microsoft Learn / **확인 불가** = 시도했으나 확인하지 못함(시도 방법·사유 병기). 테넌트 도메인과 사이트 주소는 게시하지 않았고 사용자 이름은 적지 않았습니다.
@@ -101,25 +101,25 @@ $c = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($p)) | ConvertF
 
 **③ Files 권한이 있는 토큰으로 직접 확인하기 (10/23 16:46경, 실패)**: 원인을 확정하려면 Files.ReadWrite.All 범위 토큰이 필요해서 두 가지를 시도했습니다.
 
-- Graph 탐색기(Graph Explorer): 로그인 버튼을 눌렀지만 로그인 창이 팝업으로 열리지 않아(팝업 차단) 진행하지 못했습니다. 월요일에 직접 로그인해 이어서 시험합니다.
+- Graph 탐색기(Graph Explorer): 로그인 버튼을 눌렀지만 로그인 창이 팝업으로 열리지 않아(팝업 차단) 진행하지 못했습니다. 이후 10/27에 이어서 시험했습니다(§7).
 - Cloud Shell의 `az login --scope https://graph.microsoft.com/Files.ReadWrite.All --use-device-code`: 장치 코드를 입력하고 이미 로그인된 계정을 골랐더니 **오류 코드 530035, "이에 대한 액세스 권한이 없습니다"** 로 막혔습니다. 화면에는 앱 이름 Microsoft Azure CLI, 디바이스 상태 Unregistered가 표시됐습니다. 코드를 처음에 잘못 읽어(G와 Q 혼동) 두 번 거절됐고, 코드를 글자별 숫자로 출력해 정확히 읽은 뒤에 위 결과가 나왔습니다.
 
 ![az login 장치 코드 로그인 530035 오류]({{ "/assets/images/2026/10/530035-azcli.png" | relative_url }})
 *그림 5. az login 장치 코드 로그인이 오류 530035로 막힌 화면. 10/23에는 Files.ReadWrite.All 범위를 붙인 명령으로 막혔고, 이 그림은 10/24 01:22경 선명하게 다시 찍은 것으로 범위 없이 `az login --use-device-code`만 실행했다(같은 앱 Microsoft Azure CLI, 같은 오류 코드 530035). 계정, 요청 ID, 접속 IP는 가렸다.*
 
-같은 530035가 Exchange PowerShell 로그인에서도 났으므로(관련 글: 530035 장치 코드 로그인), 이 테넌트는 포털 밖 클라이언트 로그인을 전반적으로 막고 있는 것으로 보입니다. 그래서 채널 403의 마지막 증명도 **월요일 530035 해제 작업이 끝난 뒤** 같은 명령으로 다시 시도합니다. 이번 시도로 바뀐 설정이나 권한은 없습니다(로그인이 실패해 동의도 부여되지 않았습니다).
+같은 530035가 Exchange PowerShell 로그인에서도 났으므로(관련 글: 530035 장치 코드 로그인), 이 테넌트는 포털 밖 클라이언트 로그인을 전반적으로 막고 있는 것으로 보입니다. 그래서 채널 403의 마지막 증명은 장치 코드 로그인을 쓰지 않는 방법으로 바꿨습니다(§7). 이번 시도로 바뀐 설정이나 권한은 없습니다(로그인이 실패해 동의도 부여되지 않았습니다). 같은 문제는 10/27에 Graph 탐색기(브라우저 로그인)로 우회해 확인했습니다(§7).
 
 ## 4. 해석
 
 - **결론(가장 가능성이 높은 원인)**: 멤버십이 아니라 **토큰의 권한 범위 부족**입니다. 관리자 계정은 세 채널의 owner인데도 Files/Sites 범위가 없는 토큰으로는 채널 전용 사이트 드라이브에 접근할 수 없습니다.
-- **아직 증명하지 못한 부분**: Files.ReadWrite.All 범위가 있는 토큰으로 같은 업로드를 해 성공하는 것을 직접 보지는 못했습니다. 그 토큰을 얻으려고 Graph 탐색기와 `az login` 장치 코드 로그인을 시도했으나 각각 팝업 차단, 530035로 막혔습니다(§3-③). 월요일 530035 해제 후 재시도합니다.
+- **아직 증명하지 못한 부분**: Files.ReadWrite.All 범위가 있는 토큰으로 같은 업로드를 해 성공하는 것을 직접 보지는 못했습니다. 그 토큰을 얻으려고 Graph 탐색기와 `az login` 장치 코드 로그인을 시도했으나 각각 팝업 차단, 530035로 막혔습니다(§3-③). 이후 10/27에 Graph 탐색기에서 읽기 범위를 동의하고 다시 조회해 읽기 쪽 원인은 확인했습니다(§7).
 - **확인 불가**: 10/22의 "403인데 파일이 생긴" 현상의 원인. 시도: 10/23 같은 방식 재현. 사유: 이번에는 새 파일이 생기지 않았고, 10/22의 요청·응답을 저장해 두지 않아 대조할 수 없습니다.
 
 ## 5. 다음에 할 일 / 운영 판단
 
 1. 재현할 때는 **요청과 응답 전체를 파일로 저장**합니다(이번 일의 교훈).
 2. 업로드 성공 여부는 응답 코드만으로 판단하지 않고, 코드와 실제 저장 위치를 둘 다 확인합니다.
-3. 월요일 530035 해제 후 Files.ReadWrite.All 범위 토큰으로 다시 시도해 원인을 확정합니다(동의 화면은 제가 직접 승인합니다). 채널 구성원 문제는 위에서 배제했습니다.
+3. 읽기 쪽은 10/27에 범위를 동의한 토큰으로 확인했습니다(§7). 쓰기(업로드) 성공은 Files.ReadWrite.All 범위로 별도 확인할 항목이며 아직 하지 않았습니다. 채널 구성원 문제는 위에서 배제했습니다.
 4. 정리(삭제)할 때 채널 사이트가 따로 있다는 점을 목록에 넣습니다. 표준 채널과 General에는 이번 시험 파일 `zz-test*.txt`도 남아 있어 팀 삭제 때 함께 지웁니다.
 
 ## 6. 근거 자료
@@ -129,16 +129,33 @@ $c = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($p)) | ConvertF
 | 문서 | 비공개·공유 채널은 별도 사이트 | [Shared channels in Microsoft Teams](https://learn.microsoft.com/microsoftteams/shared-channels) |
 | 조회 | 표준 성공, 비공개·공유 403, 폴더 읽기 403, 10/22 파일 존재 | Cloud Shell(Graph), SharePoint |
 | 조회 | 세 채널 모두 관리자 계정이 owner 구성원 / 토큰 scp에 Files.*·Sites.* 없음 | Cloud Shell(Graph) |
+| 조회 | 화면에서는 두 채널 사이트 문서 목록이 열림 / 읽기 범위 동의 전 파일 목록 accessDenied, 동의 후 200(그림 6~9) | SharePoint 화면, Graph 탐색기 |
 | 시도 | Files 범위 az login 장치 코드 로그인 → 오류 530035(그림 5), Graph 탐색기 로그인 팝업 차단 | 로그인 화면 |
 | 문서 | 업로드·폴더 정보 조회에 필요한 Graph 권한 | [Upload or replace the contents of a driveItem](https://learn.microsoft.com/graph/api/driveitem-put-content?view=graph-rest-1.0), [Get filesFolder](https://learn.microsoft.com/graph/api/channel-get-filesfolder?view=graph-rest-1.0) |
 | 문서 | 비공개 채널은 별도 사이트이고 채널 구성원만 접근 | [Private channels in Microsoft Teams](https://learn.microsoft.com/microsoftteams/private-channels#private-channel-sharepoint-sites) |
 
-## 담당별 기록
+## 7. 10/27 추가 확인: 읽기 범위를 동의하면 두 채널 사이트가 열린다
 
-이 글은 유재홍이 실습·측정한 내용입니다. 같은 주제에서 대원·현준이 맡은 부분은 각자 직접 채웁니다(칸만 마련).
+10/23까지는 "Files/Sites 범위가 없는 토큰이라 안 열린다"는 추정이었습니다. 10/27에는 같은 관리자 계정으로 먼저 화면(SharePoint)에서 두 채널 사이트를 열어 보고, 이어서 Graph 탐색기에서 **읽기 범위를 동의하기 전과 후**의 결과를 비교했습니다. 모두 읽기만 했고 파일을 올리거나 지우지 않았습니다.
 
-| 담당 | 기록 | 상태 |
-|---|---|---|
-| 유재홍 | 이 글의 실습·측정·정리 | 작성함 |
-| 대원 | (대원이 맡은 부분을 여기에 직접 작성) | 작성 대기 |
-| 현준 | (현준이 맡은 부분을 여기에 직접 작성) | 작성 대기 |
+**① 화면에서는 열림 (조회)**: 관리자 계정으로 비공개·공유 채널 사이트의 Documents 목록이 열리고 10/22에 올린 시험 파일(D3-test-ch-private.txt, D3-test-ch-shared.txt)이 보였습니다. 사용자의 권한이나 멤버십 문제라면 화면에서도 막혔을 것입니다.
+
+![비공개 채널 사이트의 문서 목록(SharePoint 화면)]({{ "/assets/images/2026/10/m22-4-gui-private-channel-files.png" | relative_url }})
+*그림 6. 비공개 채널 사이트의 Documents 화면. 시험 파일 D3-test-ch-private.txt가 보인다(5일 전 = 10/22). 수정자 이름은 가렸다.*
+
+![공유 채널 사이트의 문서 목록(SharePoint 화면)]({{ "/assets/images/2026/10/m22-5-gui-shared-channel-files.png" | relative_url }})
+*그림 7. 공유 채널 사이트의 Documents 화면. 시험 파일 D3-test-ch-shared.txt가 보인다. 수정자 이름은 가렸다.*
+
+**② 같은 계정의 Graph 토큰, 동의 전 (조회)**: 사이트 조회(`GET /sites/{호스트}:/sites/Practice-Team-01-ch-private`)는 200인데 파일 목록(`GET /sites/{site-id}/drive/root/children`)은 **accessDenied**였습니다. 사이트 정보는 읽히지만 파일은 못 읽는 상태로, 10/23 토큰에 Files.*·Sites.* 범위가 없던 것과 일치합니다.
+
+**③ 읽기 범위 동의 후 (조회)**: Graph 탐색기의 "권한 수정(Modify permissions)" 탭에서 **Files.Read.All**과 **Sites.Read.All**을 직접 동의한 뒤 같은 요청을 다시 실행했더니 두 채널 사이트 모두 **200 OK**로 파일 목록이 반환됐고 10/22 시험 파일이 그대로 보였습니다.
+
+![동의 후 비공개 채널 사이트 파일 목록 200]({{ "/assets/images/2026/10/m22-2-private-channel-files-200.png" | relative_url }})
+*그림 8. 동의 후 비공개 채널 사이트 `drive/root/children` 조회가 200 OK. D3-test-ch-private.txt(마지막 수정 2026-10-22)가 반환된다. 요청 주소와 사이트·테넌트 식별자는 가렸다.*
+
+![동의 후 공유 채널 사이트 파일 목록 200]({{ "/assets/images/2026/10/m22-3-shared-channel-files-200.png" | relative_url }})
+*그림 9. 동의 후 공유 채널 사이트 `drive/root/children` 조회가 200 OK. D3-test-ch-shared.txt(마지막 수정 2026-10-22)가 반환된다. 요청 주소와 식별자는 가렸다.*
+
+- **결론**: 403(읽기 쪽)의 원인은 멤버십이나 사용자 권한이 아니라 **토큰의 파일·사이트 읽기 범위 부족**입니다. 범위를 추가하자 같은 계정으로 바로 읽혔습니다.
+- **확인 불가**: 두 범위(Files.Read.All, Sites.Read.All)를 한 번에 동의해서 둘 중 하나만으로 충분한지는 구분하지 못했습니다(구분하려면 하나를 철회한 뒤 다시 조회해야 함). 업로드(쓰기)는 다시 시도하지 않아 쓰기 범위로 성공하는지도 확인하지 못했습니다.
+- **정리**: 동의한 읽기 범위는 필요가 없어지면 Entra 관리 센터의 엔터프라이즈 애플리케이션에서 철회할 수 있습니다.

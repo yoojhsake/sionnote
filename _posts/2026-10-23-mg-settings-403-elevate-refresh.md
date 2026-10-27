@@ -74,7 +74,7 @@ $e = ($r.Content | ConvertFrom-Json).error
 
 ## 4. 끈 뒤
 
-Elevate는 10/23~24에 네 번 켜고 껐습니다. 오전 두 번은 위에 적은 대로이고, **3·4회차는 10/23 밤에 이미지를 다시 찍으려고 사용자(유재홍)가 허용해 준 범위에서 제가 직접 켰다 껐습니다.**
+Elevate는 10/23~24에 네 번 켜고 껐습니다. 오전 두 번은 위에 적은 대로이고, **3·4회차는 10/23 밤에 이미지를 다시 찍으려고 담당자가 허용해 준 범위에서 제가 직접 켰다 껐습니다.**
 
 | 회차 | 켬 | 끔 | 끈 방법 |
 |---|---|---|---|
@@ -161,13 +161,3 @@ Remove-AzRoleAssignment -SignInName $upn -RoleDefinitionName 'User Access Admini
 | 문서 | Elevate access 절차, 끄는 방법(할당 제거 포함), PIM 주의 | [Elevate access to manage all Azure subscriptions and management groups](https://learn.microsoft.com/azure/role-based-access-control/elevate-access-global-admin) |
 | 문서 | 토큰·캐시 30분, 갱신 방법 | [Manage your Azure subscriptions at scale with management groups](https://learn.microsoft.com/azure/governance/management-groups/manage) |
 | 조회 | 기본 관리 그룹·계층 보호 값, 끈 뒤 화면, 감사 로그 시각 | Azure 포털·Entra |
-
-## 담당별 기록
-
-이 글은 유재홍이 실습·측정한 내용입니다. 같은 주제에서 대원·현준이 맡은 부분은 각자 직접 채웁니다(칸만 마련).
-
-| 담당 | 기록 | 상태 |
-|---|---|---|
-| 유재홍 | 이 글의 실습·측정·정리 | 작성함 |
-| 대원 | (대원이 맡은 부분을 여기에 직접 작성) | 작성 대기 |
-| 현준 | (현준이 맡은 부분을 여기에 직접 작성) | 작성 대기 |

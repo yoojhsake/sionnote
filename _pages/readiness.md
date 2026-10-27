@@ -27,7 +27,7 @@ M365·Azure 운영 사전 프로그램의 기록을 **작업 순서대로** 모�
 | 09 | [실측 ③ SharePoint·관리 센터]({{ "/m365/readiness-measure-sharepoint-admin/" | relative_url }}) | 공유, 보존, 메시지 센터 |
 | 10 | [실측 ④ Purview·Azure 거버넌스]({{ "/m365/readiness-measure-purview-azure/" | relative_url }}) | 감사, DLP, Policy, 구독 권한 |
 
-## 3. 재확인과 트러블슈팅 (10/23)
+## 3. 재확인과 트러블슈팅 (10/23~10/27)
 
 | 번호 | 글 | 다루는 내용 |
 |---|---|---|
@@ -35,13 +35,4 @@ M365·Azure 운영 사전 프로그램의 기록을 **작업 순서대로** 모�
 | 12 | [트러블슈팅 관리 그룹 설정 403]({{ "/m365/troubleshooting/mg-settings-403-elevate-refresh/" | relative_url }}) | Elevate를 켜도 안 읽힐 때 토큰 갱신 |
 | 13 | [트러블슈팅 채널 파일 업로드 403 재현]({{ "/m365/troubleshooting/channel-upload-403-repro/" | relative_url }}) | 표준·비공개·공유 채널 결과 비교 |
 | 14 | [Cloud Shell에서 Graph 호출, 되는 것과 안 되는 것]({{ "/m365/troubleshooting/cloud-shell-graph-scope/" | relative_url }}) | 토큰 범위에 따라 갈리는 조회 결과 |
-
-## 4. 담당별 기록 현황
-
-각 글 끝에도 같은 칸이 있습니다. 대원·현준 칸은 본인이 직접 채웁니다.
-
-| 영역 | 유재홍 | 대원 | 현준 |
-|---|---|---|---|
-| 준비와 구조 이해(00~05) | 작성함 | (직접 작성) | (직접 작성) |
-| 운영 설정 실측(06~10) | 작성함 | (직접 작성) | (직접 작성) |
-| 재확인과 트러블슈팅(11~14) | 작성함 | (직접 작성) | (직접 작성) |
+| 15 | [트러블슈팅 상황별 대처 가이드]({{ "/m365/troubleshooting/troubleshooting-playbook/" | relative_url }}) | 403·로그인 차단·토큰 범위·반응 지연을 상황별로 정리 |

@@ -127,11 +127,11 @@ Get-AzRoleAssignment -Scope '/' | Select DisplayName,RoleDefinitionName,Scope,Ob
 - 11:3x 시점에 토글 "아니요"와 관리 그룹 화면의 "전과 같은 안내"는 확인했지만, **루트 범위 역할 목록을 PowerShell로 다시 조회하지는 않았습니다.** 그래서 10/22 시점에는 "할당이 사라졌다"는 결론을 **확인 불가**로 남겼습니다. 10/23에 이 확인을 다시 시도한 결과는 아래 "10/23 재확인"에 적었습니다. 직접 목록으로는 끝내 확인하지 못하므로 "원복 완료"가 아니라 "토글 원복 확인 + 감사 로그 대조"라고 씁니다.
 
 ### 문제 6 — Elevate에 사전 승인이 필요한가
-- 가이드·문서만으로는 조직 내부의 사전 승인 절차를 알 수 없습니다. **확인 불가**입니다(시도: 가이드·문서 검색, 사유: 조직 내부 규정이라 문서에 없음). 팀장에게 확인할 사항으로 남겼습니다.
+- 가이드·문서만으로는 조직 내부의 사전 승인 절차를 알 수 없습니다. **확인 불가**입니다(시도: 가이드·문서 검색, 사유: 조직 내부 규정이라 문서에 없음). 내부 확인이 필요한 사항으로 남겼습니다.
 
 ## 7. 역할 할당 실습(범위별 상속 확인) — 10/23 오후 1차, 밤 2차
 
-10/22에는 범위별 역할 할당을 하지 않아 이 글에 "상속 확인" 값이 없었고 확인 불가였습니다. 10/23 16시에 1차로 해 봤고(시험 사용자 1, Azure CLI, NSG), 그림 해상도가 낮아 **같은 실습을 밤 22시대에 사용자(유재홍)의 허용을 받아 2차로 다시 수행**했습니다. 2차는 시험 사용자 2(yoo sion), PowerShell, 빈 ARM 배포를 쓴 것이 1차와 다릅니다. 대상은 제가 만든 리소스 그룹 `rg-practice-d4-01`/`-02` 둘뿐이고, 구독·관리 그룹 범위에는 부여하지 않았습니다.
+10/22에는 범위별 역할 할당을 하지 않아 이 글에 "상속 확인" 값이 없었고 확인 불가였습니다. 10/23 16시에 1차로 해 봤고(시험 사용자 1, Azure CLI, NSG), 그림 해상도가 낮아 **같은 실습을 밤 22시대에 담당자의 허용을 받아 2차로 다시 수행**했습니다. 2차는 시험 사용자 2, PowerShell, 빈 ARM 배포를 쓴 것이 1차와 다릅니다. 대상은 제가 만든 리소스 그룹 `rg-practice-d4-01`/`-02` 둘뿐이고, 구독·관리 그룹 범위에는 부여하지 않았습니다.
 
 **2차(22시대) 절차와 결과**
 
@@ -149,11 +149,11 @@ Get-AzRoleAssignment -Scope '/' | Select DisplayName,RoleDefinitionName,Scope,Ob
 **스크립트 1 — 준비와 부여** (Cloud Shell, PowerShell)
 
 ```powershell
-# (1) 준비: 구독·범위 문자열, 시험 사용자(yoo sion) 조회, 부여 전 할당 수
+# (1) 준비: 구독·범위 문자열, 시험 사용자 조회, 부여 전 할당 수
 $sub = (Get-AzContext).Subscription.Id
 $rg  = "/subscriptions/$sub/resourceGroups/rg-practice-d4-01"
 $rg2 = "/subscriptions/$sub/resourceGroups/rg-practice-d4-02"
-$u   = Get-AzADUser -UserPrincipalName ((Get-AzADUser -DisplayName 'yoo sion').UserPrincipalName)
+$u   = Get-AzADUser -UserPrincipalName ((Get-AzADUser -DisplayName '<시험 사용자 표시 이름>').UserPrincipalName)
 'user: ' + $u.DisplayName
 'before (user, all scopes): ' + @(Get-AzRoleAssignment -ObjectId $u.Id).Count
 
@@ -272,13 +272,3 @@ Remove-AzResourceGroupDeployment -ResourceGroupName 'rg-practice-d4-01' -Name 'z
 - **상속**: 리소스 그룹 범위의 기존 할당을 조회했더니 구독 Owner가 구독 범위에서 상속되어 표시됐고 User Access Administrator는 루트(`/`) 범위였습니다(조회). 사용자에게 새로 할당한 역할(Reader)의 상속은 10/23 밤 2차 실습(7번)에서 확인했습니다: 리소스 그룹에 직접 준 Reader가 하위 범위에서는 상속으로, 형제 리소스 그룹에는 없음.
 
 > 오늘 입력한 PowerShell 원문은 복구하지 못해, 같은 출력 줄이 나오는 형태로 정리했습니다. 화면 확인 값은 실제와 같습니다.
-
-## 담당별 기록
-
-이 글은 유재홍이 실습·측정한 내용입니다. 같은 주제에서 대원·현준이 맡은 부분은 각자 직접 채웁니다(칸만 마련).
-
-| 담당 | 기록 | 상태 |
-|---|---|---|
-| 유재홍 | 이 글의 실습·측정·정리 | 작성함 |
-| 대원 | (대원이 맡은 부분을 여기에 직접 작성) | 작성 대기 |
-| 현준 | (현준이 맡은 부분을 여기에 직접 작성) | 작성 대기 |

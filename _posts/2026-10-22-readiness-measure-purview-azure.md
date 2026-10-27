@@ -33,6 +33,7 @@ excerpt: "감사 로그·보존·DLP·민감도 레이블과 Azure Policy·구�
 - **판독 — 측정 불가**: 오류 문구만으로는 감사가 꺼져 있다고 확정할 수 없습니다. 문서에 따르면 감사를 켠 직후에는 반영까지 최대 60분이 걸리고, 켜져 있는지는 Exchange Online PowerShell(`UnifiedAuditLogIngestionEnabled`)로 확인합니다.
 - **왜 못 읽었나**: Cloud Shell에서 Exchange Online 로그인이 막혔습니다. 자세한 과정은 [AADSTS530035 글]({{ "/m365/troubleshooting/aadsts530035-device-code/" | relative_url }})에 있습니다.
 - **재측정 방법**: 내 PC의 PowerShell에서 브라우저 로그인으로 `Get-AdminAuditLogConfig`의 감사 수집 항목을 읽습니다.
+- **그 뒤(10/26)**: 내 PC에서 읽은 값은 꺼짐(False)이었고, 켜는 명령은 서버 오류로 거부됐습니다. 과정과 대처는 [16 보고서가 비어 있고 감사 기록이 안 켜질 때]({{ "/m365/troubleshooting/troubleshooting-empty-reports-audit/" | relative_url }})에 정리했습니다.
 - **재시도(10/23 오후)**: 같은 화면을 다시 열어 봤지만 같은 문구가 그대로 보이고 검색 버튼은 여전히 회색입니다. 검색을 실행할 수 없으므로 "기록 중인지"를 이 화면만으로는 알 수 없습니다(시도 후 확인 불가). 켜기 버튼은 설정을 바꾸는 동작이고 기존 설정을 바꾸지 않는 범위 밖이라 누르지 않았습니다. 다음 방법은 PowerShell 연결이 가능해진 뒤 `Get-AdminAuditLogConfig`입니다.
 
 ![Purview 감사 검색 재시도 화면]({{ "/assets/images/2026/10/m10-audit-retry.png" | relative_url }})

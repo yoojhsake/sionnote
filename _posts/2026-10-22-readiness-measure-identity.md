@@ -41,6 +41,7 @@ excerpt: "Entra 설정을 하나도 바꾸지 않고 읽어서 정상·주의·�
 ## 2. 항목별 상세
 
 ### 2-1. 관리자 계정과 비상 계정
+
 - **GUI 경로**: Entra > 역할 및 관리자 > 전역 관리자 > 활성 할당 / 적격 할당 탭, 사용자 목록
 - **조회**: 전역 관리자 2명 모두 "활성, 직접, 범위 테넌트", 적격 할당 결과 없음. 사용자 20명 중 비상 계정 이름 없음.
 - **왜 문제인가**: 업무용 계정이 항상 최고 권한을 쥐고 있고, 그 계정이 막히면 되돌릴 계정이 없습니다. 문서도 전역 관리자는 최소화하고 비상 계정을 두라고 권합니다.
@@ -52,6 +53,7 @@ excerpt: "Entra 설정을 하나도 바꾸지 않고 읽어서 정상·주의·�
 
 
 ### 2-2. MFA 등록 현황
+
 - **GUI 경로**: Entra > 보호 > 인증 방법 > 모니터링 > 사용자 등록 세부 정보
 - **조회**: "다단계 인증 가능" 2명 / 20명(90%가 미등록).
 - **해석**: 보안 기본값이 켜져 있으므로 미등록 사용자는 **다음 로그인 때 등록을 요구받습니다**(문서). 즉 "아직 등록 안 한 것"이지 "보호가 꺼진 것"은 아닙니다. 다만 등록 전까지는 실제 보호가 없다고 봐야 합니다.
@@ -63,6 +65,7 @@ excerpt: "Entra 설정을 하나도 바꾸지 않고 읽어서 정상·주의·�
 
 
 ### 2-3. 조건부 액세스와 보안 기본값
+
 - **GUI 경로**: Entra > 보호 > 조건부 액세스 > 정책
 - **조회**: 정책 목록이 비어 있고 예시 템플릿 안내만 표시. PowerShell로 정책 목록을 조회하면 **HTTP 403**. 원인 후보는 두 가지입니다: ① 사용자 역할 부족, ② `Invoke-AzRestMethod`가 쓰는 Azure PowerShell 앱 토큰에 `Policy.Read.All` 범위가 없음(역할이 충분해도 403 가능). 어느 쪽인지는 **확인 불가**(사유: 역할을 바꾸거나 토큰 범위를 바꿔 시험하는 것은 설정 변경이라 하지 않음).
 
@@ -80,6 +83,7 @@ $ca = Invoke-AzRestMethod -Uri 'https://graph.microsoft.com/v1.0/identity/condit
 
 
 ### 2-4. 그룹 만료·생성·명명 정책
+
 - **GUI 경로**: Entra > 그룹 > 만료 / 일반(그룹 설정) / 명명 정책
 - **조회**: 만료 정책 없음(Teams 관리 센터의 팀 목록에서도 만료일 열이 모두 "-"), 사용자 그룹 생성 허용, 명명 정책 없음.
 - **왜 문제인가**: 누구나 그룹(=Team)을 만들 수 있고 만료·이름 규칙이 없으면 주인 없는 그룹과 이름이 제각각인 그룹이 쌓입니다. 문서도 기본값은 모든 사용자의 그룹 생성을 허용한다고 설명합니다.
@@ -91,6 +95,7 @@ $ca = Invoke-AzRestMethod -Uri 'https://graph.microsoft.com/v1.0/identity/condit
 
 
 ### 2-5. 게스트·외부 공동 작업 설정
+
 - **GUI 경로**: Entra > External Identities > 외부 협업 설정
 - **조회**: 게스트 초대 = 모든 사용자 허용(가장 포괄적), 게스트 접근 = 디렉터리 개체 속성·멤버 자격 제한. 테넌트 간 액세스는 기본값. 현재 Guest는 0명.
 - **보충(10/23 재조회)**: 협업 제한 화면까지 읽었습니다. "모든 도메인에 초대를 보낼 수 있도록 허용(가장 포괄적)"이 선택되어 있어 허용·차단 도메인 목록은 쓰지 않는 상태입니다. 게스트 셀프 서비스 등록은 "아니요", 외부 사용자 나가기 허용은 "예"입니다.
@@ -103,6 +108,7 @@ $ca = Invoke-AzRestMethod -Uri 'https://graph.microsoft.com/v1.0/identity/condit
 - 근거: [외부 협업 설정](https://learn.microsoft.com/entra/external-id/external-collaboration-settings-configure), [게스트 권한 제한](https://learn.microsoft.com/entra/identity/users/users-restrict-guest-permissions), [Governed collaboration](https://learn.microsoft.com/entra/architecture/5-secure-access-b2b), [Teams·SharePoint 외부 접근](https://learn.microsoft.com/entra/architecture/9-secure-access-teams-sharepoint)
 
 ### 2-6. 앱 동의
+
 - **GUI 경로**: Entra > 엔터프라이즈 앱 > 동의 및 권한 > 사용자 동의 설정 / 관리자 동의 설정
 - **조회**: 사용자 동의 = "Microsoft에서 동의 설정 관리(권장)", 관리자 동의 요청 워크플로 = 아니요, 검토자 0, 만료 30일 설정값.
 - **문제점**: 사용자가 승인할 수 없는 앱을 만나면 **관리자에게 요청할 통로가 없습니다.** 워크플로가 꺼져 있으면 사용자는 막히고 관리자는 요청을 알 수 없습니다.
@@ -110,6 +116,7 @@ $ca = Invoke-AzRestMethod -Uri 'https://graph.microsoft.com/v1.0/identity/condit
 - 근거: [사용자 동의 설정](https://learn.microsoft.com/entra/identity/enterprise-apps/configure-user-consent), [관리자 동의 워크플로](https://learn.microsoft.com/entra/identity/enterprise-apps/configure-admin-consent-workflow)
 
 ### 2-7. 액세스 검토·진단 설정
+
 - **조회**: 액세스 검토 정의 0, 진단 설정 "정의된 설정 없음". Guest 거버넌스 화면은 구독 연결이 필요하다는 안내가 나왔습니다.
 - **문제점**: 권한을 정기적으로 점검하는 장치와 로그를 보관·내보내는 장치가 모두 없습니다. 감사 로그는 포털에서 최근 기간만 보이므로 장기 보관은 진단 설정이 필요합니다(문서 일반 설명, 보존 기간 수치는 이번에 확인하지 못함).
 
@@ -118,11 +125,13 @@ $ca = Invoke-AzRestMethod -Uri 'https://graph.microsoft.com/v1.0/identity/condit
 
 
 ### 2-8. 권장 사항과 ID 보안 점수
+
 - **조회**: 권장 사항 7건(보안 7, 모범 사례 0) — 조건부 액세스의 내부 위험 조건(P2), 신뢰할 수 없는 앱 동의 허용 안 함, 둘 이상의 전역 관리자 지정, 하이브리드 암호 해시 동기화, 암호 만료 안 함, 최소 권한 관리자 역할, 셀프 서비스 암호 재설정. **ID 보안 점수 60.40%**.
 - **해석**: 점수는 위험 확률이 아니라 "권장 기능을 얼마나 쓰고 있는가"의 지표입니다. 점수 자체보다 중요도가 높은 항목부터 처리하라는 것이 문서의 안내입니다. 앱이 0개라 "사용하지 않는 앱·자격 증명 제거" 권장 사항은 나오지 않았습니다.
 - 근거: [Identity Secure Score](https://learn.microsoft.com/entra/identity/monitoring-health/concept-identity-secure-score), [Entra 권장 사항](https://learn.microsoft.com/entra/identity/monitoring-health/overview-recommendations)
 
 ### 2-9. 감사 로그로 변경 대조
+
 - **조회**: 최근 24시간 Entra 감사 로그에 변경 이벤트가 여럿: Azure RBAC 상승 액세스 2건(09:57 상승, 11:02 해제), 사용자 업데이트(부서 변경 2건), 그룹 업데이트 1건(13:03), 서비스 사용자 추가 4건(포털 첫 접속 때 자동 생성되는 것으로 추정).
 - **판독 — 주의**: 이 중 **제 변경 이력과 맞지 않는 후보**가 있습니다(13:03 그룹 업데이트, 서비스 사용자 추가 4건). 1:1 대조는 해당 작업자 확인이 필요하며, 서비스 사용자 추가는 자동 생성으로 **추정**일 뿐 확인된 사실이 아닙니다.
 - **교훈**: 변경 이력(8개 항목)을 쓰는 이유가 바로 이것입니다. 기록과 로그가 맞지 않으면 누가 했는지 모르는 변경이 됩니다.
@@ -144,10 +153,12 @@ $ca = Invoke-AzRestMethod -Uri 'https://graph.microsoft.com/v1.0/identity/condit
 - **그룹 만료**: 만료 정책 없음을 다시 확인했습니다(조회).
 
 ## 4. 이번 측정에서 배운 점
+
 - **기본값 그대로**가 위험 판독의 대부분입니다(그룹 생성, 게스트 초대, 앱 동의, 만료 없음).
 - "정책이 0개"를 "안전"으로 읽으면 안 됩니다. 비어 있다는 것은 통제가 없다는 뜻입니다.
 - 권한이 부족해 못 읽은 값은 **"문제 없음"이 아니라 "측정 불가"**로 적습니다.
 
 ## 5. 정리
+
 - 이 글의 모든 값은 읽기 전용 조회입니다. 설정은 하나도 바꾸지 않았습니다.
 - 비상 계정 생성과 조건부 액세스 전환은 보안 설정·계정 변경이라 이번 실습에서는 하지 않았습니다.

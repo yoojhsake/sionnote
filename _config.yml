@@ -73,7 +73,7 @@ defaults:
       share: false
       related: true
       toc: true
-      toc_sticky: false   # 목차는 본문 맨 위에 한 번만 표시(따라다니지 않음)
+      toc_sticky: false   # 목차는 왼쪽 사이드바(프로필 아래)에 표시한다. 위치는 _includes/sidebar-custom.html
       toc_label: "목차"
   - scope: { path: "_pages" }
     values:

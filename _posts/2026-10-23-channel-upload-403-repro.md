@@ -97,7 +97,9 @@ $c = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($p)) | ConvertF
 "SCP:   $($c.scp)"; "APPID: $($c.appid)"; "IDTYP: $($c.idtyp)"
 ```
 
-문서에 따르면 파일 업로드(`PUT .../content`)에는 Files.ReadWrite, Files.ReadWrite.All, Sites.ReadWrite.All 중 하나가 필요합니다(문서: driveItem 업로드). Group.ReadWrite.All은 하위 호환용으로만 지원되고(문서: Get filesFolder), 팀 사이트처럼 **그룹에 연결된 드라이브**는 이 범위로 열렸지만 비공개·공유 채널의 **별도 사이트 드라이브**는 열리지 않는 것으로 보입니다. 그래서 표준 채널만 성공하고 비공개·공유 채널은 쓰기·읽기 모두 403이 난 결과와 맞습니다.
+문서에 따르면 파일 업로드(`PUT .../content`)에는 Files.ReadWrite, Files.ReadWrite.All, Sites.ReadWrite.All 중 하나가 필요합니다(문서: driveItem 업로드). Group.ReadWrite.All은 하위 호환용으로만 지원되고(문서: Get filesFolder), 팀 사이트처럼 **그룹에 연결된 드라이브**는 이 범위로 열렸지만 비공개·공유 채널의 **별도 사이트 드라이브**는 열리지 않는 것으로 보입니다.
+
+그래서 표준 채널만 성공하고 비공개·공유 채널은 쓰기·읽기 모두 403이 난 결과와 맞습니다.
 
 **③ Files 권한이 있는 토큰으로 직접 확인하기 (10/23 16:46경, 실패)**: 원인을 확정하려면 Files.ReadWrite.All 범위 토큰이 필요해서 두 가지를 시도했습니다.
 
@@ -107,7 +109,9 @@ $c = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($p)) | ConvertF
 ![az login 장치 코드 로그인 530035 오류]({{ "/assets/images/2026/10/530035-azcli.png" | relative_url }})
 *그림 5. az login 장치 코드 로그인이 오류 530035로 막힌 화면. 10/23에는 Files.ReadWrite.All 범위를 붙인 명령으로 막혔고, 이 그림은 10/24 01:22경 선명하게 다시 찍은 것으로 범위 없이 `az login --use-device-code`만 실행했다(같은 앱 Microsoft Azure CLI, 같은 오류 코드 530035). 계정, 요청 ID, 접속 IP는 가렸다.*
 
-같은 530035가 Exchange PowerShell 로그인에서도 났으므로(관련 글: 530035 장치 코드 로그인), 이 테넌트는 포털 밖 클라이언트 로그인을 전반적으로 막고 있는 것으로 보입니다. 그래서 채널 403의 마지막 증명은 장치 코드 로그인을 쓰지 않는 방법으로 바꿨습니다(§7). 이번 시도로 바뀐 설정이나 권한은 없습니다(로그인이 실패해 동의도 부여되지 않았습니다). 같은 문제는 10/27에 Graph 탐색기(브라우저 로그인)로 우회해 확인했습니다(§7).
+같은 530035가 Exchange PowerShell 로그인에서도 났으므로(관련 글: 530035 장치 코드 로그인), 이 테넌트는 포털 밖 클라이언트 로그인을 전반적으로 막고 있는 것으로 보입니다.
+
+그래서 채널 403의 마지막 증명은 장치 코드 로그인을 쓰지 않는 방법으로 바꿨습니다(§7). 이번 시도로 바뀐 설정이나 권한은 없습니다(로그인이 실패해 동의도 부여되지 않았습니다). 같은 문제는 10/27에 Graph 탐색기(브라우저 로그인)로 우회해 확인했습니다(§7).
 
 ## 4. 해석
 

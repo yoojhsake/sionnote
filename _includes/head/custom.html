@@ -2,3 +2,18 @@
 <link rel="icon" type="image/png" sizes="32x32" href="{{ '/assets/images/favicon-32.png' | relative_url }}">
 <link rel="icon" type="image/png" sizes="192x192" href="{{ '/assets/images/favicon-192.png' | relative_url }}">
 <link rel="apple-touch-icon" sizes="180x180" href="{{ '/assets/images/apple-touch-icon.png' | relative_url }}">
+
+<!-- 본문 그림을 누르면 원본 크기로 새 탭에서 열린다(캡처 글자를 확대해서 볼 수 있게) -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.page__content img').forEach(function (img) {
+    var n = img.nextElementSibling;
+    if (n && n.tagName === 'EM') n.className = 'figcap';
+    if (img.closest('a')) return;
+    var a = document.createElement('a'); a.className = 'figlink';
+    a.href = img.currentSrc || img.src; a.target = '_blank'; a.rel = 'noopener';
+    a.title = '누르면 원본 크기로 열립니다';
+    img.parentNode.insertBefore(a, img); a.appendChild(img);
+  });
+});
+</script>

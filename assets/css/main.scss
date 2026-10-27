@@ -33,27 +33,67 @@ $body-size: 14px;
 .archive__item-excerpt { font-size: 0.9rem; }
 
 // 글 속 이미지와 표
-.page__content img { display: block; margin: 1em auto; border: 1px solid #e5e7eb; border-radius: 6px; max-width: 100%; height: auto; }
-.page__content table { font-size: 0.9em; }
-.page__content th, .page__content td { padding: 0.5em 0.7em; vertical-align: top; }
-.page__content img + em { display: block; text-align: center; font-size: 0.85em; color: #6b7280; margin: -0.4em 0 1.4em; font-style: normal; }
 
 
-// ---- 좌우 여백 줄이기 (v2.5) ----
-// 목차(TOC)를 오른쪽에 따라다니는 칸으로 두지 않고, 본문 맨 위에 한 번만 보이는 상자로 둔다.
-// 그러면 본문이 오른쪽 칸까지 넓게 쓰인다.
+// ---- 목차(TOC) 위치·크기 (v2.7) ----
+// 목차는 왼쪽 사이드바의 프로필(Sion's History) 아래에 둔다(_includes/sidebar-custom.html).
+// 본문 안의 목차 상자는 없애고(_layouts/single.html), 본문 오른쪽 칸을 비워 본문을 넓게 쓴다.
 @include breakpoint($large) {
   .page { padding-right: 0; }
-  .sidebar__right,
-  .sidebar__right.sticky {
-    position: static; float: none; width: auto;
-    margin: 0 0 1.2em; padding: 0; z-index: auto;
-  }
-  .sidebar__right .toc { width: 100%; }
-  .sidebar__right .toc__menu { column-count: 3; column-gap: 1.5em; padding: 0.3em 0.6em; }
-  .sidebar__right .toc__menu li { break-inside: avoid; }
 }
-// 글 본문과 이미지 사이 여백
+// 목차 글자 크기: 아래 $toc-size 숫자만 바꾸면 된다 (10pt = 약 13.3px)
+$toc-size: 10pt;
+.sidebar .toc--sidebar { margin-top: 1.2em; }
+.sidebar .toc--sidebar .nav__title,
+.sidebar .toc--sidebar .toc__menu,
+.sidebar .toc--sidebar .toc__menu li,
+.sidebar .toc--sidebar .toc__menu a {
+  font-size: $toc-size;
+  line-height: 1.5;
+}
+.sidebar .toc--sidebar .toc__menu a { padding: 0.3em 0.75em; }
 .page__inner-wrap { padding-left: 0.2em; padding-right: 0.2em; }
-.page__content img { margin: 0.6em auto; }
-.page__content table { width: 100%; display: table; }
+
+// ---- 읽기 쉬운 본문 (v2.7) ----
+// 한글은 단어 단위로 줄바꿈하고, 문단·목록 사이 간격을 일정하게 한다.
+.page__content { word-break: keep-all; overflow-wrap: break-word; }
+.page__content p { margin: 0 0 0.9em; }
+.page__content ul, .page__content ol { margin: 0.5em 0 1em; }
+.page__content li { margin: 0.3em 0; }
+.page__content li > ul, .page__content li > ol { margin: 0.2em 0 0.3em; }
+.page__content h2 { padding-bottom: 0.25em; border-bottom: 1px solid #e5e7eb; }
+// 너무 넓은 화면에서도 글줄이 길어지지 않게 문단·목록만 폭을 제한한다(표·그림은 제한 없음)
+.page__content > p, .page__content > ul, .page__content > ol { max-width: 75em; }
+// 맨 위 "근거 표기" 인용문은 연한 상자로
+.page__content blockquote { margin: 0 0 1.2em; padding: 0.6em 0.9em; border-left: 4px solid #94a3b8; background: #f8fafc; font-style: normal; font-size: 0.95em; color: #374151; max-width: 75em; }
+.page__content blockquote p { margin: 0; }
+
+// ---- 표: 여백 없이 내용 크기에 맞추기 (v2.7) ----
+// 칸 너비를 내용에 맞추고(전체 폭으로 늘리지 않음), 안쪽 여백을 줄인다.
+// 글이 많은 칸은 남는 폭 안에서 알아서 줄바꿈된다.
+.page__content table {
+  display: table; width: auto; max-width: 100%;
+  table-layout: auto; border-collapse: collapse;
+  font-size: 0.9em; margin: 0.6em 0 1.2em;
+}
+.page__content th, .page__content td {
+  padding: 0.3em 0.6em; vertical-align: top; text-align: left;
+  border: 1px solid #e5e7eb; line-height: 1.55;
+}
+.page__content thead th { background: #f1f5f9; font-weight: 600; white-space: nowrap; }
+.page__content tbody tr:nth-child(even) td { background: #fafafa; }
+// 첫 칸(구분·번호처럼 짧은 칸)은 줄바꿈하지 않는다
+.page__content td:first-child { white-space: nowrap; }
+
+// ---- 캡처 그림: 왼쪽 정렬, 설명은 그림 아래 왼쪽 (v2.7) ----
+.page__content img {
+  display: block; margin: 0.8em 0 0.3em; max-width: min(100%, 960px); height: auto;
+  border: 1px solid #e5e7eb; border-radius: 6px; cursor: zoom-in;
+}
+.page__content img + em, .page__content em.figcap {
+  display: block; margin: 0 0 1.5em; padding-left: 0.7em; max-width: 60em;
+  border-left: 3px solid #cbd5e1; font-style: normal; font-size: 0.85em;
+  line-height: 1.6; color: #4b5563; text-align: left;
+}
+.page__content a.figlink { display: block; width: fit-content; max-width: 100%; border-bottom: 0; }
+.page__content a.figlink:hover { opacity: 0.92; }

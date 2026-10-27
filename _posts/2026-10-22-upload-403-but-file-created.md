@@ -1,5 +1,5 @@
 ---
-title: "[트러블슈팅] 채널 업로드 응답은 403인데 파일이 만들어졌을 때"
+title: "[Troubleshooting] 채널 업로드 응답은 403인데 파일이 만들어졌을 때"
 date: 2026-10-22 10:20:00 +0900
 categories: [m365, troubleshooting]
 area: Teams·채널·파일

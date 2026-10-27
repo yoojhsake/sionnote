@@ -1,5 +1,5 @@
 ---
-title: "[트러블슈팅] Elevate access를 GUI로 끄지 못해 PowerShell로 끔"
+title: "[Troubleshooting] Elevate access를 GUI로 끄지 못해 PowerShell로 끔"
 date: 2026-10-23 22:20:00 +0900
 categories: [m365, troubleshooting]
 area: 로그인·권한

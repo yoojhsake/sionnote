@@ -1,10 +1,10 @@
 ---
-title: "[트러블슈팅] 같은 설정인데 화면 값과 PowerShell 값이 다르게 읽힘"
+title: "[Troubleshooting] 같은 설정인데 화면 값과 PowerShell 값이 다르게 읽힘"
 date: 2026-10-26 15:20:00 +0900
 categories: [m365, troubleshooting]
 area: Graph·Cloud Shell·스크립트
 seq: 6
-tags: [트러블슈팅, SharePoint, Get-SPOTenant, DefaultLinkPermission, 화면과 명령 차이]
+tags: [Troubleshooting, SharePoint, Get-SPOTenant, DefaultLinkPermission, 화면과 명령 차이]
 excerpt: "기본 링크 권한이 화면에서는 편집, Get-SPOTenant에서는 None으로 읽힐 때 하나로 단정하지 않고 둘 다 기록한 기록"
 toc: true
 ---

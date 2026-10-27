@@ -1,5 +1,5 @@
 ---
-title: "[트러블슈팅] 브라우저 파일 선택창을 쓸 수 없을 때"
+title: "[Troubleshooting] 브라우저 파일 선택창을 쓸 수 없을 때"
 date: 2026-10-22 10:10:00 +0900
 categories: [m365, troubleshooting]
 area: Teams·채널·파일

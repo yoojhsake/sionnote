@@ -1,10 +1,10 @@
 ---
-title: "[트러블슈팅] 직접 라이선스와 그룹 라이선스가 겹쳤을 때 어떻게 보이는가"
+title: "[Troubleshooting] 직접 라이선스와 그룹 라이선스가 겹쳤을 때 어떻게 보이는가"
 date: 2026-10-23 10:00:00 +0900
 categories: [m365, troubleshooting]
 area: 라이선스·그룹
 seq: 4
-tags: [트러블슈팅, 그룹 라이선스, 직접 할당, 동적 그룹, licenseAssignmentStates]
+tags: [Troubleshooting, 그룹 라이선스, 직접 할당, 동적 그룹, licenseAssignmentStates]
 excerpt: "이미 직접 E5를 가진 사용자가 같은 E5를 가진 동적 그룹에 들어갈 때의 상태를 읽은 기록. 2건 모두 Active, 원복 후 그룹 할당만 회수, 사용 수 20/25 유지"
 ---
 

@@ -1,8 +1,8 @@
 ---
-title: "[트러블슈팅] 상황별 대처 가이드 — 막혔을 때 무엇부터 나눠 볼까"
+title: "[Troubleshooting] 상황별 대처 가이드 — 막혔을 때 무엇부터 나눠 볼까"
 date: 2026-10-27 10:00:00 +0900
 categories: [m365, troubleshooting]
-tags: [트러블슈팅, 가이드, 목록]
+tags: [Troubleshooting, 가이드, 목록]
 excerpt: "막혔던 상황을 작업 영역별로 모은 목록. 상황마다 글이 따로 있고, 이 글은 어떤 순서로 나눠 볼지와 글 목록만 정리"
 ---
 

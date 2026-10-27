@@ -1,10 +1,10 @@
 ---
-title: "[트러블슈팅] $top=999를 줬는데 Graph가 100건만 돌려줌 — @odata.nextLink 페이징"
+title: "[Troubleshooting] $top=999를 줬는데 Graph가 100건만 돌려줌 — @odata.nextLink 페이징"
 date: 2026-10-26 14:40:00 +0900
 categories: [m365, troubleshooting]
 area: Graph·Cloud Shell·스크립트
 seq: 4
-tags: [트러블슈팅, Graph, 페이징, nextLink, 메시지 센터, PowerShell]
+tags: [Troubleshooting, Graph, 페이징, nextLink, 메시지 센터, PowerShell]
 excerpt: "메시지 센터 게시물 목록이 한 번에 100건만 올 때 nextLink를 끝까지 따라가 전체(5페이지)를 읽은 기록"
 toc: true
 ---

@@ -27,7 +27,7 @@ author_profile: true
 | [M365·Azure] | 운영 사전 점검·실측 기록 |
 | [IAM 개념 정리] | Entra ID·AD 개념, 설계 |
 | [실무 검증] | 직접 해본 실습과 결과 |
-| [트러블슈팅] | 막힌 지점, 원인, 해결 |
+| [Troubleshooting] | 막힌 지점, 원인, 해결 |
 | [자격증·학습] | AZ-900 이후 학습 로드맵 |
 
 ### 분류(Category)

@@ -1,5 +1,5 @@
 ---
-title: "[트러블슈팅] 관리 센터 숫자·사이트 목록과 Graph 채널 수가 다를 때"
+title: "[Troubleshooting] 관리 센터 숫자·사이트 목록과 Graph 채널 수가 다를 때"
 date: 2026-10-22 10:40:00 +0900
 categories: [m365, troubleshooting]
 area: Teams·채널·파일

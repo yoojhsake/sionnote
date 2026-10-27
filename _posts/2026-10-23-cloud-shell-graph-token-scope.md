@@ -1,5 +1,5 @@
 ---
-title: "[트러블슈팅] Cloud Shell 토큰으로 Graph를 호출하면 되는 것과 403이 나는 것이 갈림"
+title: "[Troubleshooting] Cloud Shell 토큰으로 Graph를 호출하면 되는 것과 403이 나는 것이 갈림"
 date: 2026-10-23 10:30:00 +0900
 categories: [m365, troubleshooting]
 area: Graph·Cloud Shell·스크립트

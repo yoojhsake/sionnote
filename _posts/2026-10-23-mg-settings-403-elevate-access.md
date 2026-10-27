@@ -1,5 +1,5 @@
 ---
-title: "[트러블슈팅] 관리 그룹 설정이 403 — Elevate access를 켜도 값이 안 읽힐 때 (토큰과 REST)"
+title: "[Troubleshooting] 관리 그룹 설정이 403 — Elevate access를 켜도 값이 안 읽힐 때 (토큰과 REST)"
 date: 2026-10-23 10:10:00 +0900
 categories: [m365, troubleshooting]
 area: 로그인·권한

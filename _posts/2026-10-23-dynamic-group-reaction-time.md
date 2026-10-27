@@ -1,10 +1,10 @@
 ---
-title: "[트러블슈팅] 동적 그룹 규칙이 얼마 만에 반응하는지 알 수 없다"
+title: "[Troubleshooting] 동적 그룹 규칙이 얼마 만에 반응하는지 알 수 없다"
 date: 2026-10-23 12:00:00 +0900
 categories: [m365, troubleshooting]
 area: 라이선스·그룹
 seq: 5
-tags: [트러블슈팅, 동적 그룹, 반응 시간, Graph, 감사 로그]
+tags: [Troubleshooting, 동적 그룹, 반응 시간, Graph, 감사 로그]
 excerpt: "부서 값을 바꾼 뒤 동적 그룹 구성원이 들어오고 나가기까지의 시간을 20초 간격 폴링과 감사 로그로 잰 기록. 들어올 때 9초, 나갈 때 5분 35초로 편차가 큼"
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: "[트러블슈팅] 채널 경로로 업로드하면 400 \"AAD 계정에서는 지원되지 않음\""
+title: "[Troubleshooting] 채널 경로로 업로드하면 400 \"AAD 계정에서는 지원되지 않음\""
 date: 2026-10-23 10:25:00 +0900
 categories: [m365, troubleshooting]
 area: Teams·채널·파일

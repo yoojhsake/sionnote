@@ -1,10 +1,10 @@
 ---
-title: "[트러블슈팅] 가이드가 안내한 메뉴가 화면에 없다"
+title: "[Troubleshooting] 가이드가 안내한 메뉴가 화면에 없다"
 date: 2026-10-22 09:10:00 +0900
 categories: [m365, troubleshooting]
 area: 라이선스·그룹
 seq: 1
-tags: [트러블슈팅, 라이선스, 가이드, 메뉴 경로, M365 관리 센터]
+tags: [Troubleshooting, 라이선스, 가이드, 메뉴 경로, M365 관리 센터]
 excerpt: "가이드의 '제품 상세 > 앱 탭'이 화면에 없을 때 사용자 선택 후 '앱 및 서비스 관리'로 실제 경로를 찾은 기록"
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: "[트러블슈팅] 관리자 OneDrive가 \"기본 문서 라이브러리를 찾을 수 없음\"으로 열리지 않을 때"
+title: "[Troubleshooting] 관리자 OneDrive가 \"기본 문서 라이브러리를 찾을 수 없음\"으로 열리지 않을 때"
 date: 2026-10-23 15:00:00 +0900
 categories: [m365, troubleshooting]
 area: Teams·채널·파일

@@ -1,5 +1,5 @@
 ---
-title: "[트러블슈팅] 루트 IAM에 경고가 뜨고, Elevate를 끈 뒤 루트 역할 목록이 열리지 않음"
+title: "[Troubleshooting] 루트 IAM에 경고가 뜨고, Elevate를 끈 뒤 루트 역할 목록이 열리지 않음"
 date: 2026-10-23 22:40:00 +0900
 categories: [m365, troubleshooting]
 area: 로그인·권한

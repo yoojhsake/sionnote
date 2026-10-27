@@ -1,10 +1,10 @@
 ---
-title: "[트러블슈팅] 문서의 예제 명령이 '모듈 없음'이거나 환경에 따라 접속되지 않음"
+title: "[Troubleshooting] 문서의 예제 명령이 '모듈 없음'이거나 환경에 따라 접속되지 않음"
 date: 2026-10-26 15:40:00 +0900
 categories: [m365, troubleshooting]
 area: Graph·Cloud Shell·스크립트
 seq: 7
-tags: [트러블슈팅, PowerShell, Microsoft Graph 모듈, Cloud Shell, AudienceNotSupported, Windows PowerShell 5.1]
+tags: [Troubleshooting, PowerShell, Microsoft Graph 모듈, Cloud Shell, AudienceNotSupported, Windows PowerShell 5.1]
 excerpt: "Graph 하위 모듈 누락, Cloud Shell 토큰으로 접속되지 않는 서비스 모듈, 서비스별 연결을 모듈 · 연결 · 권한 순서로 나눠 푼 기록"
 toc: true
 ---

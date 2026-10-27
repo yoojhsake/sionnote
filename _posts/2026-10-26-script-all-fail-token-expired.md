@@ -1,10 +1,10 @@
 ---
-title: "[트러블슈팅] 조회 스크립트 결과가 전부 실패로 나옴 — 토큰 만료와 오류 유형 구분"
+title: "[Troubleshooting] 조회 스크립트 결과가 전부 실패로 나옴 — 토큰 만료와 오류 유형 구분"
 date: 2026-10-26 14:20:00 +0900
 categories: [m365, troubleshooting]
 area: Graph·Cloud Shell·스크립트
 seq: 3
-tags: [트러블슈팅, PowerShell, Graph, 토큰 만료, Unauthorized, Forbidden, Connect-MgGraph]
+tags: [Troubleshooting, PowerShell, Graph, 토큰 만료, Unauthorized, Forbidden, Connect-MgGraph]
 excerpt: "여러 설정을 한 번에 읽는 스크립트가 전 항목 실패했을 때 공통 원인(토큰)부터 보고, 남은 실패 메시지를 유형별로 나눠 처리한 기록"
 toc: true
 ---

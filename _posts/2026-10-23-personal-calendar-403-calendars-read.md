@@ -1,5 +1,5 @@
 ---
-title: "[트러블슈팅] 개인 달력이 403일 때 — Calendars 범위와 일정 저장 위치"
+title: "[Troubleshooting] 개인 달력이 403일 때 — Calendars 범위와 일정 저장 위치"
 date: 2026-10-23 12:30:00 +0900
 categories: [m365, troubleshooting]
 area: Teams·채널·파일

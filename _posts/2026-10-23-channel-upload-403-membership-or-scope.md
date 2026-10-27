@@ -1,5 +1,5 @@
 ---
-title: "[트러블슈팅] 비공개·공유 채널 파일이 403 — 멤버십 문제인가, 토큰 범위 문제인가"
+title: "[Troubleshooting] 비공개·공유 채널 파일이 403 — 멤버십 문제인가, 토큰 범위 문제인가"
 date: 2026-10-23 10:20:00 +0900
 categories: [m365, troubleshooting]
 area: Teams·채널·파일

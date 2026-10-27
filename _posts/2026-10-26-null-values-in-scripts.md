@@ -1,10 +1,10 @@
 ---
-title: "[트러블슈팅] 빈 값(null) 때문에 스크립트 계산이 실패하거나 항목이 누락되고, 결과 표의 이름 열이 섞임"
+title: "[Troubleshooting] 빈 값(null) 때문에 스크립트 계산이 실패하거나 항목이 누락되고, 결과 표의 이름 열이 섞임"
 date: 2026-10-26 15:00:00 +0900
 categories: [m365, troubleshooting]
 area: Graph·Cloud Shell·스크립트
 seq: 5
-tags: [트러블슈팅, PowerShell, null, 날짜 계산, 결과 표, 앱 등록]
+tags: [Troubleshooting, PowerShell, null, 날짜 계산, 결과 표, 앱 등록]
 excerpt: "화면에서는 빈 칸이던 값을 스크립트가 계산하다 예외가 나거나 누락되는 경우와, 한 열이 두 개체를 가리켜 표가 헷갈리는 경우를 고친 기록"
 toc: true
 ---

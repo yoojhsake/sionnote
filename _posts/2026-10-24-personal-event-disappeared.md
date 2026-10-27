@@ -1,5 +1,5 @@
 ---
-title: "[트러블슈팅] 만들어 둔 개인 일정이 사라졌을 때"
+title: "[Troubleshooting] 만들어 둔 개인 일정이 사라졌을 때"
 date: 2026-10-24 01:30:00 +0900
 categories: [m365, troubleshooting]
 area: Teams·채널·파일

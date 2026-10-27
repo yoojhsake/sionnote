@@ -1,10 +1,10 @@
 ---
-title: "[트러블슈팅] 그룹 라이선스를 Entra에서 할당할 수 없다"
+title: "[Troubleshooting] 그룹 라이선스를 Entra에서 할당할 수 없다"
 date: 2026-10-22 09:27:00 +0900
 categories: [m365, troubleshooting]
 area: 라이선스·그룹
 seq: 3
-tags: [트러블슈팅, 그룹 라이선스, Entra, M365 관리 센터, 라이선스 할당]
+tags: [Troubleshooting, 그룹 라이선스, Entra, M365 관리 센터, 라이선스 할당]
 excerpt: "Entra 그룹의 라이선스 탭에 할당 버튼이 없을 때 M365 관리 센터에서 그룹을 대상으로 할당하는 방법과 필요 역할·제약"
 ---
 

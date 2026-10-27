@@ -1,10 +1,10 @@
 ---
-title: "[트러블슈팅] 관리 센터 화면이 로딩에서 멈추거나 \"프로비전 중\" 안내만 나옴"
+title: "[Troubleshooting] 관리 센터 화면이 로딩에서 멈추거나 \"프로비전 중\" 안내만 나옴"
 date: 2026-10-22 15:00:00 +0900
 categories: [m365, troubleshooting]
 area: 보고서·감사·청구
 seq: 3
-tags: [트러블슈팅, M365 Apps 관리 센터, 앱 인벤토리, Purview, DLP, 화면 정체, 확인 불가]
+tags: [Troubleshooting, M365 Apps 관리 센터, 앱 인벤토리, Purview, DLP, 화면 정체, 확인 불가]
 excerpt: "M365 Apps 관리 센터가 두 번 로딩에서 멈추고, 다시 열자 앱 인벤토리에 프로비전 안내만 나올 때 값과 도구 문제를 나눠 본 기록"
 ---
 

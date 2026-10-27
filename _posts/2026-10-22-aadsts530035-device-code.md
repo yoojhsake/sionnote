@@ -1,5 +1,5 @@
 ---
-title: "[트러블슈팅] Exchange Online 장치 코드 로그인이 AADSTS530035로 막힘"
+title: "[Troubleshooting] Exchange Online 장치 코드 로그인이 AADSTS530035로 막힘"
 date: 2026-10-22 10:10:00 +0900
 categories: [m365, troubleshooting]
 area: 로그인·권한

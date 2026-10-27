@@ -1,10 +1,10 @@
 ---
-title: "[트러블슈팅] 원복한 Planner 체크가 다시 해제돼 있다 — 감사 로그로 원인 좁히기"
+title: "[Troubleshooting] 원복한 Planner 체크가 다시 해제돼 있다 — 감사 로그로 원인 좁히기"
 date: 2026-10-22 10:40:00 +0900
 categories: [m365, troubleshooting]
 area: 라이선스·그룹
 seq: 2
-tags: [트러블슈팅, Planner, 서비스 플랜, 감사 로그, Change user license]
+tags: [Troubleshooting, Planner, 서비스 플랜, 감사 로그, Change user license]
 excerpt: "켜서 원복한 Planner가 나중에 다시 꺼져 보였을 때 Entra 감사 로그의 Change user license 기록으로 범위를 좁힌 과정. 원인은 확인 불가"
 ---
 

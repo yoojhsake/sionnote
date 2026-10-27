@@ -91,7 +91,7 @@ Get-AzRoleAssignment -Scope '/' -RoleDefinitionName 'User Access Administrator' 
 - **증상**: 같은 토큰으로 팀(그룹) 달력은 읽히는데 개인 달력은 403(`ErrorAccessDenied`)입니다.
 - **원인과 대처**: 토큰에 Calendars 읽기 범위가 없었습니다. Graph 탐색기에서 Calendars.Read를 동의하고 다시 조회하자 `GET /me/calendar`가 **200 OK**였고 달력 소유자(owner)가 사용자 계정으로 나왔습니다(조회, 10/27). 팀 달력의 소유자는 그룹 계정이었습니다.
 - **의미**: **팀 일정은 그룹 사서함, 개인 일정은 사용자 사서함의 달력**에 저장된다는 것을 달력 소유자 기준으로 확인했습니다. 사서함 내부의 물리 저장 위치와 개인 회의가 그 달력에 쌓이는 점은 문서 기준입니다.
-- 자세한 기록: [03 D3 Teams 저장 구조]({{ "/m365/readiness-d3-teams-storage/" | relative_url }})
+- 자세한 기록: [03 D3 Teams 저장 구조]({{ "/m365/d3-teams-storage/" | relative_url }})
 
 ![내 달력 조회 결과, 소유자는 사용자 계정]({{ "/assets/images/2026/10/m22-1-me-calendar-owner-200.png" | relative_url }})
 *그림 4. 캘린더 읽기 범위 동의 후 `GET /me/calendar` 응답(200 OK). owner가 사용자 계정이다. 사용자 이름·주소와 식별자는 가렸다.*
@@ -131,7 +131,7 @@ Get-AzRoleAssignment -Scope '/' -RoleDefinitionName 'User Access Administrator' 
 - **측정 결과(조회)**: 들어올 때는 두 번 모두 약 20초 안에(2차는 감사 로그 기준 9초) 반영됐고, 나갈 때는 44초 이하에서 **5분 35초**까지 편차가 컸습니다.
 - **대처**: 운영에서는 "즉시"라고 가정하지 않고 변경 후 **몇 분 기다린 뒤** 확인합니다. 정확한 시각은 Entra 감사 로그(Update user → Add/Remove member → 그룹 라이선스 변경)로 확인합니다. 기준을 "1분 안쪽"으로 잡으면 부족합니다.
 - 한계: 각 방향 2회 측정이고 규모가 작은 테넌트라 큰 환경에서는 다를 수 있습니다.
-- 자세한 기록: [02 D2 Identity 구조]({{ "/m365/readiness-d2-identity-groups/" | relative_url }}) 문제 3
+- 자세한 기록: [02 D2 Identity 구조]({{ "/m365/d2-identity-groups/" | relative_url }}) 문제 3
 
 ![Entra 감사 로그: 부서 변경, 그룹 가입·제거, 라이선스 변경]({{ "/assets/images/2026/10/m02-dyn-audit.png" | relative_url }})
 *그림 8. 부서 입력 → 그룹 가입 → 부서 비움 → 그룹 제거 → 그룹 라이선스 회수가 시각순으로 남아 있다.*
@@ -141,14 +141,14 @@ Get-AzRoleAssignment -Scope '/' -RoleDefinitionName 'User Access Administrator' 
 - **증상**: 오전에 OneDrive를 열면 "기본 문서 라이브러리를 찾을 수 없음" 오류가 났고, Graph `/me/drive`도 403이었습니다.
 - **대처와 결과**: 오후에 같은 화면을 다시 열자 정상으로 열렸고 My files에 Meetings, Microsoft Copilot Chat Files, Recordings 폴더가 있었습니다(조회). 처음에는 "OneDrive가 없어서"라고 추정했다가 **정정**했습니다.
 - **판단 요령**: 403을 "권한 없음"과 "대상이 없음"으로 나눠서 보고, 같은 화면을 시간을 두고 다시 열어 확인합니다. 오류가 사라진 이유는 확인 불가입니다.
-- 자세한 기록: [03 D3 Teams 저장 구조]({{ "/m365/readiness-d3-teams-storage/" | relative_url }}) 6-3
+- 자세한 기록: [03 D3 Teams 저장 구조]({{ "/m365/d3-teams-storage/" | relative_url }}) 6-3
 
 ### 9. 만들어 둔 개인 일정이 사라졌을 때
 
 - **증상**: 10/28에 넣어 둔 개인 일정이 Outlook 웹에서 보이지 않았고, 검색(`zz-test`)도 0건, 월 보기도 비어 있었습니다.
 - **확인한 것**: 주·월 보기와 검색을 해 봤고, 필터는 "예약"만 꺼져 있어 원인이 아니었습니다. 이 일정을 지운 작업은 한 적이 없습니다.
 - **대처**: 원인은 **확인 불가**라서 같은 이름·같은 시각으로 GUI에서 다시 만들고(Outlook 웹 → 캘린더 → 새 이벤트 → 저장) 그 경위를 글에 남겼습니다. 사라진 원인을 모르는 채 "원래 있었다"고 쓰지 않았습니다.
-- 자세한 기록: [03 D3 Teams 저장 구조]({{ "/m365/readiness-d3-teams-storage/" | relative_url }})
+- 자세한 기록: [03 D3 Teams 저장 구조]({{ "/m365/d3-teams-storage/" | relative_url }})
 
 ### 10. 사용 현황 보고서가 비어 있을 때 (`UnknownTenantId`)
 

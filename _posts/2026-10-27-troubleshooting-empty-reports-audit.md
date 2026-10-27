@@ -138,4 +138,4 @@ Enable-OrganizationCustomization
 | 조회 | Graph 보고서 404 `UnknownTenantId` | 10/26, 10/27 10:29, 10/27 19:17 |
 | 조회 | 감사 로그 켜기 4회 거부 | 10/26 22:33~23:02, 내 PC PowerShell |
 
-관련 글: [10 실측 ④ Purview·Azure 거버넌스]({{ "/m365/readiness-measure-purview-azure/" | relative_url }}), [상황별 대처 가이드]({{ "/m365/troubleshooting/troubleshooting-playbook/" | relative_url }})
+관련 글: [10 실측 ④ Purview·Azure 거버넌스]({{ "/m365/measure-purview-azure/" | relative_url }}), [상황별 대처 가이드]({{ "/m365/troubleshooting/troubleshooting-playbook/" | relative_url }})

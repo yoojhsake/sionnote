@@ -11,7 +11,7 @@ excerpt: "10/19에 HTTP 403으로 못 읽은 관리 그룹 설정을 Elevate acc
 ## 1. 증상
 
 - 10/19: 관리 그룹의 계층 보호 설정을 REST로 읽으면 HTTP 403(settings/read 권한 없음). 현재 값을 알 수 없었습니다.
-- 10/22: Elevate access를 켜서 루트 범위 권한은 확인했지만([D4 글]({{ "/m365/readiness-d4-azure-structure/" | relative_url }})), 관리 그룹 설정 값은 기록하지 못했습니다.
+- 10/22: Elevate access를 켜서 루트 범위 권한은 확인했지만([D4 글]({{ "/m365/d4-azure-structure/" | relative_url }})), 관리 그룹 설정 값은 기록하지 못했습니다.
 
 ## 2. 원인 추적
 

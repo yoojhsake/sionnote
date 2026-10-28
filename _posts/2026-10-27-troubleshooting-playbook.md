@@ -69,6 +69,9 @@ excerpt: "막혔던 상황을 작업 영역별로 모은 목록. 상황마다 �
 | [빈 값(null) 때문에 스크립트 계산이 실패하거나 항목이 누락되고, 결과 표의 이름 열이 섞임]({{ "/m365/troubleshooting/null-values-in-scripts/" | relative_url }}) | 화면에서는 빈 칸이던 값을 스크립트가 계산하다 예외가 나거나 누락되는 경우와, 한 열이 두 개체를 가리켜 표가 헷갈리는 경우를 고친 기록 |
 | [같은 설정인데 화면 값과 PowerShell 값이 다르게 읽힘]({{ "/m365/troubleshooting/screen-vs-command-value-mismatch/" | relative_url }}) | 기본 링크 권한이 화면에서는 편집, Get-SPOTenant에서는 None으로 읽힐 때 하나로 단정하지 않고 둘 다 기록한 기록 |
 | [문서의 예제 명령이 '모듈 없음'이거나 환경에 따라 접속되지 않음]({{ "/m365/troubleshooting/powershell-module-not-found/" | relative_url }}) | Graph 하위 모듈 누락, Cloud Shell 토큰으로 접속되지 않는 서비스 모듈, 서비스별 연결을 모듈 · 연결 · 권한 순서로 나눠 푼 기록 |
+| [회사 PC에서 모듈이 '정책에 막힘'으로 불러와지지 않을 때 — 위치와 PowerShell 버전을 나눠 점검]({{ "/m365/troubleshooting/company-pc-module-blocked/" | relative_url }}) | 설치는 됐는데 Import-Module이 막히는 PC에서 모듈 위치·PowerShell 버전별로 불러오기를 시험해 실행 가능한 조합을 찾은 기록 |
+| [같은 세션에서 Graph 다음 Exchange 모듈을 불러오면 DLL이 충돌함 — 묶음마다 새 세션으로 분리]({{ "/m365/troubleshooting/module-dll-conflict-same-session/" | relative_url }}) | 서비스별 스크립트를 한 창에서 이어 실행하면 어셈블리 충돌이 나는 문제를, 묶음마다 새 pwsh 세션을 열어 피한 기록 |
+| [이미 접속된 세션을 재사용하는 스크립트가 다른 테넌트를 잴 수 있음 — 테넌트 ID로 접속하고 확인한 뒤 실행]({{ "/m365/troubleshooting/script-reuses-existing-session/" | relative_url }}) | 다른 사람이 만든 조회 스크립트가 기존 접속을 그대로 쓸 때, 엉뚱한 테넌트 값이 결과에 섞이지 않도록 접속과 확인을 앞에 둔 기록 |
 
 ### 보고서·감사·청구
 
@@ -77,5 +80,19 @@ excerpt: "막혔던 상황을 작업 영역별로 모은 목록. 상황마다 �
 | [사용 현황 보고서가 '데이터 없음'이고 Graph는 404 UnknownTenantId]({{ "/m365/troubleshooting/usage-report-no-data/" | relative_url }}) | 활동 보고서가 비어 있을 때 권한 오류(403)와 데이터 부재(404)를 나눠 보고, 시각을 달리해 반복 확인한 기록 |
 | [청구 범위와 청구 역할이 보이지 않음 — 청구 범위 목록이 0건]({{ "/m365/troubleshooting/billing-scope-not-visible/" | relative_url }}) | Azure 비용 관리 + 청구에서 청구 범위가 0건이라 청구 계정 유형과 청구 역할을 읽지 못했을 때, 어디까지 확인하고 무엇을 하지 않았는지 정리한 기록 |
 | [관리 센터 화면이 로딩에서 멈추거나 "프로비전 중" 안내만 나옴]({{ "/m365/troubleshooting/admin-center-loading-stuck/" | relative_url }}) | M365 Apps 관리 센터가 두 번 로딩에서 멈추고, 다시 열자 앱 인벤토리에 프로비전 안내만 나올 때 값과 도구 문제를 나눠 본 기록 |
+
+### 화면·메뉴 확인
+
+| 상황 | 한 줄 요약 |
+|---|---|
+| [화면 자동 조작에서 '메뉴를 못 찾음'이 나올 때 — 정말 없는 건지, 이름이 다른 건지]({{ "/m365/troubleshooting/menu-not-found-automation/" | relative_url }}) | 자동 점검이 여러 항목에서 메뉴를 못 찾았다고 했을 때, 실제 포털에서 하나씩 열어 보고 '없음'과 '이름 다름'과 '조작 실패'로 나눈 기록 |
+| [관리 센터 직접 주소를 열었더니 화면이 비어 있음 — 메뉴를 거쳐 실제 주소 찾기]({{ "/m365/troubleshooting/admin-center-direct-url-blank/" | relative_url }}) | 기억한 해시 주소를 열면 왼쪽 메뉴만 보이고 본문이 비던 상황에서, 메뉴를 거쳐 실제 주소를 확인한 기록 |
+
+### 측정값 해석
+
+| 상황 | 한 줄 요약 |
+|---|---|
+| [측정값이 '원래 설정'이 아니라 이전 변경 시험에서 바꾼 값이었음 — 잔여 값 구분과 원복]({{ "/m365/troubleshooting/leftover-test-values/" | relative_url }}) | 조회 결과가 이전 변경 시험의 시험용 값과 같아서 원래 설정으로 결론 내릴 수 없던 상황에서, 값을 구분하고 되돌린 뒤 다시 재는 방법 |
+| [숫자가 0이라고 모두 '문제없음'은 아님 — 실제 0건과 '데이터·평가 자체가 없음' 구분]({{ "/m365/troubleshooting/zero-vs-no-data/" | relative_url }}) | 화면에 0이 나와도 '조회해 보니 0건'인 경우와 '평가나 수집 자체가 아직 없는' 경우가 다른 상황에서, 둘을 나누는 기준 |
 
 작업 순서대로 읽으려면 상단 메뉴의 Category에서 "준비 → 구조 이해 실습 → 운영 설정 실측" 순서로 봅니다.

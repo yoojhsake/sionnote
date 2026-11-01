@@ -1,10 +1,20 @@
 {%- comment -%}
   목차(TOC)를 왼쪽 사이드바의 프로필(Sion's History) 아래에 표시한다.
   글(toc: true)에서만 나타나고, 본문 맨 위에는 따로 표시하지 않는다(_layouts/single.html).
+  v4.0: 목차를 접을 수 있게 했다. 넓은 화면(PC)에서는 펼친 상태, 좁은 화면(휴대폰)에서는 접힌 상태로 시작해
+  본문이 바로 보이게 한다. 목차 제목을 누르면 펼치고 접는다.
 {%- endcomment -%}
 {% if page.toc %}
 <nav class="toc toc--sidebar" aria-label="Table of contents">
-  <header><h4 class="nav__title"><i class="fas fa-{{ page.toc_icon | default: 'file-alt' }}"></i> {{ page.toc_label | default: "목차" }}</h4></header>
-  {% include toc.html sanitize=true html=content h_min=1 h_max=3 class="toc__menu" skip_no_ids=true %}
+  <details class="toc-fold" open>
+    <summary><h4 class="nav__title"><i class="fas fa-{{ page.toc_icon | default: 'file-alt' }}"></i> {{ page.toc_label | default: "목차" }}</h4></summary>
+    {% include toc.html sanitize=true html=content h_min=1 h_max=3 class="toc__menu" skip_no_ids=true %}
+  </details>
 </nav>
+<script>
+  (function () {
+    var d = document.querySelector('.toc--sidebar .toc-fold');
+    if (d && window.matchMedia('(max-width: 63.9375em)').matches) d.removeAttribute('open');
+  })();
+</script>
 {% endif %}

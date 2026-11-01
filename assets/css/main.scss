@@ -115,3 +115,30 @@ $toc-size: 10pt;
 .pagination--pager:first-child { border-radius: 4px 0 0 4px; }
 .pagination--pager:last-child { border-radius: 0 4px 4px 0; margin-left: -1px; }
 .pagination--pager:only-child { border-radius: 4px; }
+
+// ---- 가독성 개선 (v4.0) ----
+// 1) 본문 한 줄 길이 제한: 넓은 화면에서 글줄이 너무 길면 읽다가 줄을 놓친다. 본문 칸을 약 50rem(800px)로 제한한다.
+.page__inner-wrap { max-width: 50rem; }
+.page__content > p, .page__content > ul, .page__content > ol, .page__content blockquote { max-width: none; }
+// 2) 문단·제목 간격: 섹션 사이를 조금 더 띄워 덩어리가 보이게 한다.
+.page__content h2 { margin-top: 2.2em; }
+.page__content h3 { margin-top: 1.8em; margin-bottom: 0.6em; }
+.page__content p { margin-bottom: 1em; }
+// 3) 접기(<details>): 근거 자료·원자료·긴 스크립트를 접어 두는 상자
+.page__content details {
+  margin: 0.6em 0 1.2em; padding: 0.5em 0.9em; border: 1px solid #e5e7eb; border-radius: 6px; background: #fafafa;
+}
+.page__content details > summary { cursor: pointer; font-weight: 600; color: #374151; font-size: 0.95em; }
+.page__content details[open] > summary { margin-bottom: 0.6em; }
+// 4) 좁은 화면: 표가 화면 밖으로 밀어내지 않게 표 안에서만 가로로 넘긴다.
+@media (max-width: 63.9375em) {
+  .page__content table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .page__content td:first-child { white-space: normal; min-width: 5em; }
+  .page__content thead th { white-space: normal; }
+  .page__content pre { font-size: 0.8em; }
+}
+// 5) 목차: 좁은 화면에서는 접힌 상태로 시작(본문을 바로 보이게), 넓은 화면에서는 펼친 상태
+.sidebar .toc-fold > summary { list-style: none; cursor: pointer; }
+.sidebar .toc-fold > summary::-webkit-details-marker { display: none; }
+.sidebar .toc-fold > summary .nav__title::after { content: " ▾"; font-size: 0.85em; }
+.sidebar .toc-fold:not([open]) > summary .nav__title::after { content: " ▸"; }

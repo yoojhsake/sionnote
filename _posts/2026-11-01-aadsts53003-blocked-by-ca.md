@@ -1,0 +1,82 @@
+---
+title: "[Troubleshooting] AADSTS53003 — 조건부 액세스 정책 때문에 접근이 차단될 때"
+date: 2026-11-01 09:03:00 +0900
+categories: [iam, troubleshooting]
+area: 로그인·권한
+seq: 3
+tags: [Troubleshooting, Entra ID, 조건부 액세스, AADSTS53003, What If, 로그인 로그, 보고서 전용]
+excerpt: "어떤 정책이 왜 막았는지 로그인 로그의 조건부 액세스 탭, 정책 세부 정보, What If 도구로 찾고, 서비스 종속성처럼 헷갈리는 경우까지 정리한 대처 가이드"
+---
+
+> Microsoft Learn 공식 문서(2026-11-01 확인)를 기준으로 쓴 대처 가이드입니다. 특정 테넌트에서 재현한 기록은 아닙니다. 개념은 [Entra ID 핵심 개념 — 접근 제어 편]({{ "/iam/entra-id-access-control/" | relative_url }})을 함께 보세요. 오류 번호와 HTTP 상태 코드가 낯설면 [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }})을 먼저 보세요.
+
+## 요약
+
+- **증상**: "이 리소스에 액세스할 수 없습니다" 화면, 오류 코드 53003(BlockedByConditionalAccess)
+- **먼저 볼 곳**: 로그인 로그 → 해당 항목 → Conditional Access 탭에서 결과가 Failure인 정책
+- **원인 찾기**: 정책 옆 …(세부 정보)에서 어떤 조건이 맞았는지 확인. 재현이 어려우면 What If 도구
+- **흔한 함정**: 사용자는 Teams만 열었는데 SharePoint 정책에 걸림(서비스 종속성·Audience)
+- **대처**: 의도한 차단이면 정상 동작 안내. 의도하지 않았으면 정책 범위 수정 → 보고서 전용으로 먼저 검증
+
+---
+
+## 전체 내용
+
+### 1. 증상
+
+사용자가 앱에 로그인하자 "이 리소스에 액세스할 수 없습니다"가 나옵니다. **추가 정보(More details)**를 펼치면 오류 코드 53003, 요청 ID, 상관 관계 ID(Correlation ID), 시각이 보입니다. 이 값들을 받아 두면 로그를 찾기 쉽습니다.
+
+비슷한 조건부 액세스 계열 코드도 함께 알아 둡니다.
+
+| 코드 | 이름(문서) | 뜻 |
+|---|---|---|
+| **53003** | BlockedByConditionalAccess | 정책이 **차단**함 |
+| 53000 | DeviceNotCompliant | **준수 기기**가 필요한데 기기가 준수 상태가 아님 |
+| 53001 | DeviceNotDomainJoined | **도메인(하이브리드) 조인 기기**가 필요함 |
+| 53002 | ApplicationUsedIsNotAnApprovedApp | 승인된 앱이 아님 |
+| 530035 | BlockedBySecurityDefaults | 조건부 액세스가 아니라 **보안 기본값**이 차단함 → [별도 사례 글]({{ "/m365/troubleshooting/aadsts530035-device-code/" | relative_url }}) |
+
+### 2. 먼저 확인할 것 — 어떤 정책이 막았나
+
+1. Entra ID > Monitoring & health > Sign-in logs로 이동합니다(최소 Reports Reader 역할).
+2. 필터에 **Correlation ID**(사용자가 알려 준 값) 또는 사용자 이름·시간을 넣습니다. Conditional Access = Failure 필터도 유용합니다.
+3. 해당 로그인을 열고 **Conditional Access** 탭을 봅니다. 결과가 **Failure**인 정책이 막은 정책입니다.
+4. 정책 줄 오른쪽 **…**을 누르면 **정책 세부 정보**가 나옵니다. 왼쪽은 로그인 때 수집된 정보, 오른쪽은 그 정보가 정책 조건에 맞았는지입니다. 조건이 모두 맞을 때만 정책이 적용됩니다.
+5. 그래도 모르겠으면 Basic info > Troubleshoot Event(로그인 진단)를 실행합니다.
+
+### 3. 재현 없이 미리 확인 — What If 도구
+
+- 위치: Entra ID > Conditional Access > Policies > What If
+- 필수 입력: 사용자(또는 워크로드 ID), 대상 리소스, 기기 플랫폼, 클라이언트 앱. 나머지는 비우면 "없음"으로 계산됩니다.
+- 결과: **적용되는 정책**(필요한 허용·세션 제어 포함)과 **적용되지 않는 정책**(처음으로 맞지 않은 조건이 이유로 표시).
+- 주의: What If는 **서비스 종속성은 계산하지 않습니다.** 예를 들어 Teams를 테스트해도 Exchange Online에 걸린 정책은 결과에 안 나옵니다.
+
+**예시 — 해외 출장자가 Teams에서 차단됨**
+
+"허용 국가 외 차단" 정책이 있는 회사에서, 출장 중인 직원이 Teams 로그인 때 53003을 받습니다. 로그인 로그의 Conditional Access 탭에 위치 차단 정책이 Failure로 찍혀 있고, 세부 정보에서 위치 조건이 맞았다고 나옵니다. 출장이 승인된 경우라면 **정책을 끄지 않고**, 출장자 그룹을 기간 한정으로 제외하거나 출장 국가를 명명된 위치에 잠시 추가합니다. 출장이 끝나면 원래대로 되돌립니다.
+
+### 4. 헷갈리는 경우 — 서비스 종속성과 Audience
+
+사용자는 Teams 하나에 로그인했다고 생각하지만, 실제로는 Teams 채팅, Outlook 일정, SharePoint 파일 등 **여러 리소스**를 요청합니다. 그래서 SharePoint에만 걸어 둔 정책 때문에 Teams 사용이 막힐 수 있습니다.
+
+- 로그인 로그에서 정책을 선택하면 **Audience**(이번 로그인이 요청한 리소스 목록)가 보입니다. 그중 하나가 정책 대상이면 정책이 적용됩니다.
+- Azure 포털처럼 앱은 Azure portal인데 리소스는 Azure Resource Manager로 찍히는 경우도 있습니다. 정책을 만들 때 관련 앱과 리소스를 함께 대상으로 잡아야 합니다.
+
+### 5. 대처
+
+- **의도한 차단**: 사용자에게 이유와 정상 경로(회사 기기 사용, 회사 네트워크 등)를 안내
+- **정책 범위가 너무 넓음**: 대상 사용자·앱·조건을 좁힘. 수정본은 먼저 보고서 전용(Report-only)으로 영향 확인
+- **관리자까지 막힘**: [조건부 액세스 실수로 관리자가 잠겼을 때]({{ "/iam/troubleshooting/ca-lockout-emergency-access/" | relative_url }})의 긴급 액세스 계정 절차
+
+### 6. 예방
+
+- 새 정책은 항상 **보고서 전용 → 로그 확인 → 켜기** 순서로 배포합니다.
+- 정책 이름에 목적·대상·담당 팀을 넣어 두면, 로그에서 정책 이름만 보고도 누구에게 물어볼지 알 수 있습니다(문서 권장).
+- **보호된 작업(Protected actions)**을 켜면, 조건부 액세스 정책을 만들거나 바꾸거나 지울 때 추가 인증을 요구할 수 있습니다.
+
+## 근거 자료
+
+- 53000~53004, 530035 정의: [Microsoft Entra authentication and authorization error codes](https://learn.microsoft.com/entra/identity-platform/reference-error-codes)
+- 로그인 로그 조건부 액세스 탭, 정책 세부 정보, 서비스 종속성, Audience: [Troubleshoot sign-in problems with Conditional Access](https://learn.microsoft.com/entra/identity/conditional-access/troubleshoot-conditional-access)
+- What If 도구 위치·입력·한계: [Troubleshoot Conditional Access with the What If tool](https://learn.microsoft.com/entra/identity/conditional-access/what-if-tool)
+- 정책 이름 규칙, 보호된 작업, 문제 해결 때 모을 정보: [Plan a Conditional Access deployment](https://learn.microsoft.com/entra/identity/conditional-access/plan-conditional-access)

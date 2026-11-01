@@ -12,12 +12,11 @@ excerpt: "오전엔 '기본 문서 라이브러리를 찾을 수 없음'과 403,
 
 ## 요약
 
-- 관리자 OneDrive를 열면 "기본 문서 라이브러리를 찾을 수 없음" 오류. Graph `/me/drive`도 HTTP 403
-- 오류가 사라진 이유는 **확인 불가**(프로비저닝 지연으로 추정). 403은 "대상이 없음"이 아니라 토큰에 Files 범위가 없는 쪽으로 보임
-- 바로 단정하지 않고 시간을 두고 같은 화면을 다시 열어 확인
-- 오후에 OneDrive 홈과 My files가 정상으로 열림. Meetings, Microsoft Copilot Chat Files, Recordings 폴더가 있고 모두 0개
+- OneDrive는 실제로 있었고 Graph 403은 토큰의 Files 범위 부족으로 보임
+- 403은 권한 없음과 대상 없음을 나누고, 시간을 두고 다시 열어 확인하면 됨
+- 오전 오류가 사라진 이유는 확인 불가
 
-> 근거 표기: 조회 = 이 테넌트에서 직접 읽은 값, 문서 = Microsoft Learn, 확인 불가 = 시도했지만 확인하지 못한 값(방법과 사유 병기). 테넌트 ID, 도메인, 계정, 사용자 이름 등 비공개 정보는 가리거나 게시하지 않았습니다.
+> 근거: 조회는 이 테넌트에서 직접 읽은 값, 문서는 Microsoft Learn입니다. 비공개 정보는 가렸습니다.
 
 ---
 
@@ -25,25 +24,12 @@ excerpt: "오전엔 '기본 문서 라이브러리를 찾을 수 없음'과 403,
 
 ### 1. 증상
 
-회의 녹화와 1:1 채팅 파일이 저장되는 위치를 확인하려고 관리자 OneDrive를 열었습니다. 오전에는 "기본 문서 라이브러리를 찾을 수 없음" 오류가 나서 열리지 않았습니다. 같은 시각에 Cloud Shell에서 Graph로 `/me/drive`를 읽었을 때도 HTTP 403이었습니다.
+- 관리자 OneDrive를 열자 오전에는 "기본 문서 라이브러리를 찾을 수 없음", 같은 시각 Graph `/me/drive`는 HTTP 403이었습니다.
 
-처음에는 이 403을 "OneDrive가 없어서"라고 추정했습니다.
+### 2. 원인 및 분석
 
-### 2. 원인과 해결
-
-시간을 두고 다시 열자 오후에는 정상으로 열렸습니다. 오류가 사라진 이유는 확인 불가이고, 프로비저닝 지연으로 추정할 뿐입니다.
-
-OneDrive가 존재하니 `/me/drive`의 403을 "OneDrive가 없어서"로 본 처음 추정은 맞지 않았습니다. 정정하면, 이 403은 "대상이 없음"이 아니라 토큰에 Files 범위가 없는 쪽으로 읽는 것이 맞아 보입니다. 채널 전용 사이트의 파일 목록이 Graph 탐색기에서 Files.Read.All, Sites.Read.All을 동의하자 200으로 열렸던 것([비공개·공유 채널 파일 403]({{ "/m365/troubleshooting/channel-upload-403-membership-or-scope/" | relative_url }}))이 같은 원인으로 보는 근거입니다.
-
-대처는 오류 화면에서 바로 "없다"고 결론 내지 않고 시간을 두고 다시 여는 것이었습니다. 변경한 것은 없어 원복할 것도 없습니다(조회만 했습니다).
-
-### 3. 이번 일로 정한 기준
-
-403은 **"권한 없음"과 "대상이 없음"으로 나눠서** 봅니다. 대상이 없다는 결론은 화면에서 존재를 확인한 뒤에만 내립니다.
-
-같은 화면은 시간을 두고 다시 열어 확인합니다. 오류가 사라진 이유를 모를 때는 모른다고 기록합니다.
-
-### 4. 확인 과정
+- 오전 오류 / 오후 정상(Recordings 등 폴더 3개, 모두 0개)
+- OneDrive가 있으니 403은 "대상 없음"이 아니라 토큰의 Files 범위 부족으로 보입니다. 같은 원인의 채널 사이트 파일은 Files.Read.All, Sites.Read.All 동의 후 200이었습니다([비공개·공유 채널 파일 403]({{ "/m365/troubleshooting/channel-upload-403-membership-or-scope/" | relative_url }})).
 
 <details markdown="1">
 <summary>확인 과정 자세히 보기 (그림 1장)</summary>
@@ -80,12 +66,22 @@ OneDrive가 존재하니 `/me/drive`의 403을 "OneDrive가 없어서"로 본 �
 
 </details>
 
-### 5. 관련 글
+### 3. 결론
 
-- [Teams 저장 구조: 채널 유형별 파일·일정 위치]({{ "/m365/d3-teams-storage/" | relative_url }})
-- [Cloud Shell에서 Graph 호출: 되는 호출과 안 되는 호출]({{ "/m365/troubleshooting/cloud-shell-graph-token-scope/" | relative_url }})
+토큰에 Files 범위 없음(추정) → `/me/drive` 403 → OneDrive는 실제로 있음
 
-### 6. 근거 자료
+처음 추정("OneDrive가 없어서")은 틀렸습니다. 조회만 해서 원복할 것은 없습니다.
+
+확인 불가: 동의 후 `/me/drive` 결과, 오전 오류가 사라진 이유(프로비저닝 지연 추정), 녹화·채팅 파일의 실제 저장(시도·사유는 확인 과정에).
+
+### 4. 권고방안
+
+1. 403은 "권한 없음"과 "대상 없음"으로 나누고, "대상 없음"은 화면에서 존재를 확인한 뒤에만 결론 냅니다.
+2. 오류 화면은 시간을 두고 다시 열고, 이유를 모르면 모른다고 기록합니다.
+
+관련 글: [Teams 저장 구조: 채널 유형별 파일·일정 위치]({{ "/m365/d3-teams-storage/" | relative_url }}) · [Cloud Shell에서 Graph 호출: 되는 호출과 안 되는 호출]({{ "/m365/troubleshooting/cloud-shell-graph-token-scope/" | relative_url }})
+
+### 근거 자료
 
 <details markdown="1">
 <summary>근거 자료 펼쳐 보기 (5건)</summary>
@@ -99,6 +95,6 @@ OneDrive가 존재하니 `/me/drive`의 403을 "OneDrive가 없어서"로 본 �
 - **문서**: 1:1·회의 채팅과 녹화의 저장 위치
     - 출처: [Finding content in Microsoft Teams in eDiscovery](https://learn.microsoft.com/purview/edisc-search-teams#where-teams-content-is-stored)
 - **확인 불가**: 동의 후 `/me/drive` 결과 / 오류가 사라진 이유(프로비저닝 지연으로 추정) / 녹화·채팅 파일의 실제 저장
-    - 시도, 사유, 다음 방법은 4절 '확인 불가로 남은 것'
+    - 시도, 사유, 다음 방법은 2절 확인 과정 '확인 불가로 남은 것'
 
 </details>

@@ -12,10 +12,9 @@ Conditional Access 정책 하나를 잘못 켜면 관리자까지 잠길 수 있
 
 ## 요약
 
-- Conditional Access는 signals(누가, 어디서, 어떤 디바이스로, 어떤 앱에)를 보고 decision(차단, 허용, 추가 요구)을 내리는 if-then 정책 엔진. PIM은 관리자 권한을 필요한 시간만 열어 주는 just-in-time 체계
-- 여러 정책이 걸리면 **모두 충족**해야 함. Block 정책이 하나라도 해당되면 그 시점에 차단
-- 새 정책은 Report-only mode로 영향도를 본 뒤 켬. Emergency access 계정은 정책에서 제외
-- PIM은 역할을 Eligible로 두었다가 필요할 때 Active로 활성화해 standing privilege를 없앰. Entra ID P2 또는 Entra ID Governance 라이선스 필요
+- 여러 CA 정책은 모두 충족해야 하고 Block 정책 하나면 그 시점에 차단됨
+- 새 정책은 Report-only로 영향도를 본 뒤 켜고 비상 계정은 제외함
+- PIM은 Entra ID P2 또는 Entra ID Governance 라이선스가 있어야 씀
 
 12주 학습 로드맵의 4주차입니다. 이전 글: [3주차 하이브리드 ID]({{ "/study/hybrid-identity-study/" | relative_url }}), 다음 글: [5주차 M365 관리 센터]({{ "/study/m365-admin-center-basics/" | relative_url }}), 전체 계획: [학습 로드맵]({{ "/study/cloud-study-roadmap/" | relative_url }})
 
@@ -27,7 +26,7 @@ Conditional Access 정책 하나를 잘못 켜면 관리자까지 잠길 수 있
 
 MFA, Authentication methods, Authentication strength, Passkey·FIDO2, Windows Hello for Business, Temporary Access Pass(TAP), Conditional Access(CA), Named location, Report-only mode, Security defaults, Legacy authentication, Emergency access(break-glass) account, Identity Protection(sign-in risk·user risk), PIM(Privileged Identity Management), Eligible·Active assignment, JIT(Just-in-time), Zero Trust
 
-MFA, 패스키, 인증 방법 정책, Security defaults의 자세한 설명은 [IAM 인증 편]({{ "/iam/entra-id-authentication/" | relative_url }})에 있고, Conditional Access, PIM, ID Protection의 정책 예시는 [IAM 접근 제어 편]({{ "/iam/entra-id-access-control/" | relative_url }})에 있습니다. 여기서는 동작 규칙을 중심으로 봅니다.
+자세한 설명은 [IAM 인증 편]({{ "/iam/entra-id-authentication/" | relative_url }})(MFA, 패스키, Security defaults)과 [IAM 접근 제어 편]({{ "/iam/entra-id-access-control/" | relative_url }})(CA, PIM, ID Protection 정책 예시)에 있습니다.
 
 ### 2. 개념 설명
 
@@ -46,34 +45,30 @@ Conditional Access 정책은 **Assignments**와 **Access controls**로 이루어
 
 #### 동작 규칙
 
-설계가 어려운 이유는 대개 동작 규칙을 헷갈려서입니다. 이것만 정확히 잡아 두면 됩니다.
-
-- 한 사용자에게 여러 정책이 적용되면 **모든 정책의 요구를 충족해야** 합니다. 정책 하나는 MFA, 다른 하나는 compliant device를 요구하면 둘 다 해야 합니다.
+- 여러 정책이 적용되면 모두 충족해야 합니다. 하나는 MFA, 하나는 compliant device를 요구하면 둘 다 해야 합니다.
 - 한 정책 안의 assignments는 AND로 결합됩니다.
-- **Block 정책이 하나라도 해당되면** 그 시점에서 차단되고 끝납니다.
-- Conditional Access는 첫 번째 인증(first-factor)이 끝난 뒤에 평가됩니다. DoS 방어 같은 최전방 방어선이 아닙니다.
-- Report-only mode는 정책을 평가만 하고 강제하지 않습니다. 결과는 Sign-in log 상세의 Conditional Access와 Report-only 탭에 남고, 새 정책은 항상 이 모드로 영향도를 본 뒤 켭니다.
+- Block 정책이 하나라도 해당되면 그 시점에서 차단됩니다.
+- 첫 번째 인증(first-factor)이 끝난 뒤에 평가되므로 DoS 방어 같은 최전방 방어선이 아닙니다.
+- Report-only mode는 평가만 하고 강제하지 않습니다. 결과는 Sign-in log 상세의 Conditional Access와 Report-only 탭에 남습니다.
 
-라이선스와 기본 보호도 같이 알아 둡니다. Conditional Access는 Entra ID P1이 필요하고, Microsoft 365 Business Premium에도 포함됩니다. sign-in risk나 user risk 기반 정책은 Identity Protection이라 P2가 필요합니다.
+Conditional Access는 Entra ID P1(Microsoft 365 Business Premium 포함)이 필요하고, sign-in risk·user risk 기반 정책(Identity Protection)은 P2가 필요합니다. 모든 고객이 쓸 수 있는 Security defaults는 CA 정책이 있으면 켤 수 없으니 함께 쓰지 않습니다.
 
-Security defaults는 모든 고객이 쓸 수 있는 기본 보호 설정입니다. Conditional Access 정책을 만들면 Security defaults를 켤 수 없으니 둘을 함께 쓰지 않습니다.
-
-Emergency access(break-glass) 계정은 정책 오류로 전 관리자가 잠기는 사고에 대비해 Conditional Access에서 제외해 두는 클라우드 전용 계정입니다. 구성과 복구 순서는 [조건부 액세스 정책 실수로 관리자까지 잠겼을 때]({{ "/iam/troubleshooting/ca-lockout-emergency-access/" | relative_url }})에 있습니다.
+Emergency access(break-glass) 계정은 전 관리자 잠김에 대비해 CA에서 제외해 두는 클라우드 전용 계정입니다. 구성과 복구 순서는 [조건부 액세스 정책 실수로 관리자까지 잠겼을 때]({{ "/iam/troubleshooting/ca-lockout-emergency-access/" | relative_url }})에 있습니다.
 
 #### PIM
 
-PIM은 관리자 역할을 상시 부여(permanent)하지 않고 **Eligible**(자격만 있음)로 두었다가 필요할 때 Active로 활성화하게 하는 기능입니다. 활성화 때 MFA, 승인(approval), 사유 입력, 시간 제한을 요구할 수 있고, Entra role과 Azure RBAC role 모두 PIM과 연동됩니다.
+PIM은 관리자 역할을 상시(permanent) 부여하지 않고 Eligible(자격만 있음)로 두었다가 필요할 때 Active로 활성화하게 합니다. 활성화 때 MFA, 승인(approval), 사유 입력, 시간 제한을 요구할 수 있고, Entra role과 Azure RBAC role 모두 PIM과 연동됩니다.
 
-라이선스는 Microsoft Entra ID P2 또는 Microsoft Entra ID Governance가 필요합니다.
+라이선스(P2 또는 Entra ID Governance) 조건은 다음과 같습니다.
 
-- Eligible·기간 제한 할당을 받는 사용자, 활성화 요청을 승인·거절하는 사용자, access review 대상자·검토자 수만큼 라이선스가 있어야 합니다.
+- Eligible·기간 제한 할당을 받는 사용자, 활성화 요청을 승인·거절하는 사용자, access review 대상자·검토자 수만큼 필요합니다.
 - 라이선스가 만료되면 Entra role의 Eligible 할당은 제거되고, 상시(permanent) 할당은 그대로 남습니다.
 
-AD/ADFS 경험으로는 대응하는 개념이 없어서, 이 영역에 시간을 가장 많이 써야 합니다.
+AD/ADFS에는 대응 개념이 없어 시간을 가장 많이 써야 하는 영역입니다.
 
 #### Zero Trust
 
-Zero Trust는 세 원칙으로 말합니다. Verify explicitly, Use least privilege, Assume breach.
+세 원칙: Verify explicitly, Use least privilege, Assume breach.
 
 ### 3. 온프레미스로 번역하면
 
@@ -82,18 +77,17 @@ Zero Trust는 세 원칙으로 말합니다. Verify explicitly, Use least privil
 
 ### 4. 실습 (GUI 우선)
 
-1. Entra 관리 센터에서 Entra ID > 조건부 액세스(Conditional Access) > 정책(Policies)을 열어 기존 정책의 Assignments와 Access controls를 읽습니다.
-2. 새 정책을 만들 때는 Report-only로 만들고, 대상은 테스트 사용자만 지정하고, emergency access 계정을 제외합니다.
-    - 전체 사용자와 관리자에게 강제(On)하지 않습니다.
-3. What If 도구로 특정 사용자, 앱, 위치 조합에서 어떤 정책이 적용되는지 시뮬레이션합니다.
-4. 로그인 로그(Sign-in logs) 상세의 Conditional Access 탭과 Report-only 탭을 확인합니다.
+1. Entra 관리 센터 Entra ID > 조건부 액세스(Conditional Access) > 정책(Policies)에서 기존 정책의 Assignments와 Access controls를 읽습니다.
+2. 새 정책은 Report-only로, 대상은 테스트 사용자만, emergency access 계정은 제외해 만듭니다. 전체 사용자와 관리자에게 On으로 강제하지 않습니다.
+3. What If 도구로 사용자, 앱, 위치 조합에 적용되는 정책을 시뮬레이션합니다.
+4. 로그인 로그(Sign-in logs) 상세의 Conditional Access·Report-only 탭을 확인합니다.
 5. Entra ID > 개요(Overview) > 속성(Properties)에서 Security defaults 상태를 확인합니다.
 
-정책이 왜 걸렸는지 로그로 읽는 사례는 [AADSTS53003 글]({{ "/iam/troubleshooting/aadsts53003-blocked-by-ca/" | relative_url }}), Security defaults가 켜지지 않는 사례는 [보안 기본값 관리가 보이지 않을 때]({{ "/iam/troubleshooting/security-defaults-cannot-enable/" | relative_url }})에 있습니다.
+관련 사례: 정책이 걸린 이유를 로그로 읽기는 [AADSTS53003 글]({{ "/iam/troubleshooting/aadsts53003-blocked-by-ca/" | relative_url }}), Security defaults가 켜지지 않을 때는 [보안 기본값 관리가 보이지 않을 때]({{ "/iam/troubleshooting/security-defaults-cannot-enable/" | relative_url }}).
 
 ### 5. 전문가처럼 말하기
 
-> "Conditional Access는 signals를 모아 block이나 grant를 결정하는 Zero Trust policy engine이고, 여러 정책이 걸리면 전부 충족해야 합니다. 새 정책은 report-only로 영향도를 본 뒤 enforce합니다."
+> "Conditional Access는 signals를 모아 block이나 grant를 결정하는 Zero Trust policy engine입니다."
 >
 > "관리자 역할은 PIM으로 eligible assignment를 두고 필요할 때만 JIT로 활성화하게 해서 standing privilege를 없앱니다."
 
@@ -117,7 +111,7 @@ Zero Trust는 세 원칙으로 말합니다. Verify explicitly, Use least privil
 
 ### 7. 영상 (한글 우선)
 
-- 한글: 확인 불가. Conditional Access와 PIM을 다룬 한글 유튜브 영상을 검색으로 찾아봤지만 찾지 못했습니다. 대신 Microsoft Learn(한국어)의 "조건부 액세스란?" 문서를 먼저 읽으세요.
+- 한글: 확인 불가. CA와 PIM을 다룬 한글 유튜브 영상을 검색했지만 찾지 못했습니다. 대신 Microsoft Learn(한국어)의 "조건부 액세스란?" 문서를 먼저 읽으세요.
 - 영문 보완
     - [Enforce MFA with Conditional Access (Step-by-Step Lab)](https://www.youtube.com/watch?v=MIvuAHIVTT4): CyberMax, 5분. 조건부 액세스 정책으로 MFA를 강제하고 테스트 기기로 로그인해 보는 실습
     - [Entra ID Security: Identity Perimeter, Conditional Access, MFA & PIM](https://www.youtube.com/watch?v=4mTV4nb5Ex4): m365 Show, 19분. 조건부 액세스, MFA, PIM을 개념 중심으로 설명(화면 실습은 거의 없음)

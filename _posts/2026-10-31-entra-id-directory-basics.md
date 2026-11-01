@@ -12,10 +12,9 @@ AD DS를 오래 다뤘다면 Entra ID에서도 OU와 GPO부터 찾게 됩니다.
 
 ## 요약
 
-- Entra ID는 AD DS를 클라우드로 옮긴 것이 아니라 OAuth 2.0, OIDC, SAML 기반의 flat directory. OU와 GPO가 없고 위임은 Administrative Unit과 Entra role로 함
-- 동기화된 계정(Synced user)의 주요 속성은 **Source of authority**인 온프레미스에서 바꿔야 함
-- Administrative unit은 정책 적용 단위가 아니라 위임 범위. GPO가 연결되지 않음
-- Entra role과 Azure RBAC는 별개 체계. Global Administrator도 기본값으로는 Azure 리소스 접근 불가
+- Entra ID는 계층 없는 flat directory이며 AU는 정책이 아닌 위임 범위임
+- 동기화된 계정의 주요 속성은 원본인 온프레미스에서 바꿔야 함
+- Entra role과 Azure RBAC는 별개라 Global Administrator도 기본값으론 Azure 권한이 없음
 
 12주 학습 로드맵의 2주차입니다. 이전 글은 [1주차 클라우드 구조]({{ "/study/cloud-structure-tenant-subscription/" | relative_url }}), 다음 글은 [3주차 하이브리드 ID]({{ "/study/hybrid-identity-study/" | relative_url }})이고, 전체 계획은 [학습 로드맵]({{ "/study/cloud-study-roadmap/" | relative_url }})에 있습니다.
 
@@ -29,13 +28,13 @@ Microsoft Entra ID, Directory, User(Member, Guest), Cloud-only user, Synced user
 
 ### 2. 개념 설명
 
-AD DS와 Entra ID는 이름이 비슷하지만 구조가 다릅니다. 테넌트, 개체, 디바이스, 앱 등록의 자세한 설명과 예시는 [IAM 기초와 구조 편]({{ "/iam/what-is-entra-id/" | relative_url }})에 정리해 두었으니, 여기서는 학습서의 핵심만 짧게 적습니다.
+테넌트, 개체, 디바이스, 앱 등록의 자세한 설명과 예시는 [IAM 기초와 구조 편]({{ "/iam/what-is-entra-id/" | relative_url }})에 있습니다.
 
-User는 Member와 Guest로 나뉩니다. 온프레미스에서 동기화된 계정은 Synced user, 클라우드에서 직접 만든 계정은 Cloud-only user입니다. 여기서 Source of authority, 즉 객체를 어디서 관리하느냐가 중요해집니다. 동기화된 계정의 주요 속성은 온프레미스에서 바꿔야 하고 클라우드에서는 바꿀 수 없습니다.
+User는 Member와 Guest로 나뉩니다. 온프레미스에서 동기화된 계정은 Synced user, 클라우드에서 직접 만든 계정은 Cloud-only user입니다. Synced user는 온프레미스가 Source of authority(객체를 관리하는 곳)라서 주요 속성을 클라우드에서 바꿀 수 없습니다.
 
 Group은 Security group과 Microsoft 365 group(협업용: 메일, Teams, SharePoint)으로 나뉩니다. 멤버십 유형은 Assigned(직접 지정)와 Dynamic(규칙 기반, Entra ID P1 필요)입니다.
 
-Administrative unit(AU)은 관리 권한을 일부 객체에만 위임하는 범위입니다. 정책을 적용하는 단위가 아니라 **위임 범위**이고, OU와 달리 GPO가 연결되지 않습니다.
+Administrative unit(AU)은 관리 권한을 일부 객체에만 위임하는 범위이고, OU와 달리 GPO가 연결되지 않습니다.
 
 도메인은 처음 만들어지는 `*.onmicrosoft.com`(initial domain)과, DNS TXT로 소유를 확인해 추가하는 custom domain이 있습니다. Device identity는 세 가지입니다.
 
@@ -44,8 +43,6 @@ Administrative unit(AU)은 관리 권한을 일부 객체에만 위임하는 범
 - Entra hybrid joined: 온프레미스 AD 도메인 가입 + Entra 등록
 
 #### Entra role과 Azure RBAC
-
-이번 주에서 가장 많이 헷갈리는 구분입니다. 공식 문서 기준으로 나란히 놓으면 이렇습니다.
 
 - **Entra role**
     - 관리 대상: Entra 리소스(사용자, 그룹, 앱), M365 서비스
@@ -56,9 +53,7 @@ Administrative unit(AU)은 관리 권한을 일부 객체에만 위임하는 범
     - Scope: Management group, Subscription, Resource group, Resource
     - 확인 위치: Azure 포털의 Access control (IAM), ARM
 
-기본적으로 두 체계는 서로 겹치지 않습니다. Global Administrator도 기본값으로는 Azure 리소스에 접근할 수 없습니다.
-
-예외가 하나 있습니다. Global Administrator가 "Access management for Azure resources"를 켜면 Azure의 루트 범위(`/`)에서 User Access Administrator 역할을 얻습니다. 이 범위 덕분에 테넌트의 모든 구독과 관리 그룹에서 역할을 할당할 수 있고, 구독 접근을 복구할 때 쓰는 기능입니다. 문서에 따르면 이 설정은 켠 사용자 본인에게만 적용되고, 필요한 작업을 마치면 다시 끄라고 권고합니다. 이 토글(Elevate access)을 실제로 켜고 끈 전·후 비교는 [Azure 구조 실습 기록]({{ "/m365/d4-azure-structure/" | relative_url }})에 있습니다.
+두 체계는 기본적으로 겹치지 않습니다. 예외로 Global Administrator가 "Access management for Azure resources"를 켜면 Azure의 루트 범위(`/`)에서 User Access Administrator 역할을 얻어, 테넌트의 모든 구독과 관리 그룹에서 역할을 할당할 수 있습니다(구독 접근 복구용). 이 설정은 켠 사용자 본인에게만 적용되고, 작업을 마치면 다시 끄라고 문서는 권고합니다. 이 토글(Elevate access)을 실제로 켜고 끈 전·후 비교는 [Azure 구조 실습 기록]({{ "/m365/d4-azure-structure/" | relative_url }})에 있습니다.
 
 ### 3. 온프레미스로 번역하면
 
@@ -71,7 +66,7 @@ Administrative unit(AU)은 관리 권한을 일부 객체에만 위임하는 범
 | 외부 연동 | Trust | B2B collaboration, cross-tenant access |
 | 디바이스 | Domain join | Entra registered, joined, hybrid joined |
 
-Security group은 AD의 Security Group과 비슷합니다. Administrative unit은 위임용 OU와 비슷하지만 정책 상속이 없습니다. 앱 등록(App registration)은 서비스 계정과 SPN을 등록하는 일과 비슷한 개념입니다.
+Administrative unit은 위임용 OU와 비슷하지만 정책 상속이 없습니다. 앱 등록(App registration)은 서비스 계정과 SPN을 등록하는 일과 비슷한 개념입니다.
 
 ### 4. 실습 (GUI 우선)
 
@@ -115,8 +110,8 @@ Get-MgUser -Top 5 | Select-Object DisplayName, UserPrincipalName, OnPremisesSync
 
 ### 7. 영상 (한글 우선)
 
-- 한글: 확인 불가. Entra ID 기초를 다룬 한글 유튜브 영상을 검색으로 찾아봤지만 찾지 못했습니다. 대신 [Microsoft Entra 학습 경로(한국어)](https://adoption.microsoft.com/ko-kr/microsoft-security/entra/)와 Microsoft Learn(한국어)의 Entra 학습 경로를 먼저 읽으세요.
-- 영문 보완: [Understand Microsoft Entra ID (AZ-104 공식 시리즈 2편)](https://www.youtube.com/watch?v=iQfhi0712bM)
+- 한글: 확인 불가(시도: 유튜브 검색, 사유: Entra ID 기초를 다룬 한글 영상을 찾지 못함). 대신 [Microsoft Entra 학습 경로(한국어)](https://adoption.microsoft.com/ko-kr/microsoft-security/entra/)와 Microsoft Learn(한국어)의 Entra 학습 경로를 먼저 읽으세요.
+- 영문 보완: [Understand Microsoft Entra ID (AZ-104 공식 시리즈 2편)](https://www.youtube.com/watch?v=iQfhi0712bM) (Microsoft Learn, 42분). 테넌트, 사용자, 그룹, 라이선스, Free·P1·P2 차이를 다룹니다.
 
 ### 8. 근거 자료
 

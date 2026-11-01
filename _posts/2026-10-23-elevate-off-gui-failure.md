@@ -12,16 +12,11 @@ excerpt: "Elevate access 토글이 '권한이 부족하여'로 안 꺼질 때, �
 
 ## 요약
 
-- Entra의 "Azure 리소스에 대한 액세스 관리" 토글을 "아니요"로 저장하면 "테넌트 속성을 업데이트할 수 없음 — 권한이 부족하여 작업을 완료할 수 없습니다." 오류. 새로 불러오면 토글은 그대로 "예"
-- 원인은 **확인 불가**. 오류 메시지에 세부 사유가 없음
-    - 오전에는 같은 토글로 꺼졌으니 "끌 수 없는 설정"은 아님
-- 문서가 안내하는 대체 방법으로 루트(`/`) 범위의 User Access Administrator 할당을 PowerShell로 제거
-    - 제가 켠 할당(샌드박스 관리자 본인 1건)만 조회해 확인하고 제거함
-- 제거 전 1건, 제거 후 **0건**
-    - 감사 로그에 "removed" 기록, 사용자 에이전트에 Cloud Shell의 Azure PowerShell이 찍힘
-    - 새로 불러온 화면에서 토글 "아니요"
+- 토글로 안 꺼지는 Elevate는 루트 범위 할당 제거로 대신 끌 수 있음
+- 제거 전 대상이 본인 1건인지 보고, 0건과 감사 로그로 끈 것을 확인하면 됨
+- GUI 끄기가 실패한 원인은 확인 불가
 
-> 근거 표기: 조회 = 이 테넌트에서 직접 읽은 값, 문서 = Microsoft Learn, 확인 불가 = 시도했지만 확인하지 못한 값(방법과 사유 병기). 테넌트 ID, 도메인, 계정, 사용자 이름 등 비공개 정보는 가리거나 게시하지 않았습니다. 구독 ID도 게시하지 않았습니다. Elevate access 토글을 켜고 끄는 일은 제가 직접 했습니다.
+> 근거: 조회는 이 테넌트에서 직접 읽은 값, 문서는 Microsoft Learn입니다. 비공개 정보는 가렸습니다. 구독 ID도 게시하지 않았습니다. Elevate access 토글을 켜고 끄는 일은 제가 직접 했습니다.
 
 ---
 
@@ -29,56 +24,27 @@ excerpt: "Elevate access 토글이 '권한이 부족하여'로 안 꺼질 때, �
 
 ### 1. 증상
 
-1. 켜기: Entra 관리 센터 > 속성 > "Azure 리소스에 대한 액세스 관리" 토글을 "예"로 바꿔 저장 → "테넌트 속성을 업데이트함"(22:02:46).
-2. 끄기 1차 시도(GUI): 같은 토글을 "아니요"로 바꾸고 저장 → 오른쪽 위 알림에 **"테넌트 속성을 업데이트할 수 없음 — 권한이 부족하여 작업을 완료할 수 없습니다."**(오류).
-    - 새로 불러오니 토글은 그대로 "예"였습니다. 감사 로그에도 "끔"이 없었습니다.
-3. 끄기 2차 시도(GUI): 페이지를 새로 불러온 뒤 한 번 더 같은 순서로 저장 → 같은 오류.
+- Entra 관리 센터 > 속성 > "Azure 리소스에 대한 액세스 관리" 토글을 22:02:46에 켰습니다.
+- "아니요"로 저장하면 **"테넌트 속성을 업데이트할 수 없음 — 권한이 부족하여 작업을 완료할 수 없습니다."**(2회). 토글은 "예" 그대로, 감사 로그에 "끔" 없음.
+- 오류 알림은 캡처하지 못했습니다(캡처 누락, 재현하려면 Elevate를 또 켜야 해서 하지 않음).
 
-이 오류 알림은 화면으로 확인만 하고 이미지로 저장하지 못했습니다. 확인 불가가 아니라 캡처 누락입니다. 다시 재현하려면 Elevate를 또 켜야 해서 하지 않았습니다.
+### 2. 원인 및 분석
+
+문서는 토글 대신 PowerShell/CLI로 루트(`/`) 범위 User Access Administrator 할당을 제거해 끄는 방법도 안내합니다([문서](https://learn.microsoft.com/azure/role-based-access-control/elevate-access-global-admin)).
+
+- 같은 토글로 이날 09:50:23, 16:01:10에는 꺼졌습니다("끌 수 없는 설정"은 아님).
+- 루트 범위 할당: 제거 전 샌드박스 관리자 본인 1건 / 제거 후 0건(22:08:48).
+
+<details markdown="1">
+<summary>확인 과정 자세히 보기 (그림 8장)</summary>
+
+#### 켜기 전·후 화면
 
 ![켜기 전 화면]({{ "/assets/images/2026/10/d4-elevate-before.png" | relative_url }})
 *그림 1. 켜기 전. 위: 관리 그룹 화면의 "디렉터리 관리자로 등록되어 있지만 루트 관리 그룹에 액세스하는 데 필요한 권한이 없습니다" 안내(22:10), 아래: Entra 속성의 토글 "아니요"(22:02). 계정 이름은 가렸습니다.*
 
 ![켠 뒤 화면]({{ "/assets/images/2026/10/d4-elevate-after.png" | relative_url }})
 *그림 2. 켠 뒤. 위: 켜고 저장한 직후 토글 "예"(22:02), 가운데와 아래: 루트 IAM의 User Access Administrator(범위 "루트 (상속됨)")와 PowerShell `Get-AzRoleAssignment -Scope '/'`(00:56, 5회차 켬 상태). 계정 이름은 가렸습니다.*
-
-### 2. 원인과 해결
-
-원인은 확인 불가입니다. 오류 메시지에 세부 사유가 없습니다(시도와 사유는 아래 '먼저 짚은 것').
-
-해결은 다른 길로 했습니다. Microsoft는 Elevate 해제 방법으로 PowerShell/CLI에서 루트(`/`) 범위의 User Access Administrator 할당을 제거하는 방법도 안내합니다(문서). 제가 켠 할당(= 샌드박스 관리자 본인 1건)만 조회해 확인하고 제거했습니다.
-
-```powershell
-# Elevate 해제: 루트('/') 범위의 User Access Administrator 할당 조회 → 제거 → 0건 확인
-$upn = '<관리자 UPN>'   # 게시용 표기. 실제 실행에는 샌드박스 관리자 UPN
-Get-AzRoleAssignment -Scope '/' -RoleDefinitionName 'User Access Administrator' |
-  Select-Object DisplayName, SignInName, Scope, RoleDefinitionName | Format-List
-
-Remove-AzRoleAssignment -SignInName $upn -RoleDefinitionName 'User Access Administrator' -Scope '/'
-
-'after-remove count: ' + @(Get-AzRoleAssignment -Scope '/' -RoleDefinitionName 'User Access Administrator').Count
-```
-
-조회해 보니 루트 범위 User Access Administrator 할당은 샌드박스 관리자 1건이었고, 제거 후 조회는 **0건**이었습니다. 제거 시각은 22:08:48입니다.
-
-> 이 글의 PowerShell 원문은 일부를 복구하지 못해, 같은 출력 줄이 나오는 형태로 정리했습니다. 출력 값은 실제와 같습니다.
-
-꺼진 것은 감사 로그(PowerShell, GUI)의 "removed" 기록과 새로 불러온 화면의 토글 "아니요"로 확인했습니다(아래 감사 로그 부분).
-
-### 3. 다음에 토글이 안 꺼지면
-
-GUI 토글로 Elevate가 안 꺼지면("권한이 부족하여" 오류) 루트 범위의 User Access Administrator 할당을 PowerShell/CLI로 제거하고, 조회 0건과 감사 로그 "removed"로 확인합니다. 제거하기 전에 대상이 본인이 켠 할당 1건뿐인지 먼저 조회합니다.
-
-켠 시간은 짧게 쓰고, 쓰고 나면 곧바로 끕니다. 켬과 끔은 감사 로그에 남으니 시각을 변경 이력에 같이 적어 둡니다. 감사 로그의 사용자 에이전트를 보면 토글로 껐는지 PowerShell 호출로 제거했는지도 구별됩니다.
-
-PIM을 쓰는 경우 역할 비활성화만으로는 토글이 "아니요"로 돌아가지 않습니다. 토글을 먼저 끄고 비활성화합니다(문서).
-
-오류 알림은 사라지기 전에 캡처해야 합니다. 이번에는 알림을 이미지로 남기지 못했습니다.
-
-### 4. 확인 과정
-
-<details markdown="1">
-<summary>확인 과정 자세히 보기 (그림 6장)</summary>
 
 #### 먼저 짚은 것
 
@@ -138,18 +104,42 @@ Elevate는 다섯 번 켜고 껐습니다(감사 로그 기록, 표시 시각은
 - **5회차**: 켠 채로 약 2시간 30분이 지났습니다.
     - 켠 뒤 캡처를 이어서 하려 했는데 작업이 중간에 멈춰 있었고, 재개하자마자 캡처를 마치고 곧바로 제거했습니다.
     - 켜 둔 동안 이 계정으로 한 작업은 읽기 조회뿐이며 다른 변경은 없었습니다.
-- **제거 근거**: 끈 뒤에는 화면에서 루트 역할 목록을 열 수 없어, 4회차는 `Get-AzRoleAssignment`로 제거 전 1건 → 제거 후 0건을 직접 읽었습니다(2절).
+- **제거 근거**: 끈 뒤에는 화면에서 루트 역할 목록을 열 수 없어, 4회차는 `Get-AzRoleAssignment`로 제거 전 1건 → 제거 후 0건을 직접 읽었습니다(4절 권고방안의 스크립트).
     - 1~3회차는 이 방법으로 확인하지 않았으므로, 그 세 번의 "제거됨" 근거는 감사 로그와 "권한 없음" 안내 복귀입니다.
     - 끈 뒤 루트 역할 목록이 열리지 않는 문제는 [루트 IAM 경고와 끈 뒤 역할 목록]({{ "/m365/troubleshooting/elevate-root-iam-role-list/" | relative_url }}) 글에 따로 적었습니다.
 
 </details>
 
-### 5. 관련 글
+### 3. 결론
 
-- [관리 그룹 설정이 403: Elevate access와 토큰]({{ "/m365/troubleshooting/mg-settings-403-elevate-access/" | relative_url }})
-- [Azure 구조: 계층, 리소스 그룹, Elevate access 전·후]({{ "/m365/d4-azure-structure/" | relative_url }})
+GUI 저장 → "권한이 부족하여" 오류 → 루트 범위 할당 PowerShell 제거 → 1건→0건, 감사 로그 "removed"
 
-### 6. 근거 자료
+GUI 끄기 실패 원인은 확인 불가입니다(시도: GUI 2회, 새로 불러오기, 사유: 오류 메시지에 세부 사유 없음, 다음 방법: 오류 때 브라우저 네트워크 로그 확인). 지금은 꺼져 있습니다.
+
+### 4. 권고방안
+
+1. 토글이 안 꺼지면 루트 범위 할당을 제거합니다. 제거 전에 대상이 본인이 켠 1건뿐인지 먼저 조회합니다.
+
+```powershell
+# Elevate 해제: 루트('/') 범위의 User Access Administrator 할당 조회 → 제거 → 0건 확인
+$upn = '<관리자 UPN>'   # 게시용 표기. 실제 실행에는 샌드박스 관리자 UPN
+Get-AzRoleAssignment -Scope '/' -RoleDefinitionName 'User Access Administrator' |
+  Select-Object DisplayName, SignInName, Scope, RoleDefinitionName | Format-List
+
+Remove-AzRoleAssignment -SignInName $upn -RoleDefinitionName 'User Access Administrator' -Scope '/'
+
+'after-remove count: ' + @(Get-AzRoleAssignment -Scope '/' -RoleDefinitionName 'User Access Administrator').Count
+```
+
+> PowerShell 원문 일부를 복구하지 못해 같은 출력이 나오는 형태로 정리했습니다(출력 값은 실제와 같음).
+
+2. 조치 후 확인: 조회 0건, 감사 로그 "removed"(사용자 에이전트 `cloud-shell … AzurePowershell`), 새로 불러온 토글 "아니요".
+3. 켠 시간은 짧게, 켬·끔 시각은 변경 이력에 적고, 오류 알림은 사라지기 전에 캡처합니다.
+4. PIM 사용 시 역할 비활성화만으로는 토글이 안 돌아가니 토글을 먼저 끕니다(문서).
+
+관련 글: [관리 그룹 설정이 403: Elevate access와 토큰]({{ "/m365/troubleshooting/mg-settings-403-elevate-access/" | relative_url }}) · [Azure 구조: 계층, 리소스 그룹, Elevate access 전·후]({{ "/m365/d4-azure-structure/" | relative_url }})
+
+### 근거 자료
 
 <details markdown="1">
 <summary>근거 자료 펼쳐 보기 (4건)</summary>
@@ -161,6 +151,6 @@ Elevate는 다섯 번 켜고 껐습니다(감사 로그 기록, 표시 시각은
 - **조회**: 끈 뒤 토글 "아니요", 관리 그룹 화면의 "권한 없음" 안내 복귀
     - 출처: Entra, Azure 포털
 - **확인 불가**: GUI 끄기 실패의 원인, 오류 알림 캡처
-    - 시도, 사유, 다음 방법은 4절 '먼저 짚은 것'
+    - 시도, 사유, 다음 방법은 2절 확인 과정의 '먼저 짚은 것'
 
 </details>

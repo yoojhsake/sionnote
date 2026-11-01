@@ -12,13 +12,11 @@ excerpt: "관리 그룹 설정이 403이면 Elevate access가 필요합니다. �
 
 ## 요약
 
-- 관리 그룹 계층 보호 설정을 REST로 읽으면 HTTP 403(`settings/read` 권한 없음). Elevate access를 켠 직후 포털 설정 화면도 권한 안내만 나오고 값이 없었음
-- 루트 관리 그룹은 전역 관리자도 기본 권한이 없어 Elevate access가 필요함. 켠 직후 안 읽힌 이유는 토큰 문제로 추정했으나 직접 확인은 못 함
-- 포털 주소 끝에 `?feature.refreshtoken=true`를 붙여 다시 불러오자 값이 읽힘
-- 기본 관리 그룹 Tenant Root Group, 계층 보호 Off
-- 끈 뒤에도 포털은 같은 값, REST는 403. "토큰 갱신이 값을 읽히게 했다"고는 단정 못 함
+- 관리 그룹 설정을 REST로 읽으려면 Elevate가 필요하고 없으면 403이 남
+- 켠 직후 값이 안 읽히면 재로그인이나 토큰 갱신부터 해 보면 됨
+- 끈 뒤에도 포털에 값이 보인 이유는 확인 불가
 
-> 근거 표기: 조회 = 이 테넌트에서 직접 읽은 값, 문서 = Microsoft Learn, 확인 불가 = 시도했지만 확인하지 못한 값(방법·사유 병기). 테넌트 ID, 도메인, 계정, 사용자 이름 등 비공개 정보는 가리거나 게시하지 않았습니다. 구독 ID도 게시하지 않았습니다. Elevate access 토글을 켜고 끄는 일은 제가 직접 했습니다.
+> 근거: 조회는 이 테넌트에서 직접 읽은 값, 문서는 Microsoft Learn입니다. 비공개 정보는 가렸습니다. 구독 ID도 게시하지 않았습니다. Elevate access 토글을 켜고 끄는 일은 제가 직접 했습니다.
 
 ---
 
@@ -26,47 +24,18 @@ excerpt: "관리 그룹 설정이 403이면 Elevate access가 필요합니다. �
 
 ### 1. 증상
 
-10/19에 관리 그룹의 계층 보호 설정을 REST로 읽었을 때 HTTP 403(`settings/read` 권한 없음)이 나서 현재 값을 알 수 없었습니다. 그 뒤 Elevate access를 켜서 루트 범위 권한은 확인했지만([Azure 구조 글]({{ "/m365/d4-azure-structure/" | relative_url }})), 관리 그룹 설정 값은 기록하지 못한 상태였습니다.
-
-10/23 09:56:36에 Elevate를 켜고(감사 로그) 직후인 09:58:28에 관리 그룹 설정을 열었는데 값이 읽히지 않았습니다. 화면에는 설정 읽기 권한이 없거나 권한을 최근에 받은 경우 토큰을 새로 고치라는 안내가 나왔습니다.
+- 사례 1(10/19): 관리 그룹 계층 보호 설정을 REST로 읽으면 HTTP 403(`settings/read` 권한 없음).
+- 사례 2(10/23): 09:56:36에 Elevate를 켜고 09:58:28에 설정을 열자 토큰을 새로 고치라는 안내만 나옴.
 
 ![관리 그룹 설정 화면의 권한 부족 안내]({{ "/assets/images/2026/10/m12-4-mg-settings-403.png" | relative_url }})
 *그림 1. 10/23 09:58, Elevate를 켠 직후의 관리 그룹 > 설정 화면(당시 캡처, 해상도가 낮음). 파란 안내 상자가 설정 읽기 권한이 없다고 알리고 기본 관리 그룹 값 칸은 "권한 없음"으로 읽히지 않았습니다. 이 화면은 지금은 재현되지 않아(아래 "확정된 것과 확인 불가인 것" 참조) 다시 찍지 못했습니다. 계정, 테넌트 이름, ID는 가렸습니다.*
 
-### 2. 원인과 대처
+### 2. 원인 및 분석
 
-#### 확실한 것과 추정
+전역 관리자에게도 루트 관리 그룹 권한은 자동으로 없고, 토큰과 캐시는 최대 30분 유지됩니다([Elevate access](https://learn.microsoft.com/azure/role-based-access-control/elevate-access-global-admin), [관리 그룹 관리](https://learn.microsoft.com/azure/governance/management-groups/manage)).
 
-확실한 것은 하나입니다. **REST로 직접 읽으려면 루트 권한(Elevate)이 필요하고, 없으면 10/19와 같은 403이 납니다.** 전역 관리자라도 Azure 루트 관리 그룹의 권한은 자동으로 주어지지 않으니 Elevate access를 켜야 합니다.
-
-켠 직후 값이 안 읽힌 이유는 권한을 올린 뒤에도 이전 토큰이 남아 있었기 때문이라고 추정했습니다. 토큰을 갱신하자 값이 읽혔습니다. 하지만 끈 뒤에도 포털이 같은 값을 보여 줬기 때문에 이 추정은 증거가 부족합니다(아래 "끈 뒤에도 포털은 같은 값을 보여 줬다", "확정된 것과 확인 불가인 것").
-
-#### 대처 순서
-
-1. 루트 범위 권한이 필요하면 Elevate access를 **필요한 시간만** 켭니다. 켠 시각과 끈 시각은 감사 로그에 남습니다.
-2. 켠 직후 값이 안 읽히면 재로그인하거나 `?feature.refreshtoken=true`로 토큰을 갱신해 다시 엽니다.
-3. 읽은 뒤에는 곧바로 끕니다. 끄기가 GUI로 안 되면 [Elevate를 GUI로 끄지 못할 때]({{ "/m365/troubleshooting/elevate-off-gui-failure/" | relative_url }}) 글의 절차를 씁니다.
-4. 끈 뒤 관리 그룹 화면은 "권한 없음" 안내로 돌아옵니다(10/23 09:51, 16시경, 22:10에 확인).
-
-| 결과 | 값 |
-|---|---|
-| 기본 관리 그룹 | Tenant Root Group |
-| 계층 보호 | Off |
-
-| 결과 | 값 |
-|---|---|
-| 기본 관리 그룹 | Tenant Root Group |
-| 계층 보호 | Off |
-
-### 3. 다음에 Elevate를 켤 때
-
-Elevate를 켠 직후 값이 안 읽히면, 권한 부족으로 단정하기 전에 **토큰 갱신**(재로그인 또는 새로 고침)부터 해 봅니다.
-
-포털 화면에서 읽히는 것과 REST나 PowerShell로 읽히는 것은 같지 않을 수 있습니다. 이번에도 끈 뒤에 포털은 읽히고 REST는 403이었습니다. 그래서 권한 검증은 증거가 되는 호출로 합니다.
-
-켠 시간은 짧게 쓰고, 쓰고 나면 곧바로 끕니다. 켬과 끔은 감사 로그에 남으니 그 시각을 변경 이력에 같이 적습니다. PIM을 쓰는 경우 역할 비활성화만으로는 토글이 "아니요"로 돌아가지 않으므로, 토글을 먼저 끄고 비활성화합니다(문서).
-
-### 4. 확인 과정
+- 켜고 `?feature.refreshtoken=true`로 다시 불러온 뒤: 포털에 Tenant Root Group, 계층 보호 Off
+- 끈 뒤(22:11~22:14): 포털은 같은 값 / REST는 403 `AuthorizationFailed`
 
 <details markdown="1">
 <summary>확인 과정 자세히 보기 (그림 4장)</summary>
@@ -120,7 +89,7 @@ $e = ($r.Content | ConvertFrom-Json).error
 
 #### 확정된 것과 확인 불가인 것
 
-그래서 **"Elevate 후 토큰 갱신이 값을 읽히게 했다"는 결론은 증거가 부족합니다.** 확인된 것은 다음과 같습니다.
+확인된 것은 다음과 같습니다.
 
 | 상황 | 포털 설정 화면 | REST(settings/read) |
 |---|---|---|
@@ -138,15 +107,26 @@ $e = ($r.Content | ConvertFrom-Json).error
     - 시도: 켠 상태에서는 포털 화면만 읽고 REST는 호출하지 않음
     - 막힌 이유: 호출하지 않아 값이 없음(끈 상태의 403만 확인)
     - 다음 방법: Elevate를 켠 상태에서 위 스크립트 실행
-- 확실한 것은 REST로 직접 읽으려면 루트 권한(Elevate)이 필요하고, 없으면 10/19와 같은 403이 난다는 점입니다.
 
 </details>
 
-### 5. 관련 글
+### 3. 결론
 
-[Azure 구조: 계층, 리소스 그룹, Elevate access 전·후]({{ "/m365/d4-azure-structure/" | relative_url }}), [Elevate를 GUI로 끄지 못할 때]({{ "/m365/troubleshooting/elevate-off-gui-failure/" | relative_url }}), [루트 IAM 경고와 끈 뒤 역할 목록]({{ "/m365/troubleshooting/elevate-root-iam-role-list/" | relative_url }})
+Elevate 없음 → REST 403 / 켠 직후 이전 토큰(추정) → 갱신 후 포털에 값 표시
 
-### 6. 근거 자료
+REST로 읽으려면 Elevate가 필요합니다. 토큰 갱신 덕분이라는 추정은 끈 뒤에도 포털에 값이 보여 증거가 부족합니다.
+
+확인 불가: 끈 뒤에도 포털에 값이 보인 이유(캐시 때문인지도 확인 불가), 켠 상태의 REST 결과(시도·사유는 확인 과정 "확정된 것과 확인 불가인 것"에).
+
+### 4. 권고방안
+
+1. Elevate는 필요한 시간만 켜고 켬·끔 시각을 변경 이력에 적습니다. PIM을 쓰면 토글을 먼저 끕니다(문서).
+2. 켠 직후 값이 안 읽히면 재로그인하거나 `?feature.refreshtoken=true`로 토큰을 갱신합니다.
+3. 조치 후 확인: 권한 검증은 REST·PowerShell 호출로 하고, 끈 뒤 관리 그룹 화면이 "권한 없음"으로 돌아오는지 봅니다(10/23 09:51, 16시경, 22:10 확인). 안 꺼지면 [Elevate를 GUI로 끄지 못할 때]({{ "/m365/troubleshooting/elevate-off-gui-failure/" | relative_url }}).
+
+관련 글: [Azure 구조: 계층, 리소스 그룹, Elevate access 전·후]({{ "/m365/d4-azure-structure/" | relative_url }}) · [루트 IAM 경고와 끈 뒤 역할 목록]({{ "/m365/troubleshooting/elevate-root-iam-role-list/" | relative_url }})
+
+### 근거 자료
 
 <details markdown="1">
 <summary>근거 자료 펼쳐 보기 (4건)</summary>
@@ -157,7 +137,7 @@ $e = ($r.Content | ConvertFrom-Json).error
     - 출처: [Manage your Azure subscriptions at scale with management groups](https://learn.microsoft.com/azure/governance/management-groups/manage)
 - **조회**: 기본 관리 그룹·계층 보호 값, 끈 뒤 화면, REST 403, 감사 로그 시각
     - 출처: Azure 포털, Entra, Cloud Shell
-- **확인 불가**: 포털이 끈 뒤에도 값을 보여 준 이유, 켠 상태의 REST 결과(시도·사유·다음 방법은 4절 "확정된 것과 확인 불가인 것")
+- **확인 불가**: 포털이 끈 뒤에도 값을 보여 준 이유, 켠 상태의 REST 결과(시도·사유·다음 방법은 2절 확인 과정 "확정된 것과 확인 불가인 것")
     - 출처: -
 
 </details>

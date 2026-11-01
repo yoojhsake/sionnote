@@ -12,12 +12,11 @@ Cloud Shell 토큰으로 팀 달력은 읽히는데 내 개인 달력만 403(`Er
 
 ## 요약
 
-- Cloud Shell 토큰으로 팀(그룹) 캘린더는 읽히는데 개인 캘린더(`/me/events`, `/me/calendar`)만 403(`ErrorAccessDenied`)
-- 원인은 토큰에 Calendars 읽기 범위가 없었던 것(조회)
-- Graph 탐색기에서 Calendars.Read를 직접 동의한 뒤 다시 조회
-- `GET /me/calendar`가 **200 OK**, 달력 소유자(owner)는 사용자 계정. 팀 달력 소유자는 팀(그룹) 계정
+- 팀 일정은 그룹 사서함, 개인 일정은 사용자 사서함 달력에 저장됨
+- 화면은 열리는데 Graph만 403이면 역할보다 토큰 범위를 먼저 의심하면 됨
+- 보존과 검색 정책은 두 사서함을 따로 대상에 넣어야 함
 
-> 근거 표기: 조회 = 이 테넌트에서 직접 읽은 값, 문서 = Microsoft Learn, 확인 불가 = 시도했지만 확인하지 못한 값(방법·사유 병기). 테넌트 ID, 도메인, 계정, 사용자 이름 등 비공개 정보는 가리거나 게시하지 않았습니다. 캡처의 식별자도 가렸습니다.
+> 근거: 조회는 이 테넌트에서 직접 읽은 값, 문서는 Microsoft Learn입니다. 비공개 정보는 가렸습니다. 캡처의 식별자도 가렸습니다.
 
 ---
 
@@ -25,31 +24,15 @@ Cloud Shell 토큰으로 팀 달력은 읽히는데 내 개인 달력만 403(`Er
 
 ### 1. 증상
 
-팀 일정과 개인 일정이 저장되는 곳을 나눠 보려고, Cloud Shell에서 팀(그룹) 캘린더에 시험 일정을 만들고 같은 토큰으로 개인 캘린더를 읽어 봤습니다. 팀 캘린더는 만들기(HTTP 201)와 목록 조회가 모두 됐는데, 개인 캘린더(`/me/events`)만 403이었습니다.
+- 같은 토큰으로 팀(그룹) 캘린더는 일정 만들기(HTTP 201)와 목록 조회가 됐지만 개인 캘린더(`/me/events`)만 403이었습니다(그림 1, 확인 과정에 있음).
 
-![팀 캘린더에 일정 생성]({{ "/assets/images/2026/10/m03-1-team-event-created.png" | relative_url }})
-*그림 1. Cloud Shell 출력(위쪽 줄은 실행한 명령). 1) 팀(그룹) 캘린더에 일정 zz-test-team-event-r2(10/28 11:00 KST) 생성 HTTP 201, 2) 그룹 캘린더 목록에 그 일정이 보임(시작 시각은 UTC 표기라 02:00:00), 3) 내 개인 캘린더(`/me/events`)를 같은 토큰으로 읽으면 403(토큰에 Calendars 범위가 없음). 계정 부분은 가렸습니다.*
+### 2. 원인 및 분석
 
-### 2. 원인과 해결
-
-Cloud Shell 토큰에 Calendars 읽기 범위가 없었습니다(조회). 비공개 채널 파일 403과 같은 계열의 원인(토큰 범위 부족)입니다([비공개·공유 채널 파일 403]({{ "/m365/troubleshooting/channel-upload-403-membership-or-scope/" | relative_url }})).
-
-Graph 탐색기(Graph Explorer)에서 캘린더 읽기 범위 **Calendars.Read**를 직접 동의하고 `GET /me/calendar`를 다시 실행하면 200 OK가 됩니다.
-
-토큰 범위를 넓히려고 관리자 역할을 부여받거나 보안 설정을 바꾸는 일은 하지 않았고, 사용자 동의로 읽기 범위(Calendars.Read)만 추가했습니다. 동의한 읽기 범위는 필요가 없어지면 Entra 관리 센터의 엔터프라이즈 애플리케이션에서 철회할 수 있습니다(원복).
-
-덤으로 알게 된 것도 있습니다. 팀 일정은 그룹 사서함의 달력에, 개인 일정은 사용자 사서함의 달력에 저장된다는 것을 달력 소유자 기준으로 확인했습니다. 팀 일정은 팀(그룹) 캘린더에만, 개인 일정은 개인 캘린더에만 보였습니다(조회). 개인 회의 일정이 이 달력에 쌓인다는 점은 문서 기준입니다.
-
-### 3. 403을 만나면 먼저 나눌 것
-
-403이 나면 **권한(역할)이 부족한지, 토큰의 범위가 부족한지**부터 나눕니다. 화면에서는 열리는데 Graph만 403이면 토큰 범위를 먼저 의심합니다.
-
-일정이 어디에 저장되는지는 달력 소유자로 구분합니다. 팀 일정은 그룹 사서함, 개인 일정은 사용자 사서함입니다. 보존·검색 대상 사서함이 다르다는 점은 보존 정책을 세울 때 반영합니다.
-
-### 4. 확인 과정
+- 토큰 범위: 필요 Calendars 읽기 / Cloud Shell 토큰에는 없음(채널 파일 403과 같은 계열, [비공개·공유 채널 파일 403]({{ "/m365/troubleshooting/channel-upload-403-membership-or-scope/" | relative_url }})).
+- 동의 후 `GET /me/calendar` owner는 사용자 계정 / 그룹 달력 owner는 팀(그룹) 계정. 팀 일정은 팀 캘린더에만, 개인 일정은 개인 캘린더에만 보였습니다(개인 회의 일정이 쌓이는 점은 문서 기준).
 
 <details markdown="1">
-<summary>확인 과정 자세히 보기 (그림 1장)</summary>
+<summary>확인 과정 자세히 보기 (그림 2장)</summary>
 
 #### 나눠 본 순서
 
@@ -78,6 +61,9 @@ $null = Invoke-RestMethod -Method Post -Headers $h -Uri "$B/groups/$tid/events" 
 try { Invoke-RestMethod -Headers $h -Uri "$B/me/events?`$top=1" | Out-Null; '3) personal calendar: OK' } catch { "3) personal calendar: HTTP $($_.Exception.Response.StatusCode.value__) ($($_.Exception.Response.ReasonPhrase))" }
 ```
 
+![팀 캘린더에 일정 생성]({{ "/assets/images/2026/10/m03-1-team-event-created.png" | relative_url }})
+*그림 1. Cloud Shell 출력(위쪽 줄은 실행한 명령). 1) 팀(그룹) 캘린더에 일정 zz-test-team-event-r2(10/28 11:00 KST) 생성 HTTP 201, 2) 그룹 캘린더 목록에 그 일정이 보임(시작 시각은 UTC 표기라 02:00:00), 3) 내 개인 캘린더(`/me/events`)를 같은 토큰으로 읽으면 403(토큰에 Calendars 범위가 없음). 계정 부분은 가렸습니다.*
+
 #### 동의 후 다시 조회
 
 Graph 탐색기에서 Calendars.Read를 동의한 뒤 다시 조회했습니다.
@@ -91,13 +77,22 @@ Graph 탐색기에서 Calendars.Read를 동의한 뒤 다시 조회했습니다.
 
 </details>
 
-### 5. 관련 글
+### 3. 결론
 
-- [Teams 저장 구조: 채널 유형별 파일·일정 위치]({{ "/m365/d3-teams-storage/" | relative_url }})
-- [만들어 둔 개인 일정이 사라졌을 때]({{ "/m365/troubleshooting/personal-event-disappeared/" | relative_url }})
-- [Cloud Shell에서 Graph 호출: 되는 호출과 안 되는 호출]({{ "/m365/troubleshooting/cloud-shell-graph-token-scope/" | relative_url }})
+토큰에 Calendars 범위 없음 → `/me/events` 403 → Outlook 웹과 팀 달력은 정상
 
-### 6. 근거 자료
+역할이나 보안 설정은 바꾸지 않고 사용자 동의로 Calendars.Read만 추가했습니다.
+
+### 4. 권고방안
+
+1. 403이 나면 역할 부족인지 토큰 범위 부족인지부터 나눕니다.
+2. 조치 후 확인: 동의한 토큰으로 `GET /me/calendar`가 200 OK인지 봅니다.
+3. 동의한 범위는 필요 없어지면 Entra 관리 센터 > 엔터프라이즈 애플리케이션에서 철회합니다(원복).
+4. 저장 위치는 달력 소유자로 구분해 보존 정책에 반영합니다.
+
+관련 글: [Teams 저장 구조: 채널 유형별 파일·일정 위치]({{ "/m365/d3-teams-storage/" | relative_url }}) · [만들어 둔 개인 일정이 사라졌을 때]({{ "/m365/troubleshooting/personal-event-disappeared/" | relative_url }}) · [Cloud Shell에서 Graph 호출: 되는 호출과 안 되는 호출]({{ "/m365/troubleshooting/cloud-shell-graph-token-scope/" | relative_url }})
+
+### 근거 자료
 
 <details markdown="1">
 <summary>근거 자료 펼쳐 보기 (5건)</summary>

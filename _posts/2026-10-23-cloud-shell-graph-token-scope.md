@@ -12,33 +12,27 @@ excerpt: "같은 Cloud Shell 토큰인데 목록은 읽히고 파일·정책은 
 
 ## 요약
 
-- 같은 토큰으로 팀, 사용자, 서비스 사용자, 채널 목록은 읽히는데 비공개·공유 채널 파일 폴더, 내 OneDrive, 조건부 액세스 정책 목록은 HTTP 403
-- 원인은 Cloud Shell의 Azure 로그인 토큰에 **Files.\*·Sites.\* 범위가 없음**(조회). 조건부 액세스 정책은 읽기 권한 부족
-- 보안 설정이나 역할은 바꾸지 않음. 되는 호출은 이 토큰으로, 안 되는 항목은 화면(GUI)으로 읽음
-- 조건부 액세스 정책은 GUI에서 0건. 채널 파일은 읽기 범위를 동의한 토큰에서 열림([채널 403 글]({{ "/m365/troubleshooting/channel-upload-403-membership-or-scope/" | relative_url }}))
+- 이 토큰은 목록 같은 읽기 조회에는 쓸 만하지만 파일 호출은 403이 남
+- 403이 나면 설정을 바꾸지 말고 GUI로 읽거나 범위 동의를 승인받으면 됨
+- 범위 동의 뒤 내 OneDrive 조회가 열리는지는 확인 불가
 
-> 근거 표기: 조회 = 이 테넌트에서 직접 읽은 값, 문서 = Microsoft Learn, 확인 불가 = 시도했지만 확인하지 못한 값(방법과 사유 병기). 테넌트 ID, 도메인, 계정, 사용자 이름 등 비공개 정보는 가리거나 게시하지 않았습니다. 조회 값은 화면과 PowerShell에서 읽었고, 토큰도 게시하지 않았습니다.
+> 근거: 조회는 이 테넌트에서 직접 읽은 값, 문서는 Microsoft Learn입니다. 비공개 정보는 가렸습니다. 조회 값은 화면과 PowerShell에서 읽었고, 토큰도 게시하지 않았습니다.
 
 ---
 
 ## 전체 기록
 
+
+
 ### 1. 증상
 
-Azure Cloud Shell(PowerShell)에서 이미 로그인된 Azure 세션으로 Graph용 액세스 토큰을 받아(`Get-AzAccessToken`) Graph 주소를 호출했습니다. 별도 로그인이나 보안 설정 변경 없이 쓸 수 있는 방법이라 이번 실습에서 썼는데, 호출마다 결과가 갈렸습니다.
+Cloud Shell(PowerShell)의 Azure 세션 토큰(`Get-AzAccessToken`, 별도 로그인·설정 변경 없음)으로 Graph를 호출하니 결과가 갈렸습니다.
 
-- 내가 가입한 팀 목록(`joinedTeams`): 성공
-- 사용자 목록: 성공
-- 서비스 사용자 목록: 성공
-- 팀 > 채널 목록(`allChannels` 포함): 성공
-- 채널 파일 폴더 정보: 표준 채널 성공, 비공개·공유 채널은 403 ([채널 403 글]({{ "/m365/troubleshooting/channel-upload-403-membership-or-scope/" | relative_url }}))
-- 내 OneDrive(`/me/drive`): HTTP 403
-- 조건부 액세스 정책 목록: HTTP 403 (읽기 권한 부족)
+- 성공: 내가 가입한 팀 목록(`joinedTeams`), 사용자 목록, 서비스 사용자 목록, 팀 > 채널 목록(`allChannels` 포함), 표준 채널 파일 폴더 정보
+- HTTP 403: 비공개·공유 채널 파일 폴더 정보([채널 403 글]({{ "/m365/troubleshooting/channel-upload-403-membership-or-scope/" | relative_url }})), 내 OneDrive(`/me/drive`), 조건부 액세스 정책 목록(읽기 권한 부족)
 
 ![Graph로 읽은 팀 목록]({{ "/assets/images/2026/10/m14-2-group-list.png" | relative_url }})
 *그림 1. 위쪽 세 줄은 토큰, 헤더, 주소 변수를 만드는 줄이고, 네 번째 줄이 `joinedTeams`를 호출해 팀 표(displayName, id)를 출력합니다. 호출이 성공해 팀 8개가 나옵니다. 테넌트 이름과 같은 팀·다른 조직 이름 팀의 이름, id 열 전체, 계정 이름은 가렸습니다.*
-
-실행한 스크립트입니다.
 
 ```powershell
 # 1~3줄: 토큰·헤더·주소 변수 (그림 1의 위쪽 세 줄)
@@ -48,23 +42,13 @@ $B  = 'https://graph.microsoft.com/v1.0'
 (Invoke-RestMethod -Headers $h -Uri "$B/me/joinedTeams").value | Select-Object displayName,id | Format-Table -AutoSize
 ```
 
-### 2. 원인과 해결
+### 2. 원인 및 분석
 
-파일과 사이트 계열의 403은 Cloud Shell의 Azure 로그인 토큰에 **Files.\*·Sites.\* 범위가 없어서**였습니다(조회). Graph 탐색기에서 Files.Read.All, Sites.Read.All을 동의한 토큰으로는 채널 전용 사이트의 파일 목록이 200으로 열렸습니다(조회).
+403을 대상 없음, 토큰 범위(scp), 읽기 역할로 나눠 봤습니다.
 
-조건부 액세스 정책의 403은 읽기 권한 부족입니다. 화면(GUI)으로 대신 읽었고 0건이었습니다.
-
-토큰 범위를 넓히려고 역할을 받거나 보안 설정을 바꾸는 일은 하지 않았습니다. 별도 승인이 필요한 일이라서이고, 그래서 원복할 변경도 없습니다. 읽기 역할이 부족한 항목은 화면(GUI)으로 대체해 읽었습니다.
-
-채널 파일 업로드가 400으로 막힌 일은 경로 문제여서 [별도 글]({{ "/m365/troubleshooting/channel-upload-400-filesfolder/" | relative_url }})로 나눴습니다. 호출 묶음이 사라지는 문제는 [세션 초기화·구문 오류 글]({{ "/m365/troubleshooting/cloud-shell-reset-and-syntax-error/" | relative_url }})에 있습니다.
-
-### 3. 이 토큰을 다시 쓸 때
-
-Cloud Shell의 Azure 로그인 토큰은 팀, 사용자, 서비스 사용자, 채널 목록 같은 **읽기 조회**에는 쓸 만합니다. 파일이나 사이트(Files.*, Sites.*)가 필요한 호출은 이 토큰으로는 403이 날 수 있습니다.
-
-403이 나면 "권한 없음"과 "대상이 없음"부터 구분합니다. 화면에서 대상이 열리면 후자가 아닙니다. 읽기 역할이 부족한 항목은 보안 설정을 바꾸지 말고 GUI로 읽거나, 범위 동의를 별도 승인 항목으로 올립니다.
-
-### 4. 확인 과정
+- `/me/drive`: "OneDrive 없음" 추정 / OneDrive 웹에 Meetings, Recordings 폴더 있음. scp에 Files.*·Sites.* 없음
+- Files.Read.All, Sites.Read.All 동의 후(Graph 탐색기): 채널 전용 사이트 파일 목록 200
+- 조건부 액세스 정책: 호출 403 / GUI로 0건
 
 <details markdown="1">
 <summary>확인 과정 자세히 보기 (그림 2장)</summary>
@@ -109,14 +93,21 @@ Cloud Shell의 Azure 로그인 토큰은 팀, 사용자, 서비스 사용자, �
 
 </details>
 
-### 5. 관련 글
+### 3. 결론
 
-- [비공개·공유 채널 파일 403: 멤버십인가 토큰 범위인가]({{ "/m365/troubleshooting/channel-upload-403-membership-or-scope/" | relative_url }})
-- [채널 경로 업로드 400]({{ "/m365/troubleshooting/channel-upload-400-filesfolder/" | relative_url }})
-- [Cloud Shell 세션 초기화·구문 오류]({{ "/m365/troubleshooting/cloud-shell-reset-and-syntax-error/" | relative_url }})
-- [Exchange 장치 코드 로그인 530035]({{ "/m365/troubleshooting/aadsts530035-device-code/" | relative_url }})
+Cloud Shell 토큰에 Files.\*·Sites.\* 범위 없음 → 파일·사이트 계열 호출 403 → 목록 조회는 성공
 
-### 6. 근거 자료
+정책 목록 403은 읽기 권한 부족입니다. 설정 변경이 없어 원복할 것은 없습니다. 동의 후 `/me/drive`가 열리는지(다시 조회 안 함)와 정책 호출의 최소 읽기 역할(역할 부여 안 함)은 확인 불가입니다(시도·다음 방법은 확인 과정).
+
+### 4. 권고방안
+
+1. 조치: 이 토큰은 목록 조회에 쓰고, 파일·사이트 호출은 Files.*·Sites.* 범위를 동의한 토큰이나 GUI로 합니다.
+2. 확인: 403이면 화면에서 대상이 열리는지부터 봅니다. 열리면 권한이나 범위 문제입니다.
+3. 하지 말 것: 범위를 넓히려고 역할을 받거나 보안 설정을 바꾸지 않습니다(범위 동의는 별도 승인 항목).
+
+관련 글: [비공개·공유 채널 파일 403: 멤버십인가 토큰 범위인가]({{ "/m365/troubleshooting/channel-upload-403-membership-or-scope/" | relative_url }}) · [채널 경로 업로드 400]({{ "/m365/troubleshooting/channel-upload-400-filesfolder/" | relative_url }}) · [Cloud Shell 세션 초기화·구문 오류]({{ "/m365/troubleshooting/cloud-shell-reset-and-syntax-error/" | relative_url }}) · [Exchange 장치 코드 로그인 530035]({{ "/m365/troubleshooting/aadsts530035-device-code/" | relative_url }})
+
+### 근거 자료
 
 <details markdown="1">
 <summary>근거 자료 펼쳐 보기 (4건)</summary>

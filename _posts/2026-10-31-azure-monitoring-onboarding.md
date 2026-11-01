@@ -12,12 +12,9 @@ excerpt: "Diagnostic settings를 켜지 않으면 로그는 쌓이지 않습니�
 
 ## 요약
 
-- 로그는 Diagnostic settings로 Log Analytics workspace에 모으고 KQL로 조회. Sentinel이 이를 SIEM, SOAR 관점에서 사건(incident)으로 만듦
-- Diagnostic settings는 리소스별로 직접 켜야 로그가 쌓임
-- Sentinel은 Data connector로 모으고 Analytics rule로 탐지해 Incident 생성, Playbook으로 대응 자동화. 2027-03-31 이후에는 Azure portal이 아니라 Microsoft Defender portal에서만 씀
-- 온프레미스 AD 신호는 Defender for Identity(DC에 센서 설치)로 수집해 Defender XDR에서 확인, Entra 쪽 위험 신호는 Identity Protection
-- 신규 입사자(Joiner) 흐름은 8단계(계정 생성, 동기화, 그룹과 license, 사서함과 Teams, PC, 첫 로그인, Azure 접근, 감사). 퇴사(Leaver)는 그 반대
-- 마지막 주라 지금까지 배운 서비스를 신규 입사자 한 명의 흐름으로 엮어 설명함
+- 로그는 Log Analytics에 모아 KQL로 조회하고 Sentinel로 탐지함
+- 신규 입사자 8단계 흐름으로 배운 서비스를 엮어 3분 안에 설명할 수 있으면 됨
+- Sentinel은 2027-03-31 이후 Defender portal에서만 쓸 수 있음
 
 12주 학습 로드맵의 12주차(마지막 주)입니다. 이전 글은 [Azure 보안과 거버넌스]({{ "/study/azure-security-governance/" | relative_url }}), 다음은 부록 [온프레미스↔클라우드 대응표]({{ "/study/onprem-cloud-mapping/" | relative_url }})와 [클라우드 학습 용어집]({{ "/study/cloud-study-glossary/" | relative_url }})입니다. 전체 로드맵: [클라우드 학습 로드맵]({{ "/study/cloud-study-roadmap/" | relative_url }})
 
@@ -33,29 +30,25 @@ Azure Monitor, Metrics, Logs, Log Analytics workspace, KQL(Kusto Query Language)
 
 #### 로그가 쌓이는 곳
 
-Metrics는 가볍고 거의 실시간인 시계열 수치입니다. Logs는 Log Analytics workspace에 쌓이는 상세 이벤트이고 KQL로 조회합니다. Activity log는 구독 수준에서 누가 어떤 리소스에 무슨 작업(control plane)을 했는지 남깁니다.
+Metrics는 가볍고 거의 실시간인 시계열 수치, Logs는 Log Analytics workspace에 쌓여 KQL로 조회하는 상세 이벤트입니다. Activity log는 구독 수준에서 누가 어떤 리소스에 무슨 작업(control plane)을 했는지 남깁니다.
 
-Diagnostic settings는 리소스의 플랫폼 로그를 Log Analytics workspace, 스토리지 계정, Event Hub로 보내는 설정입니다. **리소스별로 직접 켜야** 로그가 쌓입니다.
+Diagnostic settings는 리소스의 플랫폼 로그를 Log Analytics workspace, 스토리지 계정, Event Hub로 보내는 설정입니다.
 
 Alert는 조건을 만족하면 Action group(메일, SMS, 웹훅, 자동화)을 실행합니다.
 
-Entra 쪽 Sign-in logs와 Audit logs도 workspace로 내보내면 KQL로 로그인 이상과 변경 이력을 분석할 수 있습니다. 보존 기간과 내보내기 가능 여부는 라이선스에 따라 다르므로 공식 문서로 확인하세요([하이브리드·라이선스·로그]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}) 글도 참고).
+Entra Sign-in logs와 Audit logs도 workspace로 내보내면 KQL로 분석할 수 있습니다. 보존 기간과 내보내기 가능 여부는 라이선스마다 다릅니다([하이브리드·라이선스·로그]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}) 글도 참고).
 
 #### Sentinel
 
-Sentinel은 클라우드 네이티브 SIEM이자 SOAR입니다. Data connector로 로그를 모으고, Analytics rule로 탐지해 Incident를 만들고, Playbook(Logic Apps 기반)으로 대응을 자동화합니다.
+Sentinel은 클라우드 네이티브 SIEM이자 SOAR입니다. Data connector로 모으고, Analytics rule로 탐지해 Incident를 만들고, Playbook(Logic Apps 기반)으로 대응을 자동화합니다.
 
-어디서 보느냐가 바뀌고 있습니다. 이제는 Microsoft Defender portal에서 봅니다. 2027-03-31 이후 Azure portal의 Sentinel은 지원되지 않고 Defender portal로만 쓸 수 있습니다.
-
-문서에 따르면 2025년 7월부터 테넌트에서 처음 Sentinel을 켜는 신규 고객(구독 Owner 또는 User Access Administrator)은 workspace가 Defender portal에 자동 온보딩됩니다. Defender XDR이나 E5 license가 없어도 Defender portal에서 Sentinel을 쓸 수 있습니다([Sentinel의 Azure portal 은퇴 일정](https://learn.microsoft.com/azure/sentinel/overview#microsoft-sentinel-in-the-azure-portal-retirement-timeline), [Defender portal의 Microsoft Sentinel](https://learn.microsoft.com/azure/sentinel/microsoft-sentinel-defender-portal)).
+2027-03-31 이후 Azure portal의 Sentinel은 지원되지 않습니다. 2025년 7월부터 테넌트에서 처음 Sentinel을 켜는 신규 고객(구독 Owner 또는 User Access Administrator)은 workspace가 Defender portal에 자동 온보딩됩니다. Defender XDR이나 E5 license가 없어도 Defender portal에서 Sentinel을 쓸 수 있습니다([Sentinel의 Azure portal 은퇴 일정](https://learn.microsoft.com/azure/sentinel/overview#microsoft-sentinel-in-the-azure-portal-retirement-timeline), [Defender portal의 Microsoft Sentinel](https://learn.microsoft.com/azure/sentinel/microsoft-sentinel-defender-portal)).
 
 #### AD 운영자에게 중요한 연결
 
 온프레미스 AD 신호는 Defender for Identity(DC에 센서 설치)로 수집해 Defender XDR에서 확인합니다. Entra 쪽 위험 신호는 Identity Protection이 제공합니다([ID Protection 설명]({{ "/iam/entra-id-access-control/" | relative_url }})).
 
 #### KQL 맛보기
-
-로그인 결과와 디렉터리 변경 이력을 보는 두 쿼리입니다.
 
 ```kusto
 // 최근 24시간 로그인 결과 코드별 건수 (Entra sign-in logs를 workspace로 내보낸 경우)
@@ -73,32 +66,18 @@ AuditLogs
 
 ### 3. 통합 시나리오: 신규 입사자 한 명의 흐름 (Joiner)
 
-1. **HR 요청으로 계정 생성**
-    - 전문 용어: Source of authority(온프레미스 AD 또는 Entra)
-    - 확인 위치: AD DS 또는 Entra 관리 센터
-2. **Entra ID로 동기화**
-    - 전문 용어: Entra Connect delta sync (기본 30분)
-    - 확인 위치: Entra Connect 화면
-3. **그룹 편입과 license 부여**
-    - 전문 용어: Dynamic group, Group-based licensing
-    - 확인 위치: Entra 그룹, M365 관리 센터
-4. **사서함, Teams 구성원 생성**
-    - 전문 용어: Exchange Online mailbox, Microsoft 365 group
-    - 확인 위치: Exchange 관리 센터, Teams 관리 센터
-5. **PC 프로비저닝**
-    - 전문 용어: Autopilot, Entra join, Intune enrollment
-    - 확인 위치: Intune 관리 센터
-6. **첫 로그인**
-    - 전문 용어: MFA 등록(TAP), Conditional Access, compliant device
-    - 확인 위치: Entra Sign-in logs
-7. **Azure 접근**
-    - 전문 용어: RBAC role assignment via group, PIM eligible
-    - 확인 위치: Azure 포털 IAM
-8. **감사**
-    - 전문 용어: Sign-in logs, Audit logs, Sentinel
-    - 확인 위치: Log Analytics, Microsoft Defender portal(Sentinel)
+| 단계 | 전문 용어 | 확인 위치 |
+|---|---|---|
+| 1. HR 요청으로 계정 생성 | Source of authority(온프레미스 AD 또는 Entra) | AD DS 또는 Entra 관리 센터 |
+| 2. Entra ID로 동기화 | Entra Connect delta sync (기본 30분) | Entra Connect 화면 |
+| 3. 그룹 편입과 license 부여 | Dynamic group, Group-based licensing | Entra 그룹, M365 관리 센터 |
+| 4. 사서함, Teams 구성원 생성 | Exchange Online mailbox, Microsoft 365 group | Exchange 관리 센터, Teams 관리 센터 |
+| 5. PC 프로비저닝 | Autopilot, Entra join, Intune enrollment | Intune 관리 센터 |
+| 6. 첫 로그인 | MFA 등록(TAP), Conditional Access, compliant device | Entra Sign-in logs |
+| 7. Azure 접근 | RBAC role assignment via group, PIM eligible | Azure 포털 IAM |
+| 8. 감사 | Sign-in logs, Audit logs, Sentinel | Log Analytics, Microsoft Defender portal(Sentinel) |
 
-퇴사(Leaver)는 이 흐름의 반대입니다. 계정 비활성화, 세션과 토큰 폐기, license 회수, 디바이스 retire 또는 wipe, 접근 권한 회수 순으로 정리합니다.
+퇴사(Leaver)는 반대로 계정 비활성화, 세션과 토큰 폐기, license 회수, 디바이스 retire 또는 wipe, 접근 권한 회수 순입니다.
 
 ### 4. 3분 설명 스크립트 (빈칸을 채워 외우기)
 
@@ -121,9 +100,9 @@ AuditLogs
 
 ### 5. 전문가처럼 말하기
 
-> "로그는 diagnostic settings로 Log Analytics workspace에 모으고 KQL로 조회합니다. 온프레미스 AD는 Defender for Identity 센서로, 클라우드 신원은 Entra 로그와 Identity Protection으로 보고, Sentinel에서 상관 분석합니다."
+> "온프레미스 AD는 Defender for Identity 센서로, 클라우드 신원은 Entra 로그와 Identity Protection으로 보고, Sentinel에서 상관 분석합니다."
 >
-> "Joiner 흐름은 source of authority에서 계정을 만들어 동기화하고, dynamic group과 group-based licensing으로 license를 주고, Autopilot으로 디바이스를 Entra join과 Intune에 등록한 뒤, Conditional Access가 compliant device를 요구하는 순서입니다."
+> "Joiner는 source of authority에서 계정 생성과 동기화, group-based licensing, Autopilot으로 Entra join과 Intune 등록, Conditional Access의 compliant device 요구 순입니다."
 
 ### 6. 자가 점검
 
@@ -148,5 +127,5 @@ AuditLogs
 
 ### 7. 영상과 자료 (한글 우선)
 
-- 한글: Microsoft Korea의 [Azure 교육·웨비나 페이지](https://www.microsoft.com/ko-kr/azureall)에서 모니터링, 보안 주제를 찾아 보세요. Log Analytics와 KQL 한글 유튜브는 확인 불가입니다(유튜브 검색으로 찾았지만 해당 영상을 찾지 못함).
+- 한글: Microsoft Korea의 [Azure 교육·웨비나 페이지](https://www.microsoft.com/ko-kr/azureall)에서 모니터링, 보안 주제를 찾아 보세요. Log Analytics와 KQL 한글 유튜브는 확인 불가입니다(유튜브 검색으로 찾지 못함).
 - 영문 보완: AZ-104 공식 시리즈(Microsoft Learn, 전 29편)의 [27편 Introduction to Azure Monitor](https://www.youtube.com/watch?v=p7Kw1YJl2S4), [28편 alerting](https://www.youtube.com/watch?v=AGkyh3jlaw8), [29편 Azure Monitor logs 분석](https://www.youtube.com/watch?v=Spf9SMfK000). [AZ-104 Full Course - 12 Hours](https://www.youtube.com/watch?v=qXk8_0z_HsU)는 모니터링 모듈이 7:15:25부터입니다.

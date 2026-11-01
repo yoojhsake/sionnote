@@ -12,9 +12,9 @@ GPO는 클라우드에서 무엇이 되고, Domain Admins 상시 권한은 어�
 
 ## 요약
 
-- 신원 쪽: AD DS는 Entra ID, Azure AD Connect는 Entra Connect, AD FS는 Entra SSO와 앱 등록, Domain Admins 상시 권한은 PIM Eligible assignment
-- 관리와 인프라 쪽: GPO는 Intune 구성 프로필과 Conditional Access, 파일 서버는 SharePoint와 OneDrive, 방화벽과 VLAN은 NSG, VNet, Azure Firewall
-- Azure AD는 Microsoft Entra ID로 바뀜. 자료와 영상엔 옛 이름이 그대로 많아 두 이름을 같이 알아야 검색과 대화가 됨
+- 온프레미스 구성요소와 딱 맞는 클라우드 짝은 드물어 달라지는 점까지 봐야 함
+- 옛 이름이 섞인 자료는 바뀐 이름 표와 함께 찾아 읽으면 됨
+- AzureAD와 MSOnline 모듈이 공지대로 실제 멈췄는지는 확인 불가임
 
 12주 학습 로드맵의 부록입니다. 이전 글은 [모니터링과 통합 (12주차)]({{ "/study/azure-monitoring-onboarding/" | relative_url }}), 다음 글은 [용어 전집과 영상, 자료]({{ "/study/cloud-study-glossary/" | relative_url }})이고, 전체는 [전체 로드맵]({{ "/study/cloud-study-roadmap/" | relative_url }})에 있습니다.
 
@@ -23,8 +23,6 @@ GPO는 클라우드에서 무엇이 되고, Domain Admins 상시 권한은 어�
 ## 전체 내용
 
 ### 1. 온프레미스 ↔ 클라우드 대응표
-
-딱 맞아떨어지는 짝은 드뭅니다. 그래서 오른쪽 칸 "전환할 때 달라지는 점"까지 같이 봐야 합니다.
 
 #### 신원, 정책, 권한
 
@@ -48,11 +46,9 @@ GPO는 클라우드에서 무엇이 되고, Domain Admins 상시 권한은 어�
 | 이벤트 로그 수집 서버 | Log Analytics, Sentinel | 로그 수집과 분석이 서비스로 제공됨 |
 | 서버 대수와 장비 구매 | VM, 구독, 종량제 | CapEx에서 OpEx로 |
 
-Entra ID와 AD DS의 차이, 하이브리드 인증 방식, PIM은 [IAM 시리즈]({{ "/iam/what-is-entra-id/" | relative_url }})의 [기초와 구조]({{ "/iam/what-is-entra-id/" | relative_url }}), [접근 제어]({{ "/iam/entra-id-access-control/" | relative_url }}), [하이브리드와 라이선스]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}) 글에서 자세히 다룹니다.
+Entra ID와 AD DS의 차이, 하이브리드 인증 방식, PIM은 IAM 시리즈의 [기초와 구조]({{ "/iam/what-is-entra-id/" | relative_url }}), [접근 제어]({{ "/iam/entra-id-access-control/" | relative_url }}), [하이브리드와 라이선스]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}) 글에서 자세히 다룹니다.
 
 ### 2. 옛 이름 ↔ 새 이름
-
-자료와 영상은 옛 이름을 그대로 쓰는 경우가 많습니다. 두 이름을 같이 알아야 검색과 대화가 됩니다.
 
 #### Entra ID 계열
 
@@ -79,10 +75,10 @@ Entra ID와 AD DS의 차이, 하이브리드 인증 방식, PIM은 [IAM 시리�
 | Azure Purview, Microsoft 365 compliance | Microsoft Purview |
 | AzureAD, MSOnline PowerShell | Microsoft Graph PowerShell, Microsoft Entra PowerShell |
 
-- **AzureAD, MSOnline PowerShell 모듈**은 이름만 바뀐 것이 아니라 지원이 끝난(deprecated) 모듈입니다. 새 스크립트는 Microsoft Graph PowerShell 또는 Microsoft Entra PowerShell로 씁니다.
-    - MSOnline: 2025년 4월 초부터 5월 말 사이에 은퇴(작동 중지)하는 일정으로 공지됐습니다.
-    - AzureAD: 2025년 3월 30일 이후 지원이 끝났고, 은퇴(작동 중지)는 2025년 7월 초로 공지됐습니다. 두 모듈이 공지대로 실제로 멈췄는지는 확인 불가입니다(Microsoft Learn의 Entra 새 소식 기록을 검색했지만 공지 일정만 있고 완료 기록은 찾지 못했습니다).
-    - Microsoft Entra PowerShell은 AzureAD, AzureAD Preview 모듈과 98% 이상 호환되는 cmdlet을 제공해 옮겨 가기 쉽습니다.
+- AzureAD, MSOnline PowerShell 모듈은 이름만 바뀐 것이 아니라 지원이 끝난(deprecated) 모듈이라, 새 스크립트는 위 표의 대체 모듈로 씁니다.
+    - MSOnline: 2025년 4월 초~5월 말 은퇴(작동 중지) 일정으로 공지됐습니다.
+    - AzureAD: 2025년 3월 30일 이후 지원 종료, 은퇴는 2025년 7월 초로 공지됐습니다. 두 모듈이 공지대로 실제로 멈췄는지는 확인 불가입니다(Microsoft Learn의 Entra 새 소식 기록을 검색했지만 공지 일정만 있고 완료 기록은 찾지 못했습니다).
+    - Microsoft Entra PowerShell은 AzureAD, AzureAD Preview 모듈과 98% 이상 호환되는 cmdlet을 제공합니다.
 
 ### 3. 근거 자료
 

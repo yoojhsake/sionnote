@@ -12,20 +12,17 @@ Teams 채널에 올린 파일, 팀·개인 일정, OneDrive 폴더는 실제로 
 
 ## 요약
 
-- 표준 채널 파일은 팀 사이트 문서 라이브러리 안 채널 폴더, 비공개·공유 채널 파일은 각각 **별도 SharePoint 사이트**의 문서 라이브러리
-- Graph 채널 유형 값은 표준 `standard`, 비공개 `private`, 공유 `unknownFutureValue`
-- Practice-Team-01과 채널 3종(표준, 비공개, 공유)을 만들고 시험 파일 업로드, 시험 일정 2개로 저장 위치를 나눠 봄(Team 7→8)
-- 팀 일정은 팀(그룹) 캘린더(달력 소유자가 팀(그룹) 계정), 개인 일정은 사용자 개인 캘린더(소유자가 사용자 계정)에만 들어감
-- 관리자 OneDrive My files에 Meetings, Recordings 등 폴더가 있으나 비어 있음(녹화·채팅 파일 실제 저장 여부는 확인 불가, 본문 8절)
-- 보존, 검색, 공유, 백업 정책은 사이트 단위로 대상을 따로 잡고, 업로드 성공은 응답 코드와 실제 저장 위치를 둘 다 보고 판단
+- 팀 일정은 그룹 사서함, 개인 일정은 사용자 사서함 달력에만 저장됨
+- 백업·보존·검색 정책은 채널 사이트까지 대상에 넣어야 함
+- 녹화와 1:1 채팅 파일의 실제 저장 위치는 확인 불가
 
-> 근거 표기: 조회 = 이 테넌트에서 직접 읽은 값, 문서 = Microsoft Learn, 확인 불가 = 시도했지만 확인하지 못한 값(방법·사유 병기). 테넌트 ID, 도메인, 계정, 사용자 이름 등 비공개 정보는 가리거나 게시하지 않았습니다. 주소의 테넌트 부분은 `<테넌트>`로 적었습니다.
+> 근거: 조회는 이 테넌트에서 직접 읽은 값, 문서는 Microsoft Learn입니다. 비공개 정보는 가렸습니다. 주소의 테넌트 부분은 `<테넌트>`로 적었습니다.
 
 ---
 
 ## 전체 기록
 
-Team 생성부터 시험 업로드까지는 2026-10-22(목) 09:30~10:06에 했고, 이어서 일정 저장 위치와 OneDrive 폴더를 확인했습니다. 중간에 막힌 곳이 많아서 상황별 글로 나눠 두었습니다(6절).
+Team 생성부터 시험 업로드까지는 2026-10-22(목) 09:30~10:06에 했고, 이어서 일정과 OneDrive 폴더를 확인했습니다. 막힌 곳은 6절에 글별로 모았습니다.
 
 ### 1. 목표
 
@@ -40,11 +37,11 @@ Team 생성부터 시험 업로드까지는 2026-10-22(목) 09:30~10:06에 했�
 
 *그림 1. 채널 유형별 파일 위치와 시험 업로드 결과*
 
-Team은 Microsoft 365 그룹, SharePoint 팀 사이트, 그룹 사서함(일정)이 묶인 것입니다. 파일이 어디에 쌓이는지는 채널 유형이 정합니다.
+Team은 Microsoft 365 그룹, SharePoint 팀 사이트, 그룹 사서함(일정)의 묶음이고, 파일 위치는 채널 유형이 정합니다.
 
-- 표준 채널은 팀 사이트를 같이 씁니다. 채널마다 문서 라이브러리 안에 폴더가 하나 생깁니다.
-- 비공개 채널은 구성원이 제한된 채널이고, **별도의 SharePoint 사이트**가 생깁니다.
-- 공유 채널은 다른 팀이나 조직과 공유할 수 있는 채널이고, 역시 별도의 SharePoint 사이트가 생깁니다.
+- 표준 채널: 팀 사이트 문서 라이브러리 안에 채널별 폴더
+- 비공개 채널(구성원 제한): 별도 SharePoint 사이트
+- 공유 채널(다른 팀·조직과 공유): 별도 SharePoint 사이트
 
 채팅 파일과 녹화, 일정은 위치가 또 다릅니다(문서 기준).
 
@@ -52,8 +49,8 @@ Team은 Microsoft 365 그룹, SharePoint 팀 사이트, 그룹 사서함(일정)
 - 회의 녹화
     - 일반 회의: 주최자의 OneDrive > Recordings 폴더
     - 채널 회의: 팀 SharePoint 사이트 > Documents > Recordings 폴더
-- Team 일정(채널 일정, 채널 회의): **그룹 사서함**(Microsoft 365 그룹 캘린더). 팀을 만들 때 같이 생긴 사서함입니다(문서·Q&A 기준)
-- 개인 회의 일정(Teams, Outlook에서 만든 일반 회의): 사용자 사서함. 주최자 사서함에 원본이, 참석자 각자의 사서함에 복사본이 생깁니다
+- Team 일정(채널 일정, 채널 회의): 팀을 만들 때 생긴 그룹 사서함(Microsoft 365 그룹 캘린더)(문서·Q&A 기준)
+- 개인 회의 일정(Teams, Outlook의 일반 회의): 주최자 사서함에 원본, 참석자 사서함에 복사본
 - 회의 채팅: 일반 회의는 참석자 각자의 사서함, 채널 회의는 팀의 그룹 사서함(문서: Purview eDiscovery의 Teams 콘텐츠 저장 위치 표)
 
 ### 3. 결과
@@ -69,23 +66,16 @@ Team은 Microsoft 365 그룹, SharePoint 팀 사이트, 그룹 사서함(일정)
 - 채널 사이트: 2개(비공개·공유 채널 각 1)
 - 시험 일정: 팀(그룹) 캘린더 `zz-test-team-event-r2`, 개인 캘린더 `zz-test-personal-event`
 
-관리 센터 숫자와 Graph 채널 수를 맞춰 보는 방법은 [관리 센터 숫자·사이트 목록과 Graph 채널 수가 다를 때]({{ "/m365/troubleshooting/channel-count-mismatch/" | relative_url }})에 있습니다.
-
 ![SharePoint 관리 센터 활성 사이트 목록. Practice-Team-01 한 행, 채널 사이트 2개로 표시]({{ "/assets/images/2026/10/d3-active-sites.png" | relative_url }})
 *그림 3. 활성 사이트 목록 (빨간 상자: Practice-Team-01 행)*
 
-활성 사이트에는 Practice-Team-01 한 행만 보였습니다. 채널 사이트는 별도 행이 아니라 "채널 사이트" 열의 "사이트 2개"라는 링크로 묶여 있었습니다.
+채널 사이트는 별도 행이 아니라 "채널 사이트" 열의 "사이트 2개" 링크로 묶여 있었습니다.
 
 #### 맞춰 본 값
 
-- Teams 목록, Graph Team 수: 8
-- Graph 채널 수: 4 (standard 2, private 1, unknownFutureValue 1)
-- 관리 센터 채널 열 합계: 표준 2 + 비공개 1 + 공유 1 = 4 (Graph와 일치)
-- 폴더 주소 4개를 SharePoint 화면과 대조: 일치
-- 시험 파일 존재: 3개 모두 SharePoint 화면에서 확인
-- 활성 사이트 목록: 팀 사이트 1행 + 채널 사이트 2개 표시
-- 팀 일정: 팀(그룹) 캘린더 목록에 있고 개인 캘린더에는 없음
-- 개인 일정: 개인 캘린더에 있고 팀(그룹) 캘린더 목록에는 없음(검사 결과 False)
+- Teams 목록과 Graph Team 수 8, Graph 채널 4개(standard 2, private 1, unknownFutureValue 1)
+- 폴더 주소 4개와 SharePoint 화면 일치, 시험 파일 3개 모두 존재
+- 팀 일정은 팀(그룹) 캘린더에만, 개인 일정은 개인 캘린더에만 있음(검사 결과 False)
 - 달력 소유자: 개인 달력은 사용자 계정, 팀 달력은 팀(그룹) 계정
 - 관리자 OneDrive: My files에 Meetings, Microsoft Copilot Chat Files, Recordings 폴더(모두 0개)
 
@@ -94,8 +84,7 @@ Team은 Microsoft 365 그룹, SharePoint 팀 사이트, 그룹 사서함(일정)
 - 언제: Team, 채널, 시험 파일은 2026-10-22 09:30 ~ 10:06. 이어서 채널 업로드 시험, 시험 일정 생성, 읽기 범위 동의
 - 무엇을: Team 1개 + 채널 3개 생성, 시험 파일 업로드, 시험 일정 2개 생성, Graph 탐색기에서 읽기 범위(Calendars.Read 등) 동의
 - 전 → 후: Team 7→8, 채널 사이트 2개 생성, 시험 파일 3개(D3-test-*.txt) 생성, 팀 일정 1건, 개인 일정 1건
-- 왜: 채널 유형별 파일 저장 위치와 일정 저장 위치를 실제 값으로 확인
-- 근거: Teams, SharePoint, Outlook 화면, Graph 조회, 문서는 아래 "근거 자료"의 URL
+- 근거: Teams, SharePoint, Outlook 화면, Graph 조회, 문서는 "근거 자료"의 URL
 - 검증 결과: 사이트·폴더 주소 4개, 업로드 응답 201/403/403, 파일 존재 3개, 일정 위치 2곳 구분
 - 정리 대상
     - 표준 채널 폴더와 General에 생긴 zz-test*.txt
@@ -107,11 +96,8 @@ Team은 Microsoft 365 그룹, SharePoint 팀 사이트, 그룹 사서함(일정)
 
 ### 4. 정책을 세울 때 달라지는 점
 
-"이 파일이 어디 있나"에 대한 답이 채널 유형마다 다릅니다. 표준 채널은 팀 사이트, 비공개·공유는 별도 사이트라서 보존, 검색, 외부 공유, 백업 정책을 세울 때 **사이트 단위로 대상을 따로** 잡아야 합니다.
-
-일정은 달력 소유자로 저장 위치를 구분합니다. 팀 일정은 그룹 사서함, 개인 일정은 사용자 사서함의 달력입니다. 채널 회의의 채팅은 팀의 그룹 사서함, 일반 회의의 채팅은 참석자 사서함에 있어서(문서 기준) 보존과 검색 대상 사서함도 달라집니다.
-
-정리(삭제)할 때는 팀 사이트뿐 아니라 채널 사이트가 따로 있다는 점을 목록에 넣어 둡니다. 삭제 때 채널 사이트가 어떻게 처리되는지는 확인 불가입니다(아래 "확인 불가로 남은 것"). 시험 파일(zz-test*.txt)도 팀 사이트에 남아 있어 정리 항목에 넣었습니다.
+- 보존, 검색, 외부 공유, 백업 정책은 채널 사이트를 사이트 단위로 따로 대상에 넣습니다. 회의 채팅도 채널 회의와 일반 회의의 사서함이 달라 대상이 달라집니다.
+- 정리(삭제) 목록에도 채널 사이트를 넣습니다. 삭제 때 채널 사이트 처리는 확인 불가입니다(8절).
 
 개발이나 자동화에서는 채널 유형 문자열보다 `filesFolder` 같은 실제 주소 API를 믿는 편이 낫습니다. 업로드 성공 여부도 응답 코드만 보지 말고 실제 저장 위치까지 확인합니다.
 
@@ -247,7 +233,7 @@ Graph 탐색기(Graph Explorer)에서 캘린더 읽기 범위(Calendars.Read)를
 ![내 달력 조회 결과 200, 소유자는 사용자 계정]({{ "/assets/images/2026/10/m22-1-me-calendar-owner-200.png" | relative_url }})
 *그림 9. 캘린더 읽기 범위 동의 후 `GET /me/calendar` 응답(200 OK). name은 Calendar이고 owner가 사용자 계정입니다. 사용자 이름·주소와 식별자는 가렸습니다.*
 
-두 시험 모두 팀 일정은 팀(그룹) 캘린더에만, 개인 일정은 개인 캘린더에만 들어갔습니다. 달력 소유자로 보면 **팀 일정은 그룹 사서함, 개인 일정은 사용자 사서함의 달력**에 저장됩니다. 개인 회의 일정이 이 개인 달력에 쌓인다는 점은 문서 기준입니다.
+개인 회의 일정이 이 개인 달력에 쌓인다는 점은 문서 기준입니다.
 
 #### 5-5. OneDrive 위치 확인
 
@@ -258,7 +244,7 @@ GUI 경로: Microsoft 365 앱 시작 관리자 → OneDrive → My files.
 ![OneDrive My files 화면. Meetings, Microsoft Copilot Chat Files, Recordings 폴더, 모두 0 items]({{ "/assets/images/2026/10/m03-4-onedrive.png" | relative_url }})
 *그림 10. 관리자 OneDrive의 My files. Meetings, Microsoft Copilot Chat Files, Recordings 폴더 3개가 모두 0 items입니다. 계정 이름 부분은 가렸습니다.*
 
-My files에는 Meetings, Microsoft Copilot Chat Files, Recordings 폴더가 있고 모두 0개였습니다(조회). 문서가 말하는 "개인 회의 녹화는 진행자의 OneDrive에 저장"의 대상 폴더는 있는 셈입니다.
+문서가 말하는 "개인 회의 녹화는 진행자의 OneDrive에 저장"의 대상 폴더는 있는 셈입니다.
 
 실제 녹화와 1:1 채팅 파일이 그 폴더에 들어가는지는 **확인 불가**입니다.
 
@@ -270,19 +256,19 @@ My files에는 Meetings, Microsoft Copilot Chat Files, Recordings 폴더가 있�
 
 ### 6. 작업 중 막힌 곳
 
-- 응답은 403인데 파일이 만들어짐: 코드와 실제 저장 위치를 둘 다 확인. 원인은 확인 불가. [응답은 403인데 파일이 만들어졌을 때]({{ "/m365/troubleshooting/upload-403-but-file-created/" | relative_url }})
-- 비공개·공유 채널 파일이 403: 구성원·화면을 확인해 멤버십을 배제, 토큰의 읽기 범위를 추가. [비공개·공유 채널 파일 403]({{ "/m365/troubleshooting/channel-upload-403-membership-or-scope/" | relative_url }})
-- 채널 경로로 올리면 400: `filesFolder`에서 driveId·itemId를 읽어 그 경로로 올림. [채널 경로 업로드 400]({{ "/m365/troubleshooting/channel-upload-400-filesfolder/" | relative_url }})
-- 공유 채널이 `unknownFutureValue`로 보임: 유형 문자열 대신 `filesFolder`로 실제 주소를 얻음. [공유 채널이 unknownFutureValue로 보일 때]({{ "/m365/troubleshooting/shared-channel-unknownfuturevalue/" | relative_url }})
-- 관리 센터 숫자·사이트 목록과 Graph 채널 수가 다름: 열별로 더해 맞추고, 채널 사이트는 "채널 사이트" 열 링크로 들어감. [관리 센터 숫자·사이트 목록과 Graph 채널 수가 다를 때]({{ "/m365/troubleshooting/channel-count-mismatch/" | relative_url }})
-- 브라우저 파일 선택창을 쓸 수 없음: Cloud Shell의 Graph 호출로 대체. [브라우저 파일 선택창을 쓸 수 없을 때]({{ "/m365/troubleshooting/browser-file-picker-unavailable/" | relative_url }})
-- 개인 달력이 403: Calendars.Read를 동의한 뒤 다시 조회. [개인 달력이 403일 때]({{ "/m365/troubleshooting/personal-calendar-403-calendars-read/" | relative_url }})
-- 만들어 둔 개인 일정이 사라짐: 같은 이름·시각으로 GUI에서 다시 만들고 경위를 기록. [만들어 둔 개인 일정이 사라졌을 때]({{ "/m365/troubleshooting/personal-event-disappeared/" | relative_url }})
-- 관리자 OneDrive가 "기본 문서 라이브러리를 찾을 수 없음": 시간을 두고 다시 열어 확인. [관리자 OneDrive가 열리지 않을 때]({{ "/m365/troubleshooting/onedrive-default-library-not-found/" | relative_url }})
+- 응답은 403인데 파일이 만들어짐(원인 확인 불가): [응답은 403인데 파일이 만들어졌을 때]({{ "/m365/troubleshooting/upload-403-but-file-created/" | relative_url }})
+- 비공개·공유 채널 파일 403: 멤버십이 아니라 토큰 범위 문제. [비공개·공유 채널 파일 403]({{ "/m365/troubleshooting/channel-upload-403-membership-or-scope/" | relative_url }})
+- 채널 경로 업로드 400: `filesFolder`의 driveId·itemId로 올림. [채널 경로 업로드 400]({{ "/m365/troubleshooting/channel-upload-400-filesfolder/" | relative_url }})
+- 공유 채널이 `unknownFutureValue`로 보임: [공유 채널이 unknownFutureValue로 보일 때]({{ "/m365/troubleshooting/shared-channel-unknownfuturevalue/" | relative_url }})
+- 관리 센터 숫자와 Graph 채널 수가 다름: 열별로 더해 맞춤. [관리 센터 숫자·사이트 목록과 Graph 채널 수가 다를 때]({{ "/m365/troubleshooting/channel-count-mismatch/" | relative_url }})
+- 브라우저 파일 선택창 사용 불가: Graph 호출로 대체. [브라우저 파일 선택창을 쓸 수 없을 때]({{ "/m365/troubleshooting/browser-file-picker-unavailable/" | relative_url }})
+- 개인 달력 403: Calendars.Read 동의 후 재조회. [개인 달력이 403일 때]({{ "/m365/troubleshooting/personal-calendar-403-calendars-read/" | relative_url }})
+- 개인 일정이 사라짐: 같은 이름·시각으로 다시 만듦. [만들어 둔 개인 일정이 사라졌을 때]({{ "/m365/troubleshooting/personal-event-disappeared/" | relative_url }})
+- 관리자 OneDrive "기본 문서 라이브러리를 찾을 수 없음": 시간을 두고 다시 엶. [관리자 OneDrive가 열리지 않을 때]({{ "/m365/troubleshooting/onedrive-default-library-not-found/" | relative_url }})
 
 ### 7. 남겨 둔 것
 
-Practice-Team-01(채널 사이트 2개와 시험 파일 포함)은 삭제하지 않았고, 실습을 마무리할 때 정리할 항목으로 남겼습니다(삭제 후 30일간 복구 가능). 작업 당시 입력한 PowerShell 원문은 일부 복구하지 못해 같은 출력 줄이 나오는 형태로 정리했습니다. 화면 확인 값은 실제와 같습니다.
+Practice-Team-01은 삭제하지 않고 정리 항목으로 남겼습니다(3절 변경 이력). PowerShell 원문은 일부 복구하지 못해 같은 출력 줄이 나오는 형태로 정리했습니다(화면 값은 실제와 같음).
 
 ### 8. 확인 불가로 남은 것
 

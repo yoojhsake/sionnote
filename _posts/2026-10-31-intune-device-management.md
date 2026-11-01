@@ -12,11 +12,9 @@ GPO가 하던 구성을 클라우드에서는 Intune이 맡고, Intune이 판정
 
 ## 요약
 
-- Intune은 Windows, macOS, iOS, Android 디바이스를 클라우드에서 관리하는 서비스. GPO가 하던 구성은 Settings catalog와 Administrative templates, 접근 통제는 Compliance policy와 Conditional Access 조합으로 대체
-- 가장 중요한 연결점은 Intune이 디바이스를 compliant로 표시하면 Conditional Access가 "규정 준수 디바이스 요구"로 접근을 통제한다는 것
-- 기존 GPO는 Group Policy analytics로 Intune 지원 여부를 분석한 뒤 Settings catalog로 옮김
-- 신규 PC는 Windows Autopilot으로 Entra join과 Intune enrollment를 한 번에
-- 인증서는 SCEP 또는 PKCS 프로필로 배포, 온프레미스 AD CS와는 Intune Certificate Connector(및 NDES)로 연계
+- Intune의 규정 준수 판정이 조건부 액세스의 접근 통제 입력값이 됨
+- GPO는 Group Policy analytics로 분석한 뒤 Settings catalog로 옮김
+- Cloud PKI는 E5·E7이 아니면 Intune Suite 별도 구독이 필요함
 
 12주 학습 로드맵의 8주차입니다.
 이전 글: [7주차 SharePoint·OneDrive·Teams]({{ "/study/sharepoint-onedrive-teams-structure/" | relative_url }}), 다음 글: [9주차 Azure 컴퓨팅·스토리지]({{ "/study/azure-compute-storage/" | relative_url }}), [학습 로드맵]({{ "/study/cloud-study-roadmap/" | relative_url }})
@@ -33,23 +31,15 @@ Microsoft Intune, MDM, MAM, Enrollment, Windows Autopilot, Compliance policy, Co
 
 MDM은 디바이스 전체를 등록해 관리하고, MAM은 디바이스는 건드리지 않고 앱 단위로 데이터를 보호합니다(BYOD에서 자주 씁니다).
 
-Enrollment는 Windows의 경우 Entra join과 함께 자동 등록되는 것이 일반적이고, 신규 디바이스 프로비저닝에는 Windows Autopilot을 씁니다. Autopilot은 사용자 주도(user-driven), self-deploying, pre-provisioning 같은 방식이 있고, 최근에는 device preparation 방식도 추가되었습니다.
+Windows는 Entra join과 함께 자동 등록(Enrollment)되는 것이 일반적이고, 신규 디바이스 프로비저닝에는 Windows Autopilot(사용자 주도(user-driven), self-deploying, pre-provisioning, 최근 추가된 device preparation)을 씁니다.
 
-GPO 전환에서 Settings catalog는 설정 항목을 검색해서 구성하는 방식이고, Administrative templates는 ADMX 기반 설정입니다.
+GPO 전환에서 Settings catalog는 설정 항목을 검색해서 구성하는 방식이고, Administrative templates는 ADMX 기반 설정입니다. 기존 GPO는 GPMC에서 XML 파일로 내보낸 뒤(Save report) Intune의 Group Policy analytics로 가져와(Import) 지원 여부를 분석하고, Settings catalog 정책으로 옮깁니다. GPO 하나의 XML은 4 MB보다 작아야 합니다([Group Policy analytics로 GPO 가져오기·분석](https://learn.microsoft.com/intune/device-configuration/import-group-policy-analytics#export-a-gpo-as-an-xml-file)).
 
-- 기존 GPO는 GPMC에서 XML 파일로 내보낸 뒤(Save report), Intune의 **Group Policy analytics**로 가져와(Import) Intune에서 지원되는 설정인지 분석합니다.
-- 문서: 가져온 GPO는 Settings catalog 정책으로 옮길 수 있고, GPO 하나의 XML은 4 MB보다 작아야 합니다([Group Policy analytics로 GPO 가져오기·분석](https://learn.microsoft.com/intune/device-configuration/import-group-policy-analytics#export-a-gpo-as-an-xml-file)).
-Compliance policy와 Conditional Access는 이렇게 이어집니다. Intune이 디바이스를 "규정 준수(compliant)"로 표시하면 Conditional Access가 "규정 준수 디바이스 요구"로 접근을 통제합니다. 두 서비스가 연결되는 **가장 중요한 지점**입니다. 조건부 액세스 자체는 [4주차]({{ "/study/auth-security-mfa-ca-pim/" | relative_url }})와 [IAM 접근 제어 글]({{ "/iam/entra-id-access-control/" | relative_url }})에서 다룹니다.
-업데이트는 Update ring과 Windows Autopatch가 WSUS와 MECM의 패치 배포를 대체하는 방향입니다.
+Intune이 디바이스를 "규정 준수(compliant)"로 표시하면 Conditional Access가 "규정 준수 디바이스 요구"로 접근을 통제합니다. 조건부 액세스 자체는 [4주차]({{ "/study/auth-security-mfa-ca-pim/" | relative_url }})와 [IAM 접근 제어 글]({{ "/iam/entra-id-access-control/" | relative_url }})에서 다룹니다.
 
 Hybrid joined 디바이스는 GPO와 Intune을 같이 쓸 수 있지만, 둘을 섞으면 관리 부담이 늘어납니다. Co-management는 Intune과 Configuration Manager를 함께 쓰는 구성이고, 이 구성이면 Conditional Access 같은 Entra 기능을 일부 쓸 수 있습니다.
 
-PKI 연계에서는 인증서를 Intune의 SCEP 또는 PKCS 프로필로 배포합니다.
-
-- 온프레미스 AD CS와는 Intune Certificate Connector(및 NDES)로 연계합니다.
-    - 클라우드 PKI가 필요하면 Microsoft Cloud PKI가 있습니다. Intune Plan 1·Plan 2 외에 추가 구독이 필요한 기능입니다.
-    - 문서: 2026년 7월부터 Intune Suite 기능이 Microsoft 365 등급별로 나뉘어, Microsoft 365 E5·E7에 Cloud PKI가 포함됩니다. 그 밖의 플랜은 Intune Suite를 별도 구독으로 삽니다([Intune 계획 가이드: 비용과 라이선스](https://learn.microsoft.com/intune/fundamentals/planning-guide#step-3---determine-costs-and-licensing), [Cloud PKI 개요](https://learn.microsoft.com/intune/cloud-pki/#prerequisites)).
-    - PKI 경험이 있다면 가장 자신 있게 설명할 수 있는 영역입니다.
+인증서는 Intune의 SCEP 또는 PKCS 프로필로 배포하고, 온프레미스 AD CS와는 Intune Certificate Connector(및 NDES)로 연계합니다. Microsoft Cloud PKI는 Intune Plan 1·Plan 2 외에 추가 구독이 필요한 기능입니다. 2026년 7월부터 Intune Suite 기능이 Microsoft 365 등급별로 나뉘어, Microsoft 365 E5·E7에는 Cloud PKI가 포함되고 그 밖의 플랜은 Intune Suite를 별도 구독으로 삽니다([Intune 계획 가이드: 비용과 라이선스](https://learn.microsoft.com/intune/fundamentals/planning-guide#step-3---determine-costs-and-licensing), [Cloud PKI 개요](https://learn.microsoft.com/intune/cloud-pki/#prerequisites)). PKI 경험이 있다면 가장 자신 있게 설명할 수 있는 영역입니다.
 
 ### 3. 온프레미스로 번역하면
 
@@ -77,26 +67,27 @@ PKI 연계에서는 인증서를 Intune의 SCEP 또는 PKCS 프로필로 배포�
 
 ### 6. 자가 점검
 
-- MDM과 MAM의 차이를 말할 수 있다.
-- Compliance policy와 Conditional Access가 연결되는 방식을 설명할 수 있다.
-- GPO를 Intune으로 옮길 때 쓰는 도구를 말할 수 있다.
-- Hybrid joined 디바이스에서 GPO와 Intune을 같이 쓸 때의 부담을 말할 수 있다.
-- 인증서를 Intune으로 배포하는 두 가지 프로필 유형을 말할 수 있다.
-
 <details markdown="1">
-<summary>답 펼쳐 보기 (5문항)</summary>
+<summary>자가 점검 문제와 답 펼쳐 보기 (5문항)</summary>
 
-- MDM과 MAM: MDM은 디바이스 전체를 등록해 관리하고, MAM은 디바이스는 건드리지 않고 앱 단위로 데이터를 보호합니다.
-- Compliance → CA: Intune이 디바이스를 compliant로 표시하면, Conditional Access의 "require compliant device"가 그 결과로 접근을 통제합니다.
-- GPO 전환 도구: GPMC에서 XML로 내보낸 GPO를 Group Policy analytics로 가져와 Intune 지원 여부를 분석하고, Settings catalog(또는 ADMX 기반 Administrative templates)로 옮깁니다.
-- Hybrid joined 부담: GPO와 Intune을 같이 쓸 수는 있지만, 둘을 섞으면 관리 부담이 늘어납니다.
-- 인증서 프로필: SCEP와 PKCS입니다.
+- [ ] MDM과 MAM의 차이를 말할 수 있다.
+    - 답: MDM은 디바이스 전체를 등록해 관리하고, MAM은 디바이스는 건드리지 않고 앱 단위로 데이터를 보호합니다.
+- [ ] Compliance policy와 Conditional Access가 연결되는 방식을 설명할 수 있다.
+    - 답: Intune이 디바이스를 compliant로 표시하면, Conditional Access의 "require compliant device"가 그 결과로 접근을 통제합니다.
+- [ ] GPO를 Intune으로 옮길 때 쓰는 도구를 말할 수 있다.
+    - 답: GPMC에서 XML로 내보낸 GPO를 Group Policy analytics로 가져와 Intune 지원 여부를 분석하고, Settings catalog(또는 ADMX 기반 Administrative templates)로 옮깁니다.
+- [ ] Hybrid joined 디바이스에서 GPO와 Intune을 같이 쓸 때의 부담을 말할 수 있다.
+    - 답: GPO와 Intune을 같이 쓸 수는 있지만, 둘을 섞으면 관리 부담이 늘어납니다.
+- [ ] 인증서를 Intune으로 배포하는 두 가지 프로필 유형을 말할 수 있다.
+    - 답: SCEP와 PKCS입니다.
 
 </details>
 
 ### 7. 영상·자료 (한글 우선)
 
-- 한글: [\[MS Intune 기초편\] 사용자관리 - 인튠이란?](https://www.youtube.com/watch?v=7_dRLhnPwD0), [\[MS Intune 기초편\] 사용자관리 - 인튠 계정 암호 변경](https://www.youtube.com/watch?v=Kp5N_coWcfs), [교육용 인튠 튜토리얼 (Intune for Education)](https://www.youtube.com/watch?v=QunVzLs4ulE)
-    - 세 영상 모두 교육청이나 교육용 환경에서 만든 영상이라 학교 예시가 섞여 있습니다.
-    - 정의와 용어 정리 같은 기초 개념 용도로는 한글 자료로 쓸 만합니다.
-- 영문 보완: [Microsoft Intune Admin Center Tutorial - Full Walkthrough](https://www.youtube.com/watch?v=rEJdL7YWKq4), [\#14 Microsoft Intune Admin Center Complete Walkthrough](https://www.youtube.com/watch?v=IFeGj8BZA3M)
+- 한글 (직접 열어 확인)
+    - [\[MS Intune 기초편\] 사용자관리 - 인튠이란?](https://www.youtube.com/watch?v=7_dRLhnPwD0): 전라북도교육청 미래교육과 제작, 5분. Intune이 디바이스, 사용자 계정, 앱(스토어 앱과 Win32 앱)을 관리한다는 개요
+    - [\[MS Intune 기초편\] 사용자관리 - 인튠 계정 암호 변경](https://www.youtube.com/watch?v=Kp5N_coWcfs): 같은 시리즈, 1분. 관리 센터에서 사용자를 검색해 임시 암호로 재설정
+    - [교육용 인튠 튜토리얼](https://www.youtube.com/watch?v=QunVzLs4ulE): Microsoft Education Korea, 5분. 교육용 Intune의 빠른 구성(그룹, 앱 선택, 설정)과 스토어 앱 추가
+    - 세 영상 모두 교육용 기준이라 학교 예시가 섞여 있으니, 기초 개념을 한글로 훑는 용도로 쓰고 기업 환경 정책 설계는 공식 문서로 확인하세요.
+- 영문 보완: [Microsoft Intune Admin Center Tutorial - Full Walkthrough](https://www.youtube.com/watch?v=rEJdL7YWKq4) (AzureCloudToday, 10분, 장치 등록·규정 준수·구성, 앱, 엔드포인트 보안, 보고서 순), [\#14 Microsoft Intune Admin Center Complete Walkthrough](https://www.youtube.com/watch?v=IFeGj8BZA3M) (Labs Hands On, 9분, 포털 둘러보기)

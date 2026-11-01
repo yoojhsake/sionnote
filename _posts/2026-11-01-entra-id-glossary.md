@@ -10,18 +10,11 @@ PRT, CAE, PIM처럼 Entra ID 글에 나오는 약어가 낯설면 읽다가 멈�
 
 ## 요약
 
-- 시리즈에 나오는 용어를 **원어 · 한국어: 쉬운 설명** 형식으로 모음
-- 영문 알파벳 순이 아니라 배우는 순서에 가깝게 정렬
-- 맨 아래에 함께 보면 좋은 강의와 트러블슈팅 글 전체 목록
+- 시리즈 용어를 원어와 쉬운 한국어 설명으로 모은 사전임
+- 알파벳 순이 아닌 배우는 순서대로 정렬되어 처음부터 훑으면 됨
+- 맨 아래 강의와 트러블슈팅 글 목록으로 이어서 공부할 수 있음
 
-> **시리즈: Microsoft Entra ID 핵심 개념**
->
-> 1. [기초와 구조]({{ "/iam/what-is-entra-id/" | relative_url }})
-> 2. [오류 코드 읽는 법(HTTP 상태 코드와 AADSTS)]({{ "/iam/entra-id-error-codes/" | relative_url }})
-> 3. [인증(MFA, 패스키, SSPR, SSO)]({{ "/iam/entra-id-authentication/" | relative_url }})
-> 4. [접근 제어(조건부 액세스, PIM, ID Protection)]({{ "/iam/entra-id-access-control/" | relative_url }})
-> 5. [하이브리드, 외부 사용자, 라이선스, 운영]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }})
-> 6. **용어집과 학습 자료** (지금 보는 글)
+> Entra ID 핵심 개념 시리즈: [기초]({{ "/iam/what-is-entra-id/" | relative_url }}) · [오류 코드]({{ "/iam/entra-id-error-codes/" | relative_url }}) · [인증]({{ "/iam/entra-id-authentication/" | relative_url }}) · [접근 제어]({{ "/iam/entra-id-access-control/" | relative_url }}) · [하이브리드·운영]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}) · **용어집**(지금 글)
 
 ---
 
@@ -49,7 +42,7 @@ PRT, CAE, PIM처럼 Entra ID 글에 나오는 약어가 낯설면 읽다가 멈�
 - **Least privilege** · 최소 권한: 필요한 일만 할 수 있는 가장 작은 권한만 주는 원칙
 - **Administrative Unit** · 관리 단위: 역할의 관리 범위를 일부 사용자·그룹으로 좁히는 단위(P1)
 - **Entra role / Azure RBAC** · Entra 역할 / Azure 역할 기반 액세스 제어: 디렉터리 관리 권한 / 구독·리소스 관리 권한. 서로 별개
-- **PIM / Eligible / Active / JIT** · 권한 있는 ID 관리 / 적격 / 활성 / 필요할 때만: 관리자 권한을 필요할 때 시간 제한으로 켜는 방식
+- **PIM / Eligible / Active / JIT** · 권한 있는 ID 관리 / 적격 / 활성 / 필요할 때만: 관리자 권한을 시간 제한으로 켜는 방식
 - **App registration** · 앱 등록: 앱의 설계도(만든 테넌트에 하나)
 - **Enterprise application / Service principal** · 엔터프라이즈 앱 / 서비스 주체: 앱을 쓰는 각 테넌트의 실제 인스턴스
 - **Managed identity** · 관리 ID: Azure 리소스에 자동으로 주어지는 자격 증명 없는 ID
@@ -102,9 +95,9 @@ M365, Intune, Azure 인프라까지 넓은 용어는 [클라우드 학습 용어
 
 영어 (YouTube, Microsoft 공식 채널)
 
-- [Microsoft Entra ID Beginner's Tutorial (Microsoft Mechanics)](https://www.youtube.com/watch?v=0qZzcK1mHwA): 관리 센터 화면으로 보는 전체 개요. 2023-10 영상이라 패스키 기본값, SMS 종료, B2C 판매 중단 이전 내용입니다. 바뀐 부분은 이 글을 기준으로 보세요.
-- [Why phishing resistant authentication is important](https://www.youtube.com/watch?v=YcqfXvU6xhw): 피싱 저항 인증이 필요한 이유
-- [Get started with phishing-resistant MFA](https://www.youtube.com/watch?v=fSIM_Zrlv70): 패스키·FIDO2가 피싱을 막는 원리
+- [Microsoft Entra ID Beginner's Tutorial (Microsoft Mechanics)](https://www.youtube.com/watch?v=0qZzcK1mHwA): 13분. 관리 센터 화면으로 사용자, 그룹, 역할, 조건부 액세스를 훑는 전체 개요. 2023-10 영상이라 패스키 기본값, SMS 종료, B2C 판매 중단 이전 내용입니다.
+- [Why phishing resistant authentication is important](https://www.youtube.com/watch?v=YcqfXvU6xhw): Microsoft Security, 13분, 2024-07. 피싱 저항 인증이 필요한 이유와 패스키, Windows Hello, Authenticator 같은 방식
+- [Get started with phishing-resistant MFA](https://www.youtube.com/watch?v=fSIM_Zrlv70): Microsoft Security, 10분, 2024-04. FIDO 인증이 피싱을 막는 원리(채널 바인딩 등)
 
 ## 트러블슈팅 글 전체
 

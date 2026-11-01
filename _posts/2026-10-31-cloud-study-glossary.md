@@ -12,10 +12,9 @@ excerpt: "모르는 용어가 막힐 때 펼치는 곳. 클라우드 용어 200�
 
 ## 요약
 
-- **영어 원어(약어 포함)** 기준으로 8개 영역, 225개. 영역마다 목록을 접어 두었으니 필요한 영역만 펼치면 됨
-- 각 항목은 `원어 · 풀이 → 온프레미스·기존 개념으로 보면` 형식. 일대일로 같지 않은 경우가 많아 "감을 잡는 용도"
-- 영상은 한글 먼저, 한글이 없는 영역은 한국어 공식 자료와 영문 영상으로 보완
-- 영상과 공식 문서가 다르면 공식 문서를 따름
+- 클라우드 용어 225개를 8개 영역으로 나눠 원어와 온프레미스 비교로 정리함
+- 막히는 용어는 해당 영역만 펼쳐 찾고, 온프레미스 비교는 감을 잡는 데만 씀
+- 여러 영역의 한글 영상과 SharePoint·Teams 영문 영상은 확인 불가
 
 12주 학습 로드맵의 부록입니다. 이전: [온프레미스 ↔ 클라우드 대응표]({{ "/study/onprem-cloud-mapping/" | relative_url }}) · [전체 로드맵]({{ "/study/cloud-study-roadmap/" | relative_url }})
 
@@ -25,7 +24,7 @@ excerpt: "모르는 용어가 막힐 때 펼치는 곳. 클라우드 용어 200�
 
 ### 1. 용어 전집
 
-용어는 영어 원어(약어 포함)를 기준으로 정리했습니다. 화살표(→) 뒤는 온프레미스나 기존 개념으로 보면 무엇에 해당하는지(비교 개념)입니다. 일대일로 같지 않은 경우가 많으니 "감을 잡는 용도"로 쓰세요.
+화살표(→) 뒤는 온프레미스나 기존 개념으로 보면 무엇에 해당하는지(비교 개념)이며, 일대일로 같지 않은 경우가 많습니다.
 
 #### 클라우드 일반
 
@@ -118,8 +117,7 @@ excerpt: "모르는 용어가 막힐 때 펼치는 곳. 클라우드 용어 200�
 
 </details>
 
-
-신원 용어를 더 깊게 보려면 [IAM 용어집]({{ "/iam/entra-id-glossary/" | relative_url }})과 IAM 시리즈 글을 함께 보세요.
+더 깊은 신원 용어: [IAM 용어집]({{ "/iam/entra-id-glossary/" | relative_url }})
 
 #### 하이브리드 ID
 
@@ -147,8 +145,7 @@ excerpt: "모르는 용어가 막힐 때 펼치는 곳. 클라우드 용어 200�
 
 </details>
 
-
-하이브리드 인증 방식의 상세 비교는 [하이브리드·외부 사용자·라이선스·운영]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}) 글에 있습니다.
+인증 방식 상세 비교: [하이브리드·외부 사용자·라이선스·운영]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }})
 
 #### Microsoft 365
 
@@ -324,17 +321,20 @@ excerpt: "모르는 용어가 막힐 때 펼치는 곳. 클라우드 용어 200�
 
 ### 2. 영상·자료 (한글 우선)
 
+아래 영상은 모두 직접 열어 제목, 채널, 길이, 자막(스크립트)을 확인했습니다(2026-11-01).
+
 #### 한글 유튜브
 
 - **Azure 개요**
-    - [Az-900 Azure Fundamentals](https://www.youtube.com/watch?v=GgKAkAWLnPw): 6주 과정 설명이 있는 한글 영상. 클라우드 개념과 Azure 서비스 개요
-    - [마이크로소프트 Azure 900 자격증, 함께 공부해 볼까요?](https://www.youtube.com/watch?v=iFWMKPnXMbo): 한글 라이브 시리즈. 클라우드 컴퓨팅과 핵심 서비스
+    - [Az-900 Azure Fundamentals 1주차](https://www.youtube.com/watch?v=GgKAkAWLnPw): Microsoft Developer Korea, 1시간 38분, 2021년. 클라우드 개념(IaaS·PaaS·SaaS, 리전, 가용성, 소비 기반 요금). 서비스 이름과 화면이 지금과 다를 수 있습니다.
+    - [Az-900 Azure Fundamentals 2주차](https://www.youtube.com/watch?v=892Nhkhwk4A): 같은 시리즈, 1시간 56분. 핵심 서비스(데이터베이스, 스토리지, 네트워크, 가상 머신·컨테이너)
+    - [마이크로소프트 Azure 900 자격증, 함께 공부해 볼까요?](https://www.youtube.com/watch?v=iFWMKPnXMbo): 투마일스, 25분, 2022년. 클라우드 컴퓨팅이란, Azure란, 핵심 Azure 서비스, Azure 계정
 - **Intune**
-    - [\[MS Intune 기초편\] 사용자관리 - 인튠이란?](https://www.youtube.com/watch?v=7_dRLhnPwD0): 전북교육청 제작. 정의, 용어 정리, 계정 설명
-    - [\[MS Intune 기초편\] 사용자관리 - 인튠 계정 암호 변경](https://www.youtube.com/watch?v=Kp5N_coWcfs): 같은 시리즈
-    - [교육용 인튠 튜토리얼](https://www.youtube.com/watch?v=QunVzLs4ulE): 교육용 환경 영상. 디바이스 세팅과 앱 할당 흐름
+    - [\[MS Intune 기초편\] 사용자관리 - 인튠이란?](https://www.youtube.com/watch?v=7_dRLhnPwD0): 전라북도교육청 미래교육과 제작, 5분. 디바이스, 사용자 계정, 앱 관리 개요
+    - [\[MS Intune 기초편\] 사용자관리 - 인튠 계정 암호 변경](https://www.youtube.com/watch?v=Kp5N_coWcfs): 같은 시리즈, 1분. 사용자를 검색해 임시 암호로 재설정
+    - [교육용 인튠 튜토리얼](https://www.youtube.com/watch?v=QunVzLs4ulE): Microsoft Education Korea, 5분. 교육용 Intune 빠른 구성(그룹, 앱 선택, 설정), 스토어 앱 추가
 
-> 확인 불가: Entra ID, 하이브리드 ID, Conditional Access, M365 관리, Exchange Online, Azure 네트워크, AZ-104 영역의 한글 유튜브는 유튜브에서 영역별로 검색했지만 찾지 못했습니다. 아래 한국어 공식 자료를 먼저 보고, 영어 영상은 한국어 자막(자동 번역)을 켠 채 용어 전집과 함께 보세요.
+> 확인 불가: Entra ID, 하이브리드 ID, Conditional Access, M365 관리, Exchange Online, Azure 네트워크, AZ-104 영역의 한글 유튜브는 유튜브에서 영역별로 검색했지만 찾지 못했습니다(2026-11-01 기준). 아래 한국어 공식 자료를 먼저 보고, 영어 영상은 한국어 자막(자동 번역)을 켠 채 용어 전집과 함께 보세요.
 
 #### 한국어 공식 자료
 
@@ -342,51 +342,58 @@ excerpt: "모르는 용어가 막힐 때 펼치는 곳. 클라우드 용어 200�
 - [Azure 교육 (Microsoft Learn, 한국어)](https://learn.microsoft.com/ko-kr/training/azure/): Azure 기본 사항 학습 경로와 Virtual Training Days
 - [Microsoft Entra (Microsoft Adoption, 한국어)](https://adoption.microsoft.com/ko-kr/microsoft-security/entra/): Entra 학습 경로, 인증, 배포 문서 안내
 
-공식 문서는 한국어 번역 용어가 어색할 때가 있습니다. 모르는 용어는 영어 원문 페이지(URL의 `ko-kr`를 `en-us`로 바꿔서)에서 원어를 확인하고 용어 전집에 영어 원어로 기록하세요.
+한국어 번역 용어가 어색하면 영어 원문 페이지(URL의 `ko-kr`를 `en-us`로 바꿔서)에서 원어를 확인하세요.
 
-한글 유튜브를 직접 찾을 때 쓸 검색어는 다음과 같습니다. 좋은 채널을 찾으면 이 목록에 추가하세요.
+한글 유튜브를 직접 찾을 때 쓸 검색어:
 
 - "엔트라 ID 하이브리드", "Entra Connect 설치", "조건부 액세스 설정", "M365 관리자 센터 강의"
 - "Exchange Online 관리", "Azure 가상 네트워크 NSG", "AZ-104 한국어 강의"
 
 #### 영문 영상 (한글이 없는 영역의 보완)
 
+자막은 자동 생성이라 세부 표현은 영상과 다를 수 있습니다.
+
 <details markdown="1">
-<summary>영문 영상 목록 펼쳐 보기 (16건)</summary>
+<summary>영문 영상 목록 펼쳐 보기 (28건)</summary>
 
 - **Azure 개요**
-    - [AZ-900 Course introduction (공식 1편)](https://www.youtube.com/watch?v=orwWx0_KEcA): Microsoft 공식 6편 시리즈
-    - [AZ-900: Azure Fundamentals Course with 2026 Updates](https://www.youtube.com/watch?v=yhzCNQfX3RE): 2026 업데이트 반영이라고 설명됨
+    - [AZ-900 Course introduction](https://www.youtube.com/watch?v=orwWx0_KEcA): Microsoft Learn, 3분. 과정 소개와 세 세션 구성
+    - [AZ-900: Azure Fundamentals Course with 2026 Updates](https://www.youtube.com/watch?v=yhzCNQfX3RE): Cloud360 Training, 6분. 2026년 AZ-900 개정 사항과 공부 순서 안내(과정 본편은 아님)
 - **Entra ID**
-    - [Understand Microsoft Entra ID (AZ-104 공식 2편)](https://www.youtube.com/watch?v=iQfhi0712bM): 공식 29편 시리즈
+    - [Understand Microsoft Entra ID (AZ-104 공식 2편)](https://www.youtube.com/watch?v=iQfhi0712bM): Microsoft Learn, 42분. 테넌트, 사용자, 그룹, 라이선스, Free·P1·P2 차이
 - **하이브리드 ID**
-    - [Identity Architecture: Microsoft Entra Connect](https://www.youtube.com/watch?v=F0ldcCfCWNw): 동기화 구조
-    - [Entra ID Connect installation for hybrid join](https://www.youtube.com/watch?v=RPj53B7rxYU): 설치 화면
-    - [How to Configure Microsoft Entra Hybrid Join Device](https://www.youtube.com/watch?v=_vA5_OJPcTk): hybrid join 구성
+    - [Identity Architecture: Microsoft Entra Connect](https://www.youtube.com/watch?v=F0ldcCfCWNw): Microsoft Azure, 4분, 2020년. connector space, metaverse 구조와 30분 주기 동기화
+    - [Entra ID Connect installation for hybrid join](https://www.youtube.com/watch?v=RPj53B7rxYU): Dean Ellerby, 16분, 2024년. Connect 설치(빠른 설정)와 동기화 화면
+    - [How to Configure Microsoft Entra Hybrid Join Device](https://www.youtube.com/watch?v=_vA5_OJPcTk): MSFT WebCast, 12분, 2025년. SCP 구성, delta sync, hybrid join 확인
 - **인증 보안**
-    - [Enforce MFA with Conditional Access (Step-by-Step Lab)](https://www.youtube.com/watch?v=MIvuAHIVTT4): 실습 위주
-    - [Entra ID Security: Identity Perimeter, Conditional Access, MFA & PIM](https://www.youtube.com/watch?v=4mTV4nb5Ex4): 개념 위주
+    - [Enforce MFA with Conditional Access (Step-by-Step Lab)](https://www.youtube.com/watch?v=MIvuAHIVTT4): CyberMax, 5분. MFA 강제 정책 생성과 테스트
+    - [Entra ID Security: Identity Perimeter, Conditional Access, MFA & PIM](https://www.youtube.com/watch?v=4mTV4nb5Ex4): m365 Show, 19분. 개념 중심
+    - [Entra ID Security: MFA, Conditional Access & Risk Protection](https://www.youtube.com/watch?v=q-OkGHwXAj0): KryptoMindz, 9분. 위험 기반 보호, 보고 전용 모드, P2 범위
 - **M365 관리**
-    - [Microsoft 365 Admin Centre, Intune, EntraID, Exchange 연동 개요](https://www.youtube.com/watch?v=o8bdHkxw-Es): 서비스 간 관계
-    - [Microsoft 365 Administrator Full Course 2026](https://www.youtube.com/watch?v=v0xa7SzeXjA): 실습 위주 풀코스
+    - [Microsoft 365 Admin Centre, Intune, EntraID, Exchange 연동 개요](https://www.youtube.com/watch?v=o8bdHkxw-Es): Tech's World, 54분. 라이선스, 테넌트, Entra 등 관리 센터 메뉴 위주(Intune·Exchange는 짧게)
 - **Exchange**
-    - [How to Use Exchange Online Admin Center](https://www.youtube.com/watch?v=J0OWaStDkMc): 관리 센터 안내
-    - [Beginners Tutorial for Exchange Online & Microsoft 365 Administration](https://www.youtube.com/playlist?list=PLUZTRmXEpBy0W9bJNme2P9h5XiOnRIFUI): 재생목록
+    - [How to Use Exchange Online Admin Center](https://www.youtube.com/watch?v=J0OWaStDkMc): 28분. 사서함, 공유 사서함 등 관리 센터 작업
+    - [Microsoft 365: Creating and Managing User Mailboxes](https://www.youtube.com/watch?v=yvhwHjNVMvw): 12분. 사용자 사서함 생성과 관리
+    - [Beginners Tutorial for Exchange Online & Microsoft 365 Administration](https://www.youtube.com/playlist?list=PLUZTRmXEpBy0W9bJNme2P9h5XiOnRIFUI): 43편 재생목록, 2022년 2월 마지막 업데이트(화면이 지금과 다를 수 있음)
 - **Intune**
-    - [Microsoft Intune Admin Center Tutorial - Full Walkthrough](https://www.youtube.com/watch?v=rEJdL7YWKq4): 관리 센터 전체 둘러보기
-- **Azure 관리**
-    - [AZ-104 Course Introduction (공식 시리즈 1편, 전 29편)](https://www.youtube.com/watch?v=6rs-oGmz3pk): 공식 시리즈
-    - [AZ-104 Full Course - 12 Hours](https://www.youtube.com/watch?v=qXk8_0z_HsU): 영역별 비중 구성
-- **보안**
-    - [Entra ID Security: MFA, Conditional Access & Risk Protection](https://www.youtube.com/watch?v=q-OkGHwXAj0): 위험 기반 보호
+    - [Microsoft Intune Admin Center Tutorial - Full Walkthrough](https://www.youtube.com/watch?v=rEJdL7YWKq4): AzureCloudToday, 10분. 장치 등록·규정 준수·구성, 앱, 엔드포인트 보안, 보고서
+    - [\#14 Microsoft Intune Admin Center Complete Walkthrough](https://www.youtube.com/watch?v=IFeGj8BZA3M): Labs Hands On, 9분. 포털 둘러보기
+- **Azure 관리 (AZ-104 공식 시리즈, Microsoft Learn, 전 29편)**
+    - [1편 Course Introduction](https://www.youtube.com/watch?v=6rs-oGmz3pk): 7분. 과정 소개
+    - [4편 Describe the core architectural components of Azure](https://www.youtube.com/watch?v=9dZK_d-nZp8): 40분
+    - [5편 Azure Policy initiatives](https://www.youtube.com/watch?v=XGL-8ZaBU4s), [6편 Azure RBAC](https://www.youtube.com/watch?v=uk8xwyudb1k)
+    - [8편 Configure virtual networks](https://www.youtube.com/watch?v=PLwE82PNEpg), [9편 Network security groups](https://www.youtube.com/watch?v=6Gr17HqHfUw), [11편 Virtual Network peering](https://www.youtube.com/watch?v=gxvdN8hZRtQ)
+    - [16편 Configure storage accounts](https://www.youtube.com/watch?v=NKmq1t41Zys), [20편 Introduction to Azure virtual machines](https://www.youtube.com/watch?v=mCMpIUGYI48), [21편 Configure virtual machine availability](https://www.youtube.com/watch?v=Sz6yhVDs4yY)
+    - [27편 Introduction to Azure Monitor](https://www.youtube.com/watch?v=p7Kw1YJl2S4), [29편 Azure Monitor logs 분석](https://www.youtube.com/watch?v=Spf9SMfK000)
+    - [AZ-104 Full Course - 12 Hours](https://www.youtube.com/watch?v=qXk8_0z_HsU): Certsqill, 11시간 49분. 모듈 구성은 거버넌스 0:27, 스토리지 1:56:11, 컴퓨팅 3:29:08, 네트워킹 5:31:32, 모니터링 7:15:25
 
 </details>
 
-> 확인 불가: 위 영상은 제목과 설명을 기준으로 골랐고, 영상별로 시청해 내용을 검증하지는 못했습니다. 영상과 공식 문서가 다르면 공식 문서를 따르세요.
+> 확인 불가: SharePoint·Teams 영역의 영어 영상은 내용까지 확인한 것이 없습니다(시도: 후보 영상 자막 확인, 사유: 후보였던 풀코스 영상은 힌디어 강의이고 해당 내용이 자막에 나오지 않아 제외). 영상과 공식 문서가 다르면 공식 문서를 따르세요.
 
 ### 3. 공식 문서 출처
 
-본문 중 아래 Microsoft Learn 문서로 직접 확인한 내용은 다음 여섯 가지입니다.
+아래 Microsoft Learn 문서로 직접 확인한 내용:
 
 - 하이브리드 인증 3방식 비교(3주차)
 - Conditional Access 동작과 라이선스(4주차)
@@ -395,7 +402,7 @@ excerpt: "모르는 용어가 막힐 때 펼치는 곳. 클라우드 용어 200�
 - Entra role과 Azure RBAC 구분(2주차)
 - Entra Connect 동기화 주기와 명령(3주차)
 
-그 외 항목은 공식 문서의 용어를 기준으로 정리한 것이므로, 해당 주차에 Microsoft Learn에서 교차 확인하면서 학습하세요.
+그 외 항목은 공식 문서의 용어를 기준으로 정리했으니 해당 주차에 Microsoft Learn에서 교차 확인하세요.
 
 <details markdown="1">
 <summary>공식 문서 출처 펼쳐 보기 (9건)</summary>

@@ -12,13 +12,11 @@ SharePoint와 OneDrive, M365 관리 센터의 공유, 보존, 메시지 센터, 
 
 ## 요약
 
-- 가장 큰 위험은 외부 공유. 두 슬라이더 모두 "누구나(Anyone)", 기본 링크는 "링크가 있는 모든 사용자 + 편집", Anyone 링크 만료는 미설정
-- 2026-10-22(목)~10-23(금), 세 관리 센터 설정을 읽기 전용으로 측정함
-- 메시지 센터는 조치 기한 있는 31건 중 기한 경과 16건. 서비스 상태는 활성 문제 9건인데 이메일 알림 미설정
-- DAG 보고서, Restricted SharePoint Search, 사용 현황 보고서, M365 Apps 관리 센터는 측정 불가(각각 라이선스, PowerShell 전용, 데이터 없음, 로딩 정체)
-- 외부 공유는 최대치와 기본 링크, 만료를 같이 봐야 함. 메시지 센터와 서비스 상태는 담당과 주기가 없으면 위험
+- 기본 링크가 로그인 없이 편집되는 링크라 실수로 넓게 공유되기 쉬움
+- 공유는 최대치와 기본 링크와 만료를 함께 보고 공지 검토 담당을 정해야 함
+- DAG 보고서와 Restricted SharePoint Search 현재 값은 확인 불가
 
-> 근거 표기: 조회 = 이 테넌트에서 직접 읽은 값, 문서 = Microsoft Learn, 확인 불가 = 시도했지만 확인하지 못한 값(방법·사유 병기). 테넌트 ID, 도메인, 계정, 사용자 이름 등 비공개 정보는 가리거나 게시하지 않았습니다. 사이트 주소도 게시하지 않았습니다. 개선 방안은 권고이며 **이번에 실행하지 않았습니다.**
+> 근거: 조회는 이 테넌트에서 직접 읽은 값, 문서는 Microsoft Learn입니다. 비공개 정보는 가렸습니다. 사이트 주소도 게시하지 않았습니다. 개선 방안은 권고이며 **이번에 실행하지 않았습니다.**
 
 ---
 
@@ -26,11 +24,9 @@ SharePoint와 OneDrive, M365 관리 센터의 공유, 보존, 메시지 센터, 
 
 ### 1. 측정 범위와 방법
 
-측정은 2026-10-22(목)부터 2026-10-23(금)까지 했고, 모든 측정은 읽기 전용입니다. 방법과 판독 기준은 [측정 방법 글]({{ "/m365/measurement-method/" | relative_url }})에 있습니다.
+측정은 2026-10-22(목)~10-23(금)에 읽기 전용으로 했습니다. 방법과 판독 기준은 [측정 방법 글]({{ "/m365/measurement-method/" | relative_url }})에 있습니다.
 
 ### 2. 판독 결과
-
-영역별로 읽은 값(조회)과 판독입니다. 끝내 읽지 못한 항목은 아래 "확인 불가로 남은 것"에 시도 방법, 막힌 이유, 다음 방법을 적었습니다.
 
 - **위험**
     - 외부 공유 수준: SharePoint, OneDrive 모두 "누구나(Anyone)" = 최대 허용
@@ -61,9 +57,7 @@ SharePoint와 OneDrive, M365 관리 센터의 공유, 보존, 메시지 센터, 
 
 ### 3. 측정하며 배운 점
 
-외부 공유는 **조직 최대치, 기본 링크, 만료** 세 가지를 함께 봐야 합니다. 최대치가 Anyone이어도 기본 링크가 "특정 사용자"면 실수가 줄어듭니다.
-
-메시지 센터와 서비스 상태는 "쓰지 않는 기능"이 아니라 운영 업무의 입력입니다. 담당과 주기가 없으면 위험으로 읽었습니다. 라이선스나 로그인 환경이 맞지 않아 못 읽은 값은 "문제 없음"이 아니라 측정 불가로 적고 재측정 방법을 남겼습니다.
+최대치가 Anyone이어도 기본 링크가 "특정 사용자"면 실수가 줄어듭니다. 메시지 센터와 서비스 상태는 운영 업무의 입력이라 담당과 주기가 없으면 위험으로 읽었습니다. 라이선스나 로그인 환경 때문에 못 읽은 값은 측정 불가로 적고 재측정 방법을 남겼습니다.
 
 ### 4. 영역별 측정 상세
 
@@ -74,9 +68,7 @@ SharePoint와 OneDrive, M365 관리 센터의 공유, 보존, 메시지 센터, 
 
 - **GUI 경로**: SharePoint 관리 센터 > 정책 > 공유
 
-SharePoint와 OneDrive 슬라이더가 모두 "누구나(Anyone)"였고, Anyone 링크 만료는 체크 해제였습니다. 기본 링크 유형은 "링크가 있는 모든 사용자", 권한은 "편집"이고, 파일은 "보기 및 편집", 폴더는 "보기, 편집 및 업로드"였습니다.
-
-문제는 링크만 알면 로그인 없이 편집까지 되는 링크가 **기본으로** 만들어진다는 점입니다. 사용자는 보통 기본값을 그대로 쓰기 때문에 실수로 넓게 공유될 가능성이 가장 큰 곳입니다. 슬라이더는 조직 최대치이고, 사이트별로 더 좁힐 수는 있지만 더 넓힐 수는 없습니다(문서).
+Anyone 링크 만료는 체크 해제였고, Anyone 링크 권한은 파일 "보기 및 편집", 폴더 "보기, 편집 및 업로드"였습니다. 사용자는 보통 기본값을 그대로 쓰기 때문에 기본 링크가 가장 위험합니다. 슬라이더는 조직 최대치이고, 사이트별로 더 좁힐 수는 있지만 더 넓힐 수는 없습니다(문서).
 
 개선 방안(미실행)은 이렇습니다. 조직 수준을 "새 게스트와 기존 게스트"로 낮추거나, 최소한 Anyone 링크에 만료일(예: 수 주)과 "보기" 권한을 설정합니다. 기본 링크는 "특정 사용자"로 바꿉니다. 민감 사이트는 사이트별로 더 엄격하게 두고, 민감도 레이블에 기본 공유 링크 동작을 묶는 방법도 있습니다.
 
@@ -93,7 +85,7 @@ SharePoint와 OneDrive 슬라이더가 모두 "누구나(Anyone)"였고, Anyone 
 
 총 469건(수집 464건 기준 집계)이었고, 조치 기한이 있는 게시물 31건 가운데 **기한 경과 16건**(기한 범위 2026-06-29 ~ 2026-10-05), 30일 내 임박 7건이었습니다. 조직 내 상태 기록은 "예약됨 2, 시작됨 1"로 3건입니다. 10/19 사전 조회 때는 451건이었습니다.
 
-기한이 지난 변경 안내를 아무도 처리하지 않은 상태입니다. 메시지 센터는 변경이 오기 전에 알려 주는 채널이어서, 놓치면 사용자 문의로 먼저 알게 됩니다.
+메시지 센터는 변경 전에 알려 주는 채널이라, 놓치면 사용자 문의로 먼저 알게 됩니다.
 
 개선 방안(미실행): 담당자를 정해 주 1회 검토하고, 메시지를 Planner 작업으로 보내 추적하고, 변경 영향이 큰 건은 변경 관리 문서로 연결합니다. 메시지 센터와 Planner의 동기화 설정은 이번에는 하지 않았습니다.
 
@@ -138,7 +130,7 @@ SharePoint와 OneDrive 슬라이더가 모두 "누구나(Anyone)"였고, Anyone 
 
 지원 요청은 서비스 요청 기록 0건("표시할 티켓이 없습니다")이었습니다. 에스컬레이션 경로와 지원 계약(Services Hub)은 확인 불가입니다(아래 "확인 불가로 남은 것").
 
-Customer Lockbox는 "모든 데이터 액세스 요청에 승인 필요"가 해제되어 있었습니다. 이 화면을 두 차례 열어 같은 해제 상태를 읽었고, 저장 없이 닫았습니다. 이 기능은 승인자 역할과 라이선스 조건(문서상 E5 수준 서비스 설명 참고)이 있는데, 이 테넌트가 조건을 충족하는지는 확인 불가입니다(아래 "확인 불가로 남은 것"). 설정 변경은 하지 않았습니다.
+Customer Lockbox 화면은 두 차례 열어 같은 해제 상태를 읽고 저장 없이 닫았습니다. 이 기능은 승인자 역할과 라이선스 조건(문서상 E5 수준 서비스 설명 참고)이 있는데, 이 테넌트가 충족하는지는 확인 불가입니다(6절).
 
 근거: [릴리스 옵션](https://learn.microsoft.com/microsoft-365/admin/manage/release-options-in-office-365), [릴리스 옵션 구성](https://learn.microsoft.com/microsoft-365/admin/manage/configure-release-options), [대상 릴리스 중지](https://learn.microsoft.com/microsoft-365/admin/manage/targeted-release-retirement), [Customer Lockbox 요청](https://learn.microsoft.com/purview/customer-lockbox-requests)
 
@@ -159,8 +151,6 @@ M365 관리 센터 > 에이전트 > 설정에는 7개 항목(공유, 사용자 �
 
 #### 측정하지 못한 DAG 보고서와 Restricted SharePoint Search
 
-두 항목 모두 처음에는 값을 읽지 못했고, 다른 방법으로 사유를 좁혔습니다.
-
 DAG(데이터 접근 거버넌스) 보고서는 보고서 메뉴에 OneDrive 계정만 있어 찾을 수 없었습니다. 고급 관리 화면을 열어 보니 DAG가 포함 서비스로 나열되고 **무료 평가판 등록 버튼만** 있었습니다. SharePoint Advanced Management가 활성화되지 않은 상태입니다(조회). 평가판 등록은 관리자 결정 사항이라 누르지 않았습니다.
 
 Restricted SharePoint Search는 포털 화면이 없고 PowerShell 전용입니다. SPO 관리 셸은 Windows용이라 Linux 기반 Cloud Shell(PowerShell 7)에서는 실행하지 못한 것으로 판단했습니다. Windows의 PowerShell 7에서는 `-UseWindowsPowerShell` 옵션으로 불러올 수 있습니다(문서). 현재 값은 확인 불가이고, 로컬 Windows PowerShell에서 SPO 관리자로 연결해 조회할 계획입니다.
@@ -178,7 +168,7 @@ Restricted SharePoint Search는 포털 화면이 없고 PowerShell 전용입니�
 ![SharePoint 고급 관리 화면]({{ "/assets/images/2026/10/m19-sam-trial.png" | relative_url }})
 *그림 8. SharePoint 관리 센터 > 고급 관리. 안내 문구와 "무료 평가판에 등록" 버튼이 보이고, 포함된 서비스 목록은 흐리게(비활성) 표시됩니다. 버튼은 누르지 않았습니다.*
 
-참고로 Restricted SharePoint Search는 중단 예정이며 2026-07-31부터 새로 켤 수 없고, 대안으로 Restricted Content Discovery를 쓰라는 안내가 문서에 있습니다. 이 테넌트의 현재 값은 위에 적은 대로 확인 불가입니다.
+Restricted SharePoint Search는 중단 예정이며 2026-07-31부터 새로 켤 수 없고, 대안은 Restricted Content Discovery입니다(문서).
 
 근거: [Restricted SharePoint Search](https://learn.microsoft.com/sharepoint/restricted-sharepoint-search), [데이터 접근 거버넌스 보고서](https://learn.microsoft.com/sharepoint/data-access-governance-reports), [SharePoint Advanced Management](https://learn.microsoft.com/sharepoint/advanced-management)
 
@@ -186,18 +176,16 @@ Restricted SharePoint Search는 포털 화면이 없고 PowerShell 전용입니�
 
 사용 현황 보고서(Teams, Office 정품 인증)는 "이 보고서에 대한 데이터가 없습니다"여서 측정 불가입니다. 원인 후보는 보고서 생성 지연(문서 기준 통상 24~72시간)과 샌드박스 활동 부족인데 확정하지 못했습니다. 이름 익명화(사용자, 그룹, 사이트 이름 숨기기)는 켜져 있었고, 설정은 바꾸지 않았습니다. Intune Windows 장치 0, Windows 업데이트 링 0으로 측정 대상이 없습니다.
 
-M365 Apps 관리 센터는 처음 두 번 모두 로딩에서 멈췄습니다. 다시 열어 본 앱 인벤토리(config.office.com)에는 "프로비전 중, 최대 24시간" 안내가 표시되고 목록이 비어 있었습니다. 멈춘 원인은 화면만으로 확정할 수 없어 측정 불가로 남겼고, 시도 과정과 화면은 [관리 센터 로딩 정체 트러블슈팅]({{ "/m365/troubleshooting/admin-center-loading-stuck/" | relative_url }})에 정리했습니다.
+M365 Apps 관리 센터는 처음 두 번 모두 로딩에서 멈췄습니다. 다시 열어 본 앱 인벤토리(config.office.com)에는 "프로비전 중, 최대 24시간" 안내가 표시되고 목록이 비어 있었습니다. 멈춘 원인은 화면만으로 확정할 수 없었고, 과정은 [관리 센터 로딩 정체 트러블슈팅]({{ "/m365/troubleshooting/admin-center-loading-stuck/" | relative_url }})에 정리했습니다.
 
 </details>
 
 ### 5. 작업 중 막힌 곳
 
-- M365 Apps 관리 센터가 로딩에서 멈추고 앱 인벤토리에 "프로비전 중" 안내만 보였습니다. 측정 불가로 적고 안내된 시간이 지난 뒤 재조회합니다. ([관리 센터 로딩 정체 트러블슈팅]({{ "/m365/troubleshooting/admin-center-loading-stuck/" | relative_url }}))
-- 사용 현황 보고서(Teams, Office 정품 인증)가 "데이터 없음"이었습니다. 역시 측정 불가로 적고 시간을 두고 재조회합니다. ([사용 현황 보고서 트러블슈팅]({{ "/m365/troubleshooting/usage-report-no-data/" | relative_url }}))
+- M365 Apps 관리 센터 로딩 정체와 "프로비전 중" 안내: 안내된 시간이 지난 뒤 재조회합니다. ([관리 센터 로딩 정체 트러블슈팅]({{ "/m365/troubleshooting/admin-center-loading-stuck/" | relative_url }}))
+- 사용 현황 보고서 "데이터 없음": 시간을 두고 재조회합니다. ([사용 현황 보고서 트러블슈팅]({{ "/m365/troubleshooting/usage-report-no-data/" | relative_url }}))
 
 ### 6. 확인 불가로 남은 것
-
-끝내 확인하지 못한 것을 시도 방법, 막힌 이유, 다음 방법 순으로 적었습니다.
 
 <details markdown="1">
 <summary>확인 불가 항목 펼쳐 보기 (10건)</summary>

@@ -12,13 +12,11 @@ PTA를 쓰는 조직에서 동기화된 사용자 전원이 M365에 로그인하
 
 ## 요약
 
-- PTA를 쓰는 조직에서 동기화된 사용자 전원이 M365 로그인 실패. 클라우드 전용 계정은 로그인됨
-- 원인 후보는 PTA 에이전트가 모두 멈춤(80001), 에이전트가 DC에 연결 못 함(80001, 80002, 80007), 에이전트 서버가 AD "Logon To" 제한에 걸림
-- 먼저 볼 곳은 Entra 관리 센터 Microsoft Entra Connect 화면의 PTA 기능 Enabled 여부와 에이전트 Active/Inactive 상태
-- 급할 때는 에이전트와 DC 복구. 사내 장애가 길어지면 미리 켜 둔 PHS로 수동 전환(자동 전환 안 됨)
-- 장애 중에 PTA 기능을 끄거나 에이전트를 지우지 않음. 작업은 클라우드 전용 하이브리드 ID 관리자 계정으로
+- 동기화 사용자만 막히면 PTA 에이전트나 DC 연결이 끊긴 것임
+- 클라우드 전용 관리자로 에이전트 상태와 로그인 로그 오류 코드부터 확인함
+- PHS 전환은 자동이 아니며 PHS를 미리 켜 둔 경우에만 가능함
 
-> Microsoft Learn 공식 문서(2026-11-01 확인)를 기준으로 쓴 대처 가이드입니다. 특정 테넌트에서 재현한 기록은 아닙니다. 개념은 [Entra ID 핵심 개념: 하이브리드 편]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }})을 함께 보세요. 오류 번호와 HTTP 상태 코드가 낯설면 [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }})을 먼저 보세요.
+> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다. 함께 볼 글: [Entra ID 핵심 개념: 하이브리드 편]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
 
 ---
 
@@ -26,15 +24,19 @@ PTA를 쓰는 조직에서 동기화된 사용자 전원이 M365에 로그인하
 
 ### 1. 증상
 
-월요일 아침, 사내 서버 점검 이후 동기화된 직원 전원이 Outlook과 Teams에 로그인하지 못합니다. 로그인 화면에 AADSTS80001 또는 80002가 보입니다. 반면 `admin@contoso.onmicrosoft.com` 같은 클라우드 전용 관리자 계정은 정상적으로 로그인됩니다.
+- 월요일 아침 사내 서버 점검 이후, 동기화된 직원 전원이 Outlook과 Teams에 로그인하지 못하고 AADSTS80001 또는 80002가 보입니다.
+- `admin@contoso.onmicrosoft.com` 같은 클라우드 전용 관리자 계정은 정상 로그인됩니다.
 
-PTA는 로그인할 때마다 사내 에이전트가 DC에 암호를 확인하는 방식이라, 에이전트나 DC가 응답하지 않으면 클라우드 로그인도 같이 멈춥니다.
+### 2. 원인 및 분석
 
-### 2. 원인과 해결
+PTA는 로그인마다 사내 에이전트가 DC에 암호를 확인하므로 에이전트나 DC가 응답하지 않으면 클라우드 로그인도 멈춥니다([Troubleshoot pass-through authentication](https://learn.microsoft.com/entra/identity/hybrid/connect/tshoot-connect-pass-through-authentication)). 어느 지점인지는 로그인 로그의 오류 코드로 가립니다.
 
-에이전트(또는 에이전트가 기대는 DC와 네트워크)를 되살리는 게 해결입니다. 사내 장애가 길어지면 미리 켜 둔 PHS로 수동 전환합니다. 어느 원인인지는 아래 4번의 오류 코드로 가릅니다.
+<picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/11/ts-pta-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/11/ts-pta.png" | relative_url }}" alt="PTA 로그인 경로와 끊기는 4가지 지점" loading="lazy"></picture>
 
-#### 원인별 대처
+*그림 1. PTA 경로와 끊기는 지점*
+
+<details markdown="1">
+<summary>원인별 확인과 대처, 에이전트 로그 위치 보기 (4가지)</summary>
 
 - **에이전트 서비스 중지, 서버 다운**
     - 확인: 에이전트 서버 상태, 이벤트 뷰어 Applications and Services Logs\Microsoft\AzureAdConnect\AuthenticationAgent\Admin
@@ -54,33 +56,7 @@ PTA는 로그인할 때마다 사내 에이전트가 DC에 암호를 확인하�
 
 **에이전트 로그 위치(문서)**: 설치 문제는 `%ProgramData%\AADConnect\trace-*.log`, 로그인 실패 상세는 `%ProgramData%\Microsoft\Azure AD Connect Authentication Agent\Trace\`. 로그의 `Reason` 숫자는 명령 프롬프트에서 `Net helpmsg <번호>`로 뜻을 볼 수 있습니다.
 
-#### 사내 장애가 길어질 때: PHS로 수동 전환
-
-**PHS를 미리 켜 두었다면** Entra Connect에서 로그인 방식을 PHS로 바꿔 클라우드 로그인을 되살릴 수 있습니다. 자동으로 바뀌지 않으므로 관리자가 직접 전환해야 합니다(문서). 전환 절차(문서)는 다음과 같습니다.
-
-1. Entra Connect 서버에서 Microsoft Entra Connect 구성 마법사 > Configure(구성) > Change user sign-in(사용자 로그인 변경)
-2. 하이브리드 ID 관리자(클라우드 전용 계정 권장) 자격 증명 입력
-3. **User sign-in**에서 Password Hash Synchronization 선택
-4. **Enable single sign-on** 페이지(필요 시 도메인 자격 증명)
-5. Ready to configure에서 Configure → 완료 후 Exit
-
-반영되면 클라우드 전용 계정이 아니라 동기화된 사용자로 로그인해 확인합니다.
-
-Connect 서버 자체가 멈췄다면 마법사를 실행할 수 없어서, PTA를 끄려면 Microsoft 지원이 필요합니다(문서). 스테이징 서버나 서버 복구 계획을 함께 준비해 두는 이유입니다. PHS가 꺼져 있었다면 이 선택지 자체가 없습니다. 그래서 문서는 PTA나 페더레이션을 쓰더라도 PHS를 백업으로 함께 켜 두라고 권장합니다.
-
-사내 인프라가 복구되면 계획한 일정에 맞춰 원래 방식으로 되돌릴지 결정합니다.
-
-### 3. 예방
-
-- **에이전트 수**: 운영 환경은 최소 3대(테넌트당 최대 40대). 부하 분산이 아니라 고가용성 목적
-- **서버 등급**: 에이전트 서버는 Tier 0(DC급)으로 관리
-- **PHS 병행**: 백업 + ID Protection 유출 자격 증명 탐지용
-- **스마트 잠금**: Entra 잠금 임계값은 AD보다 작게, 잠금 시간은 AD보다 길게
-- **장애 대응 계정**: 클라우드 전용 하이브리드 ID 관리자와 긴급 액세스 계정 준비
-
-에이전트 수에서 흔히 생기는 실수가 패치 일정입니다. 에이전트가 3대 있어도 같은 시간에 2대를 재부팅하면 남은 1대에 모든 요청이 몰리고, 그 1대마저 문제가 생기면 전원이 로그인하지 못합니다. 패치 일정은 에이전트마다 **다른 시간대**로 나눕니다.
-
-### 4. 확인 과정
+</details>
 
 <details markdown="1">
 <summary>확인 과정 자세히 보기</summary>
@@ -106,7 +82,36 @@ Connect 서버 자체가 멈췄다면 마법사를 실행할 수 없어서, PTA�
 
 </details>
 
-### 5. 근거 자료
+### 3. 결론
+
+`점검 후 PTA 에이전트 정지 또는 에이전트→DC 연결 끊김 → 암호 검증 불가(80001·80002) → 동기화 사용자 전원 로그인 실패`
+
+클라우드 전용 계정만 정상인 것이 이 경로의 문제라는 신호입니다. 복구가 늦어질 때의 PHS 전환은 PHS를 미리 켜 둔 경우에만 가능합니다.
+
+### 4. 권고방안
+
+1. 조치: 에이전트(또는 에이전트가 기대는 DC와 네트워크)를 복구합니다. 장애가 길면 **PHS를 미리 켜 두었을 때만** Entra Connect의 Change user sign-in으로 PHS 수동 전환합니다(자동 전환 아님, 문서. 절차는 아래 접힌 블록).
+2. 조치 후 확인: 클라우드 전용 계정이 아니라 동기화된 사용자로 로그인되면 해결입니다. 사내 복구 뒤 원래 방식으로 되돌릴지는 계획한 일정에 맞춰 정합니다.
+3. 대비: Connect 서버가 멈추면 마법사를 못 써 PTA를 끄려면 Microsoft 지원이 필요하므로(문서) 스테이징 서버나 복구 계획을 둡니다.
+4. 예방:
+    - **에이전트 수**: 운영 환경은 최소 3대(테넌트당 최대 40대), 고가용성 목적. 패치는 에이전트마다 **다른 시간대**로(2대를 같이 재부팅하면 남은 1대에 몰림)
+    - **서버 등급**: 에이전트 서버는 Tier 0(DC급)으로 관리
+    - **PHS 병행**: 백업 + ID Protection 유출 자격 증명 탐지용
+    - **스마트 잠금**: Entra 잠금 임계값은 AD보다 작게, 잠금 시간은 AD보다 길게
+    - **장애 대응 계정**: 클라우드 전용 하이브리드 ID 관리자와 긴급 액세스 계정 준비
+
+<details markdown="1">
+<summary>PHS 수동 전환 절차 보기 (5단계, 문서)</summary>
+
+1. Entra Connect 서버에서 Microsoft Entra Connect 구성 마법사 > Configure(구성) > Change user sign-in(사용자 로그인 변경)
+2. 하이브리드 ID 관리자(클라우드 전용 계정 권장) 자격 증명 입력
+3. **User sign-in**에서 Password Hash Synchronization 선택
+4. **Enable single sign-on** 페이지(필요 시 도메인 자격 증명)
+5. Ready to configure에서 Configure → 완료 후 Exit
+
+</details>
+
+### 근거 자료
 
 <details markdown="1">
 <summary>근거 자료 펼쳐 보기 (6건)</summary>

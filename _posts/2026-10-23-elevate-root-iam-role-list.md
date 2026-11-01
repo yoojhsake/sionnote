@@ -12,13 +12,11 @@ Elevate access를 켠 루트 IAM 화면에는 `denyAssignments/read` 경고가 �
 
 ## 요약
 
-- Elevate를 켠 루트 IAM 화면에 `denyAssignments/read` 관련 경고가 뜸
-- Elevate를 끈 뒤에는 루트 IAM 역할 목록이 열리지 않아, 할당 제거를 화면으로 직접 볼 수 없었음
-- 경고 원인은 확인 불가(부여된 역할에 그 읽기 권한이 없어서일 수 있다는 추정만). 목록이 안 열리는 건 끈 뒤 루트 범위 권한이 없기 때문
-- 끈 뒤 확인은 토글 "아니요", 관리 그룹 화면의 "권한 없음" 안내 복귀, 감사 로그 "removed", PowerShell 제거 직후 0건으로 대신함
-- 기록에는 "원복 완료"가 아니라 **"토글 원복 확인 + 감사 로그 대조 + 제거 직후 0건 조회"**로 표기
+- 끈 뒤 루트 역할 목록이 안 열리는 것은 루트 범위 권한이 사라져서임
+- 제거 여부는 토글, 감사 로그, 제거 직후 0건 조회를 겹쳐 확인하면 됨
+- 켠 화면에 뜬 denyAssignments 경고의 원인은 확인 불가
 
-> 근거 표기: 조회 = 이 테넌트에서 직접 읽은 값, 문서 = Microsoft Learn, 확인 불가 = 시도했지만 확인하지 못한 값(방법·사유 병기). 테넌트 ID, 도메인, 계정, 사용자 이름 등 비공개 정보는 가리거나 게시하지 않았습니다. 구독 ID도 게시하지 않았습니다. Elevate access 토글을 켜고 끄는 일은 제가 직접 했습니다.
+> 근거: 조회는 이 테넌트에서 직접 읽은 값, 문서는 Microsoft Learn입니다. 비공개 정보는 가렸습니다. 구독 ID도 게시하지 않았습니다. Elevate access 토글을 켜고 끄는 일은 제가 직접 했습니다.
 
 ---
 
@@ -26,48 +24,28 @@ Elevate access를 켠 루트 IAM 화면에는 `denyAssignments/read` 경고가 �
 
 ### 1. 증상
 
-Elevate access를 켜고 재로그인한 뒤 루트 IAM(Tenant Root Group > 액세스 제어(IAM))을 열자, 역할 할당 탭에 User Access Administrator가 범위 "루트 (상속됨)"으로 보였습니다. PowerShell `Get-AzRoleAssignment -Scope '/'`도 같은 1건을 돌려줬습니다(조회). 그런데 이 화면에 `denyAssignments/read` 관련 경고가 함께 떴습니다.
-
-![Elevate 후. 루트 IAM 역할 할당 탭에 User Access Administrator가 범위 / 로 보이고, PowerShell도 같은 값]({{ "/assets/images/2026/10/d4-elevate-after.png" | relative_url }})
-*그림 1. Elevate 후 상태(위: Entra 토글 "예" 22:02 / 가운데: Tenant Root Group > 액세스 제어(IAM)에서 User Access Administrator가 범위 "루트 (상속됨)"으로 보임, 10/24 00:56 / 아래: PowerShell `Get-AzRoleAssignment -Scope '/'`로 같은 값 확인, 00:56). 계정 이름은 가렸습니다. 토글은 22:02(4회차)에, 루트 IAM은 22:28에 켠 5회차 상태에서 찍어 시점이 다릅니다.*
-
-토글을 "아니요"로 돌리자 관리 그룹 화면은 "권한 없음" 안내로 돌아왔고, 루트 IAM의 역할 할당 목록은 열리지 않았습니다. "제거됐다"를 화면의 목록으로 직접 읽을 방법이 없어진 것입니다.
+- 사례 1(켠 상태): Tenant Root Group > 액세스 제어(IAM)에 User Access Administrator가 범위 "루트 (상속됨)"으로 보였고 `Get-AzRoleAssignment -Scope '/'`도 1건이었지만, `denyAssignments/read` 관련 경고가 함께 떴습니다.
+- 사례 2(끈 상태): 관리 그룹 화면은 "권한 없음" 안내로 돌아왔고 루트 IAM 역할 목록은 열리지 않았습니다.
 
 ![Elevate를 끈 뒤의 관리 그룹 화면]({{ "/assets/images/2026/10/m12-2-elevate-off-banner.png" | relative_url }})
 *그림 2. Elevate를 끈 뒤(10/23 22:10)의 관리 그룹 화면(GUI). "디렉터리 관리자로 등록되어 있지만, 루트 관리 그룹에 액세스하는 데 필요한 권한이 없습니다"라는 안내가 나오고, Tenant Root Group 이름이 더 이상 파란 링크가 아니다. 구독은 구독 자체에 대한 권한으로 계속 보입니다. 구독 이름, ID, 테넌트 ID는 가렸습니다.*
 
-### 2. 원인과 해결
+### 2. 원인 및 분석
 
-#### 왜 이렇게 보였나
+문서는 Elevate가 루트 `/`에 User Access Administrator를 주고 토글을 끄면 제거한다고 설명합니다([Elevate access](https://learn.microsoft.com/azure/role-based-access-control/elevate-access-global-admin)). 그래서 사례 2는 정상이고, 제거는 다음으로 대신 확인했습니다.
 
-경고(첫 번째 증상)의 원인은 확인 불가입니다. 부여된 역할(User Access Administrator)에 `denyAssignments/read` 읽기 권한이 포함되지 않기 때문일 수 있다는 추정만 있습니다(시도는 아래 '경고 원인 확인').
-
-끈 뒤 목록이 안 열리는 것(두 번째 증상)은 이상한 일이 아닙니다. 끄면 루트 범위 권한이 사라지므로 권한 없음 안내로 돌아오는 것이 정상적인 방향이고, 문서도 토글을 끄면 제거된다고 설명합니다. 켜 둔 상태에서만 루트 목록을 볼 수 있으니, 끈 뒤에 목록을 GUI로 직접 확인하는 방법은 없습니다.
-
-#### 대신 모은 근거
-
-목록으로는 끝내 확인하지 못하므로 "원복 완료"라고 쓰지 않고, 아래 근거를 모아 **"토글 원복 확인 + 감사 로그 대조 + 제거 직후 0건 조회"**라고 썼습니다.
-
-- Entra 속성 토글: "아니요", 새로 불러온 화면에서 저장 버튼 비활성(조회)
-- 관리 그룹 화면: "권한 없음" 안내로 복귀, Tenant Root Group 링크 없음(끈 직후 09:51, 16시경, 22:10)(조회)
-- 감사 로그: 켬·끔 시각 모두 기록(조회)
-    - 제거는 "The role assignment of User Access Administrator has been removed from the user"
-- PowerShell: 4회차, 5회차 제거 직후 `Get-AzRoleAssignment` 0건(조회)
-- 루트 IAM 역할 목록(GUI): 끈 뒤 열리지 않음 → 확인 불가
-    - 시도: 끈 뒤 목록 열기
-    - 막힌 이유: 권한 없음으로 열리지 않음
-    - 다음 방법: 켠 상태에서만 볼 수 있어 직접 확인 방법 없음 → 위 대체 근거 사용
-
-### 3. Elevate를 쓸 때 지키는 것
-
-Elevate access는 "쓰고 나면 끄는" 기능입니다. **켠 시각과 끈 시각을 기록**하고, 끈 뒤에도 루트 범위 할당을 한 번 더 읽어 둡니다. GUI로는 읽을 수 없으니 PowerShell 조회와 감사 로그를 함께 씁니다.
-
-끈 뒤 "제거됨"은 한 가지 근거로 단정하지 않고 토글, 안내 복귀, 감사 로그, 조회 결과를 겹쳐 적습니다. 켠 화면의 경고처럼 원인을 확정하지 못한 것은 추정과 시도, 막힌 이유를 함께 적어 둡니다. 역할 정의를 바꿔 확인하는 일은 권한 변경이라 하지 않습니다.
-
-### 4. 확인 과정
+- 토글: "아니요", 새로 불러온 화면에서 저장 버튼 비활성
+- 관리 그룹: "권한 없음" 안내 복귀(끈 직후 09:51, 16시경, 22:10)
+- 감사 로그: 켬·끔 시각 모두 기록, 제거는 "The role assignment of User Access Administrator has been removed from the user"
+- PowerShell: 4회차, 5회차 제거 직후 `Get-AzRoleAssignment` 0건
 
 <details markdown="1">
-<summary>확인 과정 자세히 보기 (그림 2장)</summary>
+<summary>확인 과정 자세히 보기 (그림 3장)</summary>
+
+#### 켠 상태의 루트 IAM
+
+![Elevate 후. 루트 IAM 역할 할당 탭에 User Access Administrator가 범위 / 로 보이고, PowerShell도 같은 값]({{ "/assets/images/2026/10/d4-elevate-after.png" | relative_url }})
+*그림 1. Elevate 후 상태(위: Entra 토글 "예" 22:02 / 가운데: Tenant Root Group > 액세스 제어(IAM)에서 User Access Administrator가 범위 "루트 (상속됨)"으로 보임, 10/24 00:56 / 아래: PowerShell `Get-AzRoleAssignment -Scope '/'`로 같은 값 확인, 00:56). 계정 이름은 가렸습니다. 토글은 22:02(4회차)에, 루트 IAM은 22:28에 켠 5회차 상태에서 찍어 시점이 다릅니다.*
 
 #### 처음에 짚은 것
 
@@ -101,11 +79,22 @@ Elevate access는 "쓰고 나면 끄는" 기능입니다. **켠 시각과 끈 �
 
 </details>
 
-### 5. 관련 글
+### 3. 결론
 
-[관리 그룹 설정이 403: Elevate access와 토큰]({{ "/m365/troubleshooting/mg-settings-403-elevate-access/" | relative_url }}), [Elevate를 GUI로 끄지 못해 PowerShell로 끔]({{ "/m365/troubleshooting/elevate-off-gui-failure/" | relative_url }}), [Azure 구조: 계층, 리소스 그룹, Elevate access 전·후]({{ "/m365/d4-azure-structure/" | relative_url }})
+Elevate 끔 → 루트 범위 권한 제거 → 루트 IAM 목록 안 열림(정상) → 토글·감사 로그·0건 조회로 확인
 
-### 6. 근거 자료
+- 사례 1 경고 원인: 확인 불가. 역할에 `denyAssignments/read`가 없어서라는 추정만 있습니다(시도: 켠 상태에서 경고와 목록 조회, 사유: 역할 정의 변경은 권한 변경이라 하지 않음, 다음 방법: 변경 권한이 있을 때 역할 정의 대조).
+- 끈 뒤 루트 역할 목록 직접 확인: 확인 불가(시도: 목록 열기, 사유: 권한 없음, 다음 방법: 대체 근거 사용).
+
+### 4. 권고방안
+
+1. Elevate는 쓰고 나면 끄고, 켬·끔 시각을 기록합니다.
+2. 조치 후 확인: 끈 뒤 PowerShell 조회와 감사 로그로 한 번 더 읽고, "제거됨"은 한 가지 근거로 단정하지 않습니다.
+3. 역할 정의를 바꿔 확인하는 일은 권한 변경이라 하지 않습니다.
+
+관련 글: [관리 그룹 설정이 403: Elevate access와 토큰]({{ "/m365/troubleshooting/mg-settings-403-elevate-access/" | relative_url }}) · [Elevate를 GUI로 끄지 못해 PowerShell로 끔]({{ "/m365/troubleshooting/elevate-off-gui-failure/" | relative_url }}) · [Azure 구조: 계층, 리소스 그룹, Elevate access 전·후]({{ "/m365/d4-azure-structure/" | relative_url }})
+
+### 근거 자료
 
 > 이 글의 PowerShell 원문은 일부를 복구하지 못해, 같은 출력 줄이 나오는 형태로 정리했습니다. 화면 확인 값은 실제와 같습니다.
 
@@ -116,7 +105,7 @@ Elevate access는 "쓰고 나면 끄는" 기능입니다. **켠 시각과 끈 �
     - 출처: [Elevate access](https://learn.microsoft.com/azure/role-based-access-control/elevate-access-global-admin)
 - 조회: 켠 상태 루트 IAM의 User Access Administrator 1건, PowerShell 1건, 끈 뒤 화면과 토글, 감사 로그, 제거 직후 0건
     - 출처: Azure 포털, Entra, Cloud Shell
-- 확인 불가: denyAssignments 경고 원인, 끈 뒤 루트 역할 목록의 직접 확인(시도, 사유, 다음 방법은 4절 '경고 원인 확인'과 2절 '대신 모은 근거')
+- 확인 불가: denyAssignments 경고 원인, 끈 뒤 루트 역할 목록의 직접 확인(시도, 사유, 다음 방법은 2절 확인 과정의 '경고 원인 확인', '끈 뒤 루트 역할 목록 읽기')
     - 출처: -
 
 </details>

@@ -12,16 +12,11 @@ excerpt: "'관리자 승인 필요'·AADSTS65001이 뜨면 동의부터 누르�
 
 ## 요약
 
-- 앱 로그인 때 "관리자 승인 필요(Need admin approval)" 화면, 또는 AADSTS65001(동의하지 않음), AADSTS90094(관리자만 줄 수 있는 권한), AADSTS90093
-- 흔한 원인은 네 가지
-    - 테넌트가 **사용자 동의를 끄거나 제한**함
-    - 앱이 관리자만 동의할 수 있는 권한을 요청
-    - Microsoft가 위험한 앱으로 판단
-    - 할당 필요 앱인데 관리자 동의가 아직 없음
-- 앱이 믿을 만한지 먼저 검토 → 필요하면 관리자가 테넌트 전체 관리자 동의 → 반복되면 관리자 동의 워크플로 켜기
-- 동의는 앱에 메일과 파일 접근 권한을 주는 일. 오류를 없애려고 확인 없이 동의하면 동의 피싱에 그대로 당함
+- 동의 설정이나 요청 권한 때문에 사용자가 동의할 수 없는 상태임
+- 요청이 잦으면 관리자 동의 워크플로를 켜서 검토자가 처리하게 함
+- 확인 없이 동의하면 앱에 메일과 파일 권한을 넘겨 동의 피싱에 당함
 
-> Microsoft Learn 공식 문서(2026-11-01 확인)를 기준으로 쓴 대처 가이드입니다. 특정 테넌트에서 재현한 기록은 아닙니다. 개념은 [Entra ID 핵심 개념: 기초와 구조 편]({{ "/iam/what-is-entra-id/" | relative_url }})을 함께 보세요. 오류 번호와 HTTP 상태 코드가 낯설면 [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }})을 먼저 보세요.
+> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다. 함께 볼 글: [Entra ID 핵심 개념: 기초와 구조 편]({{ "/iam/what-is-entra-id/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
 
 ---
 
@@ -29,13 +24,19 @@ excerpt: "'관리자 승인 필요'·AADSTS65001이 뜨면 동의부터 누르�
 
 ### 1. 증상
 
-직원이 업무용으로 찾은 메일 정리 앱에 회사 계정으로 로그인하자 "관리자 승인 필요 — 이 앱은 조직의 리소스에 접근하려면 관리자만 줄 수 있는 권한이 필요합니다"가 나옵니다. 개발자가 만든 사내 앱은 `AADSTS65001: The user or administrator has not consented to use the application…` 오류를 받습니다.
+- 사례 1: 메일 정리 앱에 회사 계정으로 로그인하면 "관리자 승인 필요 — 이 앱은 조직의 리소스에 접근하려면 관리자만 줄 수 있는 권한이 필요합니다"
+- 사례 2: 사내 개발 앱이 `AADSTS65001: The user or administrator has not consented to use the application…` 오류
 
-### 2. 원인과 해결
+### 2. 원인 및 분석
 
-테넌트의 동의 설정이나 앱이 요청한 권한 때문에 사용자가 동의할 수 없는 상태입니다. 앱이 믿을 만한지 먼저 검토하고, 필요하면 관리자가 동의합니다. 코드별 뜻과 확인 위치는 아래 '코드와 동의 설정'에 있습니다.
+테넌트 동의 설정이나 앱의 요청 권한 때문에 사용자가 동의할 수 없습니다([공식 문서](https://learn.microsoft.com/entra/identity/enterprise-apps/application-sign-in-unexpected-user-consent-error)). 코드별 뜻은 아래 확인 과정에 있습니다.
 
-#### 원인별 대처
+<picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/11/ts-aadsts65001-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/11/ts-aadsts65001.png" | relative_url }}" alt="사용자 동의가 막힐 때 관리자가 판단하는 순서" loading="lazy"></picture>
+
+*그림 1. 동의가 막힐 때 판단 순서*
+
+<details markdown="1">
+<summary>원인별 대처와 실제 사례 자세히 보기 (5가지)</summary>
 
 - 회사가 사용자 동의를 막아 둔 경우(의도된 설정): 앱을 검토해 업무상 필요하고 믿을 만하면 관리자가 테넌트 전체 관리자 동의(Grant admin consent)
 - 앱이 관리자 전용 권한(예: 조직 전체 메일 읽기)을 요청하는 경우: 그 권한이 정말 필요한지 개발사나 개발자에게 확인. 최소 권한으로 줄일 수 있으면 줄인 뒤 동의
@@ -43,25 +44,13 @@ excerpt: "'관리자 승인 필요'·AADSTS65001이 뜨면 동의부터 누르�
     - 관리자도 게시자 확인(verified publisher) 여부, 요청 권한, 평판을 신중히 보고 결정
     - 의심스러우면 동의 화면에서 Microsoft에 신고
 - 할당 필요 앱인데 동의가 없는 경우: 관리자가 먼저 테넌트 전체 동의를 준 뒤 사용자나 그룹 할당([AADSTS50105 글]({{ "/iam/troubleshooting/aadsts50105-app-not-assigned/" | relative_url }}))
-- 요청이 자주 들어와 관리가 어려운 경우: 관리자 동의 워크플로 켜기(아래 '관리자 동의 워크플로')
+- 요청이 자주 들어와 관리가 어려운 경우: 관리자 동의 워크플로 켜기(권고방안 1)
 
-오류가 오히려 사고를 막은 장면도 있습니다. "Office 문서 보안 검사"라는 이름의 앱이 직원들에게 링크로 돌고, 로그인하면 "메일 읽기·보내기, 모든 파일 읽기" 권한 동의를 요청합니다. 회사가 사용자 동의를 "확인된 게시자의 낮은 위험 권한만"으로 제한해 두어 직원들은 "관리자 승인 필요"를 받았고, 관리자는 게시자가 확인되지 않은 앱임을 보고 요청을 거부했습니다. 오류가 **보안 장치로 동작한 사례**입니다.
+오류가 보안 장치로 동작한 사례도 있습니다. "Office 문서 보안 검사"라는 앱이 링크로 돌며 "메일 읽기·보내기, 모든 파일 읽기" 동의를 요청했지만, 사용자 동의가 "확인된 게시자의 낮은 위험 권한만"으로 제한되어 직원들은 "관리자 승인 필요"를 받았고, 관리자는 게시자가 확인되지 않은(unverified publisher) 앱임을 보고 요청을 거부했습니다.
 
-#### 관리자 동의 워크플로(Admin consent workflow)
+</details>
 
-사용자가 동의할 수 없는 앱을 만났을 때 사유를 적어 승인 요청을 보내고, 지정한 검토자가 처리하게 하는 기능입니다.
 
-1. Entra ID > Enterprise apps > Consent and permissions > Admin consent settings(관리자 동의 설정)
-2. Users can request admin consent to apps they are unable to consent to = **Yes**
-3. 검토자(사용자, 그룹, 역할), 이메일 알림, 요청 만료 기간 설정 후 저장. 켜지기까지 최대 1시간
-
-켜는 작업은 전역 관리자가 해야 합니다. 검토자로 지정한다고 권한이 올라가지는 않습니다. 실제 승인에는 그 앱에 관리자 동의를 줄 권한이 있어야 하고, Microsoft Graph **애플리케이션 권한**을 요청하는 앱은 전역 관리자만 승인할 수 있습니다.
-
-### 3. 예방
-
-사용자 동의는 "확인된 게시자의, 낮은 위험 권한"처럼 좁게 두고, 나머지는 관리자 동의 워크플로로 받습니다. 정기적으로 엔터프라이즈 앱의 권한 목록을 검토해 쓰지 않는 앱의 동의를 회수합니다.
-
-### 4. 확인 과정
 
 <details markdown="1">
 <summary>확인 과정 자세히 보기</summary>
@@ -80,13 +69,31 @@ excerpt: "'관리자 승인 필요'·AADSTS65001이 뜨면 동의부터 누르�
 2. 해당 앱(엔터프라이즈 앱) > Security > Permissions(권한): 앱이 요청하는 권한 목록
 3. 감사 로그에서 범주 **ApplicationManagement**, 활동 **Consent to application**, 사유 Risky application detected 기록이 있는지(위험 앱으로 막힌 경우)
 
-#### 해결됐는지 확인
+</details>
 
-사용자가 다시 로그인해 동의 화면 없이 앱이 열리는지 봅니다. 해당 엔터프라이즈 앱의 Security > Permissions에 관리자 동의가 기록됐는지도 확인합니다.
+### 3. 결론
+
+`사용자 동의 제한 또는 관리자 전용 권한 요청 → 사용자 동의 불가 → 관리자 승인 필요, AADSTS65001·90094`
+
+앱이 믿을 만한지 먼저 검토하고, 필요할 때만 관리자가 동의합니다.
+
+### 4. 권고방안
+
+1. 조치: 요청이 잦으면 관리자 동의 워크플로(Admin consent workflow)를 켜서 검토자가 처리하게 합니다. 켜는 작업은 전역 관리자가 하며, 켜지기까지 최대 1시간 걸립니다.
+2. 조치 후 확인: 다시 로그인해 동의 화면 없이 앱이 열리고, 앱의 Security > Permissions에 관리자 동의가 기록되면 해결입니다.
+3. 예방: 사용자 동의는 "확인된 게시자의, 낮은 위험 권한"으로 좁히고, 앱 권한 목록을 정기 검토해 안 쓰는 앱의 동의를 회수합니다.
+4. 하지 말아야 할 것: 오류를 없애려고 검토 없이 동의 버튼부터 누르지 않습니다.
+
+<details markdown="1">
+<summary>관리자 동의 워크플로 설정 경로와 검토자 권한 보기</summary>
+
+- Entra ID > Enterprise apps > Consent and permissions > Admin consent settings(관리자 동의 설정)에서 Users can request admin consent to apps they are unable to consent to = **Yes**
+- 검토자(사용자, 그룹, 역할), 이메일 알림, 요청 만료 기간 설정 후 저장
+- 검토자 지정으로 권한이 올라가지 않으며, 승인에는 그 앱에 관리자 동의를 줄 권한이 필요합니다. Microsoft Graph **애플리케이션 권한**을 요청하는 앱은 전역 관리자만 승인할 수 있습니다.
 
 </details>
 
-### 5. 근거 자료
+### 근거 자료
 
 <details markdown="1">
 <summary>근거 자료 펼쳐 보기 (4건)</summary>

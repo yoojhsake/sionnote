@@ -12,21 +12,22 @@ excerpt: "비공개·공유 채널만 403이 났습니다. 멤버십이 아니�
 
 ## 요약
 
-- 표준 채널은 Graph 업로드 성공, 비공개·공유 채널은 업로드도 폴더 읽기도 HTTP 403
-- 관리자 계정은 세 채널의 owner이고 SharePoint 화면에서도 두 채널 사이트가 열림. 멤버십 문제는 아님
-- 원인은 토큰의 파일·사이트 범위 부족(읽기 쪽은 확인)
-- Graph 탐색기에서 Files.Read.All, Sites.Read.All을 동의한 토큰으로 같은 요청을 다시 보냄
-- 동의 전 파일 목록 accessDenied, 동의 후 두 채널 사이트 모두 200 OK로 시험 파일 목록 반환
+- 관리자가 채널 소유자이고 화면에서도 열려 멤버십 문제는 아니었음
+- 채널 403은 화면 접근과 멤버십을 본 뒤 토큰 범위 순으로 나눠 보면 됨
+- 읽기만 확인했으니 업로드 성공은 따로 시험해야 함
 
-> 근거 표기: 조회 = 이 테넌트에서 직접 읽은 값, 문서 = Microsoft Learn, 확인 불가 = 시도했지만 확인하지 못한 값(방법·사유 병기). 테넌트 ID, 도메인, 계정, 사용자 이름 등 비공개 정보는 가리거나 게시하지 않았습니다. 사이트 주소도 게시하지 않았습니다.
+> 근거: 조회는 이 테넌트에서 직접 읽은 값, 문서는 Microsoft Learn입니다. 비공개 정보는 가렸습니다. 사이트 주소도 게시하지 않았습니다.
 
 ---
 
 ## 전체 기록
 
+
+
+
 ### 1. 증상
 
-비공개·공유 채널 폴더에 Graph로 시험 파일을 올렸더니 응답이 403이었습니다. 표준 채널은 정상 업로드였습니다. 같은 방식으로 세 채널에 다시 올려 결과를 표로 모았습니다.
+- Graph 업로드가 표준 채널은 성공, 비공개·공유 채널은 업로드·폴더 읽기 모두 403(accessDenied 계열)이었습니다.
 
 | 채널 유형 | 업로드 | 폴더 읽기 | 새 파일 생성 |
 |---|---|---|---|
@@ -34,41 +35,20 @@ excerpt: "비공개·공유 채널만 403이 났습니다. 멤버십이 아니�
 | 비공개 | HTTP 403 | HTTP 403 | 생성 안 됨 |
 | 공유 | HTTP 403 | HTTP 403 | 생성 안 됨 |
 
-응답 본문은 accessDenied 계열이었습니다. 읽기까지 403이니 "쓰기 권한만 없다"가 아니라 이 드라이브 자체에 들어가지 못하는 상태입니다. 앞서(10/22) 만들어진 비공개·공유 채널의 시험 파일은 SharePoint 화면에서 여전히 있었습니다(조회).
+10/22에 생긴 두 채널의 시험 파일이 화면에 남아 있는 현상은 [별도 글]({{ "/m365/troubleshooting/upload-403-but-file-created/" | relative_url }})에서 다룹니다.
 
-응답은 403인데 파일이 생기는 현상은 [별도 글]({{ "/m365/troubleshooting/upload-403-but-file-created/" | relative_url }})에 정리했고, 여기서는 403이 **왜** 나는지만 봅니다.
+### 2. 원인 및 분석
 
-### 2. 원인과 해결
+비공개·공유 채널은 별도 사이트를 쓰고 비공개 채널 사이트는 구성원만 접근합니다(문서: Private channels, Shared channels). 업로드(`PUT .../content`)에는 Files.ReadWrite, Files.ReadWrite.All, Sites.ReadWrite.All 중 하나가 필요하고(문서: driveItem 업로드), Group.ReadWrite.All은 하위 호환용으로만 지원됩니다(문서: Get filesFolder). 화면 접근 → 멤버십 → 토큰 범위 순으로 나눠 봤습니다.
 
-#### 원인: 토큰에 파일·사이트 범위가 없었다
+| 가설 | 기대값 | 실제값 |
+|---|---|---|
+| 1. 사용자에게 채널 사이트 권한이 없다 | 화면에서 막힘 | SharePoint 화면에서 두 사이트 Documents가 열림 |
+| 2. 관리자가 채널 구성원이 아니다 | 구성원 아님 | 세 채널 모두 구성원 1명(관리자, owner) |
+| 3. 토큰에 파일·사이트 범위가 없다 | scp에 Files.*·Sites.* | 없음(Group.ReadWrite.All 등만 있음) |
+| 3 증명. 범위를 더해 같은 요청 | 403 → 200 | 동의 전 accessDenied / 동의 후 두 사이트 모두 200 OK |
 
-멤버십이나 사용자 권한이 아니라 **토큰의 파일·사이트 읽기 범위 부족**이 원인이었습니다. 같은 계정, 같은 요청에서 범위만 더했더니 403(accessDenied)이 200 OK로 바뀌었습니다(아래 "동의 전과 후 비교").
-
-업로드에 쓴 Cloud Shell 토큰에는 Files.* 와 Sites.* 범위가 없었습니다(아래 "토큰의 허용 범위"). 문서에 따르면 파일 업로드(`PUT .../content`)에는 Files.ReadWrite, Files.ReadWrite.All, Sites.ReadWrite.All 중 하나가 필요합니다(문서: driveItem 업로드). Group.ReadWrite.All은 하위 호환용으로만 지원됩니다(문서: Get filesFolder).
-
-팀 사이트처럼 그룹에 연결된 드라이브는 이 범위로 열렸지만, 비공개·공유 채널의 별도 사이트 드라이브는 열리지 않는 것으로 보입니다. 표준 채널만 성공하고 비공개·공유 채널은 쓰기, 읽기 모두 403이 난 결과와 맞아떨어집니다.
-
-관리자 계정은 세 채널 모두의 owner 구성원이었고, SharePoint 화면에서도 두 채널 사이트가 열렸습니다(아래 "채널 구성원 여부", "화면에서는 열린다"). 그러니 멤버십 때문은 아닙니다.
-
-#### 해결: 범위를 동의한 토큰으로 다시 요청
-
-Graph 탐색기(Graph Explorer)의 "권한 수정(Modify permissions)" 탭에서 Files.Read.All과 Sites.Read.All을 직접 동의한 뒤 같은 요청을 다시 실행했습니다. 두 채널 사이트 모두 200 OK로 파일 목록이 반환됐습니다.
-
-다만 쓰기 성공은 읽기와 따로 확인해야 합니다. 읽기 범위를 동의했다고 업로드까지 된다고 단정하지 않았습니다.
-
-처음에는 Cloud Shell의 `az login` 장치 코드 로그인으로 Files 범위 토큰을 얻으려 했는데 오류 530035로 막혔습니다(아래 "Files 범위 토큰을 얻으려던 시도"). 그래서 브라우저 로그인을 쓰는 Graph 탐색기로 바꿨습니다.
-
-#### 원복
-
-로그인이 막힌 시도(az login 장치 코드)는 바뀐 설정이 없어 원복할 것이 없습니다. Graph 탐색기에서 동의한 읽기 범위(Files.Read.All, Sites.Read.All)는 필요가 없어지면 Entra 관리 센터의 엔터프라이즈 애플리케이션에서 철회할 수 있습니다. 표준 채널과 General에는 이번 시험 파일 `zz-test*.txt`도 남아 있어 팀 삭제 때 함께 지웁니다.
-
-### 3. 다음에 채널 403을 만나면
-
-비공개·공유 채널의 403은 **화면 접근 → 채널 멤버십 → 토큰 범위** 순으로 나눠 봅니다. 화면에서 열리고 구성원이면 사용자 권한 문제가 아닙니다. 이번 구성에서는 토큰 범위였습니다. 팀 사이트(그룹 드라이브)가 열린다고 채널 전용 사이트까지 열리는 것은 아니었습니다.
-
-업로드가 됐는지는 응답 코드만 보고 판단하지 않고, 코드와 실제 저장 위치를 둘 다 확인합니다. 재현할 때는 요청과 응답 전체를 파일로 저장해 둡니다. 나중에 정리(삭제)할 때는 채널 사이트가 따로 있다는 점을 목록에 넣어 둡니다.
-
-### 4. 확인 과정
+Files 범위 토큰은 `az login` 장치 코드 로그인이 오류 530035로 막혀 Graph 탐색기(브라우저 로그인)로 얻었습니다.
 
 <details markdown="1">
 <summary>확인 과정 자세히 보기 (그림 9장)</summary>
@@ -217,11 +197,22 @@ Files.ReadWrite.All 범위 토큰을 얻으려고 두 가지를 시도했습니�
 
 </details>
 
-### 5. 관련 글
+### 3. 결론
 
-[채널 경로 업로드 400]({{ "/m365/troubleshooting/channel-upload-400-filesfolder/" | relative_url }}), [Cloud Shell 토큰으로 되는 Graph 호출과 안 되는 호출]({{ "/m365/troubleshooting/cloud-shell-graph-token-scope/" | relative_url }}), [응답은 403인데 파일이 생김]({{ "/m365/troubleshooting/upload-403-but-file-created/" | relative_url }}), [Exchange 장치 코드 로그인 530035]({{ "/m365/troubleshooting/aadsts530035-device-code/" | relative_url }}), [Teams 저장 구조: 채널 유형별 파일 위치]({{ "/m365/d3-teams-storage/" | relative_url }})
+Cloud Shell 토큰에 Files.*·Sites.* 범위 없음 → 채널 전용 사이트 드라이브 쓰기·읽기 403 → 화면과 멤버십은 정상
 
-### 6. 근거 자료
+Files.Read.All·Sites.Read.All 동의 후 같은 요청이 200 OK가 됐고, 업로드 성공은 따로 시험해야 합니다. 403인데 파일이 생긴 원인은 확인 불가입니다(시도·사유는 확인 과정 "확인하지 못한 것").
+
+### 4. 권고방안
+
+1. 조치: 채널 파일 작업은 Files.*·Sites.* 범위가 있는 토큰으로 합니다(Graph 탐색기 "권한 수정(Modify permissions)" 탭에서 동의).
+2. 확인: 채널 사이트 `drive/root/children`이 200 OK이고 accessDenied가 없으면 됩니다. 업로드는 응답 코드와 저장 위치를 둘 다 보고, 재현 시 요청·응답을 파일로 저장합니다.
+3. 하지 말 것: 팀 사이트(그룹 드라이브)가 열린다고 채널 전용 사이트도 열린다고 보지 않습니다.
+4. 원복·정리: az login 시도는 바뀐 설정이 없습니다. 동의한 범위는 Entra 관리 센터 엔터프라이즈 애플리케이션에서 철회할 수 있습니다. 표준 채널과 General의 `zz-test*.txt`는 팀 삭제 때 지우고, 채널 사이트를 정리 목록에 넣습니다.
+
+관련 글: [채널 경로 업로드 400]({{ "/m365/troubleshooting/channel-upload-400-filesfolder/" | relative_url }}) · [Cloud Shell 토큰으로 되는 Graph 호출과 안 되는 호출]({{ "/m365/troubleshooting/cloud-shell-graph-token-scope/" | relative_url }}) · [응답은 403인데 파일이 생김]({{ "/m365/troubleshooting/upload-403-but-file-created/" | relative_url }}) · [Exchange 장치 코드 로그인 530035]({{ "/m365/troubleshooting/aadsts530035-device-code/" | relative_url }}) · [Teams 저장 구조: 채널 유형별 파일 위치]({{ "/m365/d3-teams-storage/" | relative_url }})
+
+### 근거 자료
 
 <details markdown="1">
 <summary>근거 자료 펼쳐 보기 (7건)</summary>

@@ -1,24 +1,27 @@
 ---
-title: "[IAM] Microsoft Entra ID 핵심 개념 — 용어집과 학습 자료"
+title: "[IAM] Microsoft Entra ID 핵심 개념: 용어집과 학습 자료"
 date: 2026-11-01 08:56:00 +0900
 categories: [iam]
 tags: [IAM, Entra ID, 용어집, 학습 자료]
-excerpt: "Entra ID 핵심 개념 시리즈에 나오는 용어를 원어와 쉬운 설명으로 정리하고, 학습 자료와 트러블슈팅 글을 모은 페이지"
+excerpt: "PRT·CAE·PIM처럼 낯선 약어를 원어와 쉬운 설명으로 바로 찾는 용어집. 강의와 트러블슈팅 글 목록도 함께 있습니다."
 ---
+
+PRT, CAE, PIM처럼 Entra ID 글에 나오는 약어가 낯설면 읽다가 멈추게 됩니다. 여기서 원어와 쉬운 한국어 설명을 바로 찾고, 맨 아래 강의와 트러블슈팅 글 목록으로 이어서 공부할 수 있습니다.
+
+## 요약
+
+- 시리즈에 나오는 용어를 **원어 · 한국어: 쉬운 설명** 형식으로 모음
+- 영문 알파벳 순이 아니라 배우는 순서에 가깝게 정렬
+- 맨 아래에 함께 보면 좋은 강의와 트러블슈팅 글 전체 목록
 
 > **시리즈: Microsoft Entra ID 핵심 개념**
 >
 > 1. [기초와 구조]({{ "/iam/what-is-entra-id/" | relative_url }})
-> 2. [오류 코드 읽는 법(HTTP 상태 코드·AADSTS)]({{ "/iam/entra-id-error-codes/" | relative_url }})
-> 3. [인증 — MFA·패스키·SSPR·SSO]({{ "/iam/entra-id-authentication/" | relative_url }})
-> 4. [접근 제어 — 조건부 액세스·PIM·ID Protection]({{ "/iam/entra-id-access-control/" | relative_url }})
-> 5. [하이브리드·외부 사용자·라이선스·운영]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }})
+> 2. [오류 코드 읽는 법(HTTP 상태 코드와 AADSTS)]({{ "/iam/entra-id-error-codes/" | relative_url }})
+> 3. [인증(MFA, 패스키, SSPR, SSO)]({{ "/iam/entra-id-authentication/" | relative_url }})
+> 4. [접근 제어(조건부 액세스, PIM, ID Protection)]({{ "/iam/entra-id-access-control/" | relative_url }})
+> 5. [하이브리드, 외부 사용자, 라이선스, 운영]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }})
 > 6. **용어집과 학습 자료** (지금 보는 글)
-
-## 요약
-
-- 시리즈에 나오는 용어를 **원어 · 한국어: 쉬운 설명** 형식으로 모았습니다. 영문 알파벳 순이 아니라 배우는 순서에 가깝게 정렬했습니다.
-- 맨 아래에 함께 보면 좋은 강의와 트러블슈팅 글 전체 목록이 있습니다.
 
 ---
 
@@ -87,7 +90,8 @@ excerpt: "Entra ID 핵심 개념 시리즈에 나오는 용어를 원어와 쉬�
 
 ---
 
-## 함께 보면 좋은 강의
+M365, Intune, Azure 인프라까지 넓은 용어는 [클라우드 학습 용어 전집]({{ "/study/cloud-study-glossary/" | relative_url }})에 있습니다. 12주 학습 순서는 [Azure·M365 클라우드 학습 로드맵]({{ "/study/cloud-study-roadmap/" | relative_url }})에서 봅니다.
+
 ## 함께 보면 좋은 강의
 
 한국어 (Microsoft Learn 학습 모듈)
@@ -98,23 +102,23 @@ excerpt: "Entra ID 핵심 개념 시리즈에 나오는 용어를 원어와 쉬�
 
 영어 (YouTube, Microsoft 공식 채널)
 
-- [Microsoft Entra ID Beginner's Tutorial — Microsoft Mechanics](https://www.youtube.com/watch?v=0qZzcK1mHwA): 관리 센터 화면으로 보는 전체 개요. 2023-10 영상이라 패스키 기본값·SMS 종료·B2C 판매 중단 이전 내용이므로, 바뀐 부분은 이 글을 기준으로 보세요.
+- [Microsoft Entra ID Beginner's Tutorial (Microsoft Mechanics)](https://www.youtube.com/watch?v=0qZzcK1mHwA): 관리 센터 화면으로 보는 전체 개요. 2023-10 영상이라 패스키 기본값, SMS 종료, B2C 판매 중단 이전 내용입니다. 바뀐 부분은 이 글을 기준으로 보세요.
 - [Why phishing resistant authentication is important](https://www.youtube.com/watch?v=YcqfXvU6xhw): 피싱 저항 인증이 필요한 이유
 - [Get started with phishing-resistant MFA](https://www.youtube.com/watch?v=fSIM_Zrlv70): 패스키·FIDO2가 피싱을 막는 원리
 
 ## 트러블슈팅 글 전체
 
-- 암호가 맞다는데 로그인 실패 → [AADSTS50126 — 사용자 이름 또는 암호가 잘못됨]({{ "/iam/troubleshooting/aadsts50126-wrong-password/" | relative_url }})
-- MFA 필요·등록 필요, Azure CLI 필수 MFA → [AADSTS50076·50079 — MFA가 필요하거나 등록하라고 막힐 때]({{ "/iam/troubleshooting/aadsts50076-mfa-required/" | relative_url }})
-- 조건부 액세스 차단 → [AADSTS53003 — 조건부 액세스 정책 때문에 차단될 때]({{ "/iam/troubleshooting/aadsts53003-blocked-by-ca/" | relative_url }})
+- 암호가 맞다는데 로그인 실패 → [AADSTS50126: 사용자 이름 또는 암호가 잘못됨]({{ "/iam/troubleshooting/aadsts50126-wrong-password/" | relative_url }})
+- MFA 필요·등록 필요, Azure CLI 필수 MFA → [AADSTS50076·50079: MFA가 필요하거나 등록하라고 막힐 때]({{ "/iam/troubleshooting/aadsts50076-mfa-required/" | relative_url }})
+- 조건부 액세스 차단 → [AADSTS53003: 조건부 액세스 정책 때문에 차단될 때]({{ "/iam/troubleshooting/aadsts53003-blocked-by-ca/" | relative_url }})
 - 로그인은 되는데 권한 없음 → [로그인은 되는데 403·AuthorizationFailed가 나올 때]({{ "/iam/troubleshooting/signed-in-but-403/" | relative_url }})
-- 정책 실수로 관리자까지 잠김 → [조건부 액세스 정책 실수로 관리자까지 잠겼을 때 — 긴급 액세스 계정]({{ "/iam/troubleshooting/ca-lockout-emergency-access/" | relative_url }})
+- 정책 실수로 관리자까지 잠김 → [조건부 액세스 정책 실수로 관리자까지 잠겼을 때: 긴급 액세스 계정]({{ "/iam/troubleshooting/ca-lockout-emergency-access/" | relative_url }})
 - 막은 계정이 계속 접근 → [계정을 막았는데 퇴사자가 여전히 메일·파일에 접근할 때]({{ "/iam/troubleshooting/disabled-user-still-signed-in/" | relative_url }})
 - 보안 기본값을 켤 수 없음 → [보안 기본값 관리가 보이지 않을 때]({{ "/iam/troubleshooting/security-defaults-cannot-enable/" | relative_url }})
-- 셀프 서비스 암호 재설정 실패 → [SSPR이 되지 않을 때 — 오류 코드와 쓰기 저장]({{ "/iam/troubleshooting/sspr-cannot-reset/" | relative_url }})
+- 셀프 서비스 암호 재설정 실패 → [SSPR이 되지 않을 때: 오류 코드와 쓰기 저장]({{ "/iam/troubleshooting/sspr-cannot-reset/" | relative_url }})
 - SMS·음성 MFA 종료 대비 → [SMS·음성으로만 MFA를 하는 사용자가 있을 때]({{ "/iam/troubleshooting/sms-voice-mfa-retirement/" | relative_url }})
 - PTA 환경 전원 로그인 실패 → [통과 인증(PTA) 환경에서 전원이 로그인하지 못할 때]({{ "/iam/troubleshooting/pta-agent-sign-in-fails/" | relative_url }})
-- 앱에 할당되지 않아 SSO 실패 → [AADSTS50105 — 앱에 할당되지 않은 사용자]({{ "/iam/troubleshooting/aadsts50105-app-not-assigned/" | relative_url }})
-- 앱 권한 동의 막힘·관리자 승인 필요 → [AADSTS65001·90094 — 앱 권한 동의가 막힐 때]({{ "/iam/troubleshooting/aadsts65001-consent-required/" | relative_url }})
-- 게스트·외부 계정 로그인 실패 → [AADSTS50020 — 게스트가 이 테넌트에 없는 계정으로 막힐 때]({{ "/iam/troubleshooting/aadsts50020-guest-not-in-tenant/" | relative_url }})
+- 앱에 할당되지 않아 SSO 실패 → [AADSTS50105: 앱에 할당되지 않은 사용자]({{ "/iam/troubleshooting/aadsts50105-app-not-assigned/" | relative_url }})
+- 앱 권한 동의 막힘·관리자 승인 필요 → [AADSTS65001·90094: 앱 권한 동의가 막힐 때]({{ "/iam/troubleshooting/aadsts65001-consent-required/" | relative_url }})
+- 게스트·외부 계정 로그인 실패 → [AADSTS50020: 게스트가 이 테넌트에 없는 계정으로 막힐 때]({{ "/iam/troubleshooting/aadsts50020-guest-not-in-tenant/" | relative_url }})
 - 보안 기본값의 디바이스 코드 차단(실제 사례) → [Exchange Online 장치 코드 로그인이 AADSTS530035로 막힘]({{ "/m365/troubleshooting/aadsts530035-device-code/" | relative_url }})

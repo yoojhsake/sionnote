@@ -17,3 +17,23 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 </script>
+
+<!-- 제목 옆 링크(🔗) 아이콘을 누르면 그 위치의 전체 주소(#포함)를 클립보드에 복사하고 "링크 복사됨"을 잠깐 보여 준다 -->
+<style>
+.copy-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#333;color:#fff;padding:8px 14px;border-radius:6px;font-size:.8em;z-index:9999;opacity:0;transition:opacity .2s;pointer-events:none}
+.copy-toast.show{opacity:.92}
+</style>
+<script>
+document.addEventListener('click', function (e) {
+  var a = e.target.closest('.page__content .header-link');
+  if (!a || !navigator.clipboard) return;
+  var url = location.origin + location.pathname + a.getAttribute('href');
+  navigator.clipboard.writeText(url).then(function () {
+    var t = document.querySelector('.copy-toast');
+    if (!t) { t = document.createElement('div'); t.className = 'copy-toast'; document.body.appendChild(t); }
+    t.textContent = '링크 복사됨';
+    t.classList.add('show');
+    clearTimeout(t._h); t._h = setTimeout(function () { t.classList.remove('show'); }, 1500);
+  });
+});
+</script>

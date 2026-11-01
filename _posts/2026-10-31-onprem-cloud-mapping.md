@@ -46,7 +46,7 @@ GPO는 클라우드에서 무엇이 되고, Domain Admins 상시 권한은 어�
 | 이벤트 로그 수집 서버 | Log Analytics, Sentinel | 로그 수집과 분석이 서비스로 제공됨 |
 | 서버 대수와 장비 구매 | VM, 구독, 종량제 | CapEx에서 OpEx로 |
 
-Entra ID와 AD DS의 차이, 하이브리드 인증 방식, PIM은 IAM 시리즈의 [기초와 구조]({{ "/iam/what-is-entra-id/" | relative_url }}), [접근 제어]({{ "/iam/entra-id-access-control/" | relative_url }}), [하이브리드와 라이선스]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}) 글에서 자세히 다룹니다.
+Entra ID와 AD DS의 차이, 하이브리드 인증 방식, PIM은 IAM 시리즈의 [기초와 구조]({{ "/iam/what-is-entra-id/" | relative_url }}), [접근 제어]({{ "/iam/entra-id-access-control/" | relative_url }}), [하이브리드와 외부 사용자]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}) 글에서 자세히 다룹니다.
 
 ### 2. 옛 이름 ↔ 새 이름
 

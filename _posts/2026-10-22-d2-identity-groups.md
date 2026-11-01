@@ -22,68 +22,42 @@ excerpt: "부서 값만 바꿨더니 동적 그룹 구성원이 0 → 1 → 0으
 
 ## 전체 기록
 
-### 1. 목표
+### 1. 목표와 범위
 
-수행일은 2026-10-22(목)입니다. 사용자 유형, 그룹, 인증 방식은 읽기만 하고, 동적 그룹과 그룹 라이선스는 실제로 바꿨습니다.
+2026-10-22(목) 클라우드 전용 Sandbox 테넌트에서 동적 그룹(규칙에 맞는 사용자가 자동으로 들고 나는 그룹, Entra ID P1 이상)과 그룹 기반 라이선스를 실제로 바꿔, 부서 값 하나에 구성원과 라이선스가 따라오는지 확인했습니다. 사용자 유형과 그룹은 읽기만 했고, PHS, PTA, Federation은 동기화 구성이 없어 문서로만 정리했습니다. 용어는 [클라우드 학습 용어 전집]({{ "/study/cloud-study-glossary/" | relative_url }})을 보세요.
 
-1. Member/Guest, 그룹 유형, 인증 방식(PHS, PTA, Federation)을 정리합니다.
-2. **동적 그룹**이 사용자 속성(부서) 변경에 반응해 자동으로 구성원을 넣고 빼는지 직접 확인합니다.
-3. **그룹 기반 라이선스**를 할당하고, 그룹에서 빠졌을 때 라이선스가 어떻게 되는지 확인합니다.
-
-### 2. 실습 전에 짚어 둔 개념
+### 2. 결과
 
 ![부서 값 변경, 규칙 평가, 그룹 자동 가입, 라이선스 반영 순서]({{ "/assets/images/2026/10/d2-dynamic-group.png" | relative_url }})
 *그림 1. 동적 그룹 동작 순서*
 
-보안 그룹은 권한과 라이선스 대상을 정하고, Microsoft 365 그룹은 Teams나 메일 같은 협업에 씁니다.
+| 항목 | 변경 전 | 부서=Practice02 저장 후 | 원복 후(부서 비움) |
+|---|---|---|---|
+| 시험 사용자 2 부서 | 비어 있음 | Practice02 | 비어 있음 (`dept=[]`) |
+| DG-Practice-02 구성원 수 | 0 | **1** (해당 사용자, 부서 Practice02) | **0** |
+| 시험 사용자 2의 그룹 구성원 자격 | 2 | 따로 기록하지 못함 | - |
+| 그룹의 라이선스 | 할당 1건 | 할당 1건 | 할당 1건 |
+| 사용자의 라이선스 소스 | 직접 | 직접 + 그룹 2건 모두 Active, 충돌 없음 | 직접만 유지, `byGroup` 비어 있음, 상태 Active |
+| SKU 사용 수 | 20 / 25 | 따로 기록하지 못함 | 20 / 25 |
+| 그룹 수 | 10 | 10 | 10 (Team 생성으로 11, [Teams 저장 구조 글]({{ "/m365/d3-teams-storage/" | relative_url }})) |
 
-**동적 그룹**은 규칙(예: 부서가 Sales)에 맞는 사용자가 자동으로 들어오고 나가는 그룹이며 Entra ID P1 이상이 필요합니다. **그룹 기반 라이선스**를 얹으면 그룹에 준 라이선스가 구성원에게 자동 반영됩니다.
+위 값(`MEMBERS`, 부서, 라이선스 소스, SKU)과 그룹 목록 9→10, 그룹 `lic=1`은 화면과 Graph로 확인했습니다. 조건부 액세스 정책 조회는 HTTP 403이었습니다(범위 밖, [실측 Identity 글]({{ "/m365/measure-identity/" | relative_url }})).
 
-Source of authority(원본)는 그 개체의 "원본"이 어디인지를 말합니다. 동기화된 속성은 온-프레미스 AD에서만 고치고, 클라우드 전용 개체는 Entra에서 직접 고칩니다.
+### 3. 판단과 권고
 
-온-프레미스 AD 암호로 클라우드에 로그인하는 방식은 PHS, PTA, Federation 세 가지입니다.
+1. 동적 그룹은 부서, 직책 같은 속성이 정확히 관리될 때만 씁니다. 입력이 사람마다 다르면 규칙에서 빠지거나 잘못 들어옵니다.
+2. 그룹 라이선스로 입사, 이동, 퇴사 때 수작업을 줄이되, 그룹 규칙 변경은 변경 관리 대상으로 둡니다.
+3. 직접 할당을 그룹 할당으로 옮길 때는 먼저 그룹에 할당하고 나중에 직접 할당을 제거합니다.
+4. 속성은 원본(Source of authority)에서 고칩니다. 이번에는 클라우드 원본이라 Entra에서 고쳤고, 동기화된 사용자라면 온-프레미스 AD에서 고칩니다.
+5. 소유자 없는 그룹(DG-Practice-01)은 운영 점검 항목에 넣습니다.
+6. 그룹은 그룹 라이선스를 먼저 제거한 뒤 삭제합니다. 사용자 부서는 원복했고, DG-Practice-02 정리는 이번에 하지 않고 남겼습니다.
 
-- PHS=암호 해시 동기화
-- PTA=로그인 때마다 온-프레미스 에이전트 확인
-- Federation=AD FS 같은 외부 서버에 위임
-
-### 3. 결과: 전·후 비교와 검증
-
-#### 전·후 비교
-
-각 항목은 변경 전 → 부서=Practice02 저장 후 → 원복 후(부서 비움) 순서입니다.
-
-- **시험 사용자 2 부서**: 비어 있음 → Practice02 → 비어 있음 (`dept=[]`)
-- **DG-Practice-02 구성원 수**: 0 → **1** (해당 사용자, 부서 Practice02) → **0**
-- **시험 사용자 2의 그룹 구성원 자격**: 2 → 변경 후 값은 따로 기록하지 못함 → -
-- **그룹의 라이선스**: 할당 1건 → 할당 1건 → 할당 1건
-- **사용자의 라이선스 소스**
-    - 변경 전: 직접
-    - 저장 후: 직접 + 그룹 2건 모두 Active, 충돌 없음
-    - 원복 후: 직접만 유지, `byGroup` 비어 있음, 상태 Active
-- **SKU 사용 수**: 20 / 25 → 겹친 동안의 값은 따로 기록하지 못함 → 20 / 25
-- **그룹 수**: 10 → 10 → 10 → (Team 생성으로 11, [Teams 저장 구조 글]({{ "/m365/d3-teams-storage/" | relative_url }}) 참고)
-
-#### 검증한 값
-
-- 그룹 목록 9→10, 개요의 멤버십 유형 동적과 구성원 0, 라이선스 할당 메시지와 그룹 `lic=1`: 확인
-- 위 표의 구성원 수(`MEMBERS`), 부서, 라이선스 소스, SKU 값: 화면과 Graph로 모두 확인
-- 조건부 액세스 정책 조회: HTTP 403([실측 Identity 글]({{ "/m365/measure-identity/" | relative_url }}) 참고, 이 글의 범위 아님)
-
-### 4. 운영에 옮긴다면
-
-동적 그룹은 부서나 직책 같은 속성이 정확히 관리되는 조직에서만 안전합니다. 입력이 사람마다 다르면 규칙에서 빠지거나 의도치 않게 들어옵니다. 그룹 라이선스는 입사, 이동, 퇴사 때 수작업을 줄이는 대신 규칙 변경을 변경 관리 대상으로 만듭니다.
-
-- 소유자 없는 그룹(DG-Practice-01)은 운영 점검 항목에 넣습니다.
-- 이 테넌트는 원본이 클라우드라 Entra에서 부서를 고쳤습니다. 온-프레미스 AD에서 동기화된 사용자라면 AD에서 고쳐야 합니다.
-- 겹친 라이선스의 정리 기준은 확인 불가입니다(8절).
-
-### 5. 절차
+### 4. 수행 절차
 
 <details markdown="1">
 <summary>절차와 캡처 펼쳐 보기 (그림 5장)</summary>
 
-#### 5-1. 변경 전 조회 (변경 없음)
+#### 4-1. 변경 전 조회 (변경 없음)
 
 - **그룹 목록** (Entra ID > 그룹 > 모든 그룹): 9개, Microsoft 365 8 + 보안 1(DG-Practice-01)
 - **새 그룹 폼** (새 그룹 > 멤버십 유형): 할당됨 / 동적 사용자 / 동적 디바이스 3종
@@ -108,9 +82,9 @@ $gid = (((Invoke-AzRestMethod -Uri "$B/groups?`$filter=displayName eq 'DG-Practi
 
 이 테넌트는 클라우드 전용이라 PHS, PTA, Federation과 Connect Sync/Cloud Sync는 **실습할 수 없고 문서로만 정리**했습니다(동기화 메뉴에 구성 정보 없음 = 조회).
 
-DG-Practice-01은 Entra 감사 로그에서 관리자 계정이 2026-10-14 11:14에 생성한 것으로 확인했습니다(조회). 이 그룹을 계속 둘지는 확인 불가로 남겼고(시도와 사유는 8절), 건드리지는 않았습니다.
+DG-Practice-01은 Entra 감사 로그에서 관리자 계정이 2026-10-14 11:14에 생성한 것으로 확인했습니다(조회). 이 그룹을 계속 둘지는 확인 불가로 남겼고(시도와 사유는 5절), 건드리지는 않았습니다.
 
-#### 5-2. 동적 그룹 DG-Practice-02 만들기 (09:26)
+#### 4-2. 동적 그룹 DG-Practice-02 만들기 (09:26)
 
 GUI 경로는 entra.microsoft.com > 그룹 > 모든 그룹 > 새 그룹 > 그룹 유형 보안 / 이름 DG-Practice-02 / 멤버십 유형 "동적 사용자" > 동적 쿼리 추가 > 속성 department / 연산자 Equals / 값 Practice02 > 저장 > 만들기 순서입니다.
 
@@ -129,7 +103,7 @@ GUI 경로는 entra.microsoft.com > 그룹 > 모든 그룹 > 새 그룹 > 그룹
 - DG-Practice-02: 없음 → 보안 / 동적 사용자 / 규칙 `(user.department -eq "Practice02")`
 - 구성원: - → 0
 
-#### 5-3. 그룹에 E5 라이선스 할당 (09:27)
+#### 4-3. 그룹에 E5 라이선스 할당 (09:27)
 
 Entra의 그룹 > 라이선스 탭을 열면 "라이선스 할당 추가, 제거 또는 재처리는 M365 관리 센터 내에서만 사용할 수 있습니다" 안내가 나옵니다. 그래서 **M365 관리 센터 > 청구 > 라이선스 > Microsoft 365 E5 Developer SKU V2(할당 전 20/25) > 라이선스 할당 > 그룹 DG-Practice-02 선택 > 할당**으로 했습니다(GUI 경로).
 
@@ -146,7 +120,7 @@ $grp = ((Invoke-AzRestMethod -Uri "$B/groups?`$filter=displayName eq 'DG-Practic
 "GRP|state=$($grp.membershipRuleProcessingState)|lic=$($grp.assignedLicenses.Count)"    # GRP|state=On|lic=1
 ```
 
-#### 5-4. 부서 값을 바꿔 자동 가입 확인 (09:29), 원복 (09:33)
+#### 4-4. 부서 값을 바꿔 자동 가입 확인 (09:29), 원복 (09:33)
 
 대상은 시험 사용자 2입니다. 이 사용자는 이미 직접 라이선스를 갖고 있습니다.
 
@@ -184,19 +158,13 @@ $mem = ((Invoke-AzRestMethod -Uri "$B/groups/$($grp.id)/members?`$select=display
 
 </details>
 
-### 6. 작업 중 막힌 곳
+막힌 곳:
 
-- 그룹 라이선스는 Entra에서 할당할 수 없어, M365 관리 센터 라이선스 할당 패널에서 대상을 그룹으로 골랐습니다. [그룹 라이선스를 Entra에서 할당할 수 없음]({{ "/m365/troubleshooting/license-assignment-not-in-entra/" | relative_url }})
+- 그룹 라이선스는 M365 관리 센터에서 할당: [그룹 라이선스를 Entra에서 할당할 수 없음]({{ "/m365/troubleshooting/license-assignment-not-in-entra/" | relative_url }})
+- 직접·그룹 라이선스 겹침: [직접 라이선스와 그룹 라이선스가 겹침]({{ "/m365/troubleshooting/direct-and-group-license-overlap/" | relative_url }})
+- 규칙 반응 시간(구성원 수를 약 20초 간격으로 읽고 감사 로그로 좁힘): [동적 그룹 규칙이 얼마 만에 반응하는지 모름]({{ "/m365/troubleshooting/dynamic-group-reaction-time/" | relative_url }})
 
-- 직접과 그룹 라이선스가 겹쳤습니다. 옮길 때는 먼저 그룹에 할당하고 나중에 직접 할당을 제거합니다. [직접 라이선스와 그룹 라이선스가 겹침]({{ "/m365/troubleshooting/direct-and-group-license-overlap/" | relative_url }})
-
-- 규칙 반응 시간은 구성원 수를 약 20초 간격으로 읽고 감사 로그로 구간을 줄였습니다. [동적 그룹 규칙이 얼마 만에 반응하는지 모름]({{ "/m365/troubleshooting/dynamic-group-reaction-time/" | relative_url }})
-
-### 7. 정리와 남은 일
-
-시험 사용자 2의 부서는 원복했습니다. DG-Practice-02의 그룹 라이선스 제거와 그룹 삭제는 남은 정리입니다(이번에는 하지 않음).
-
-### 8. 확인 불가로 남은 것
+### 5. 확인 불가로 남은 것
 
 <details markdown="1">
 <summary>확인 불가 항목 펼쳐 보기 (2건)</summary>
@@ -210,7 +178,7 @@ $mem = ((Invoke-AzRestMethod -Uri "$B/groups/$($grp.id)/members?`$select=display
 
 </details>
 
-### 9. 근거 자료
+### 근거 자료
 
 <details markdown="1">
 <summary>근거 자료 펼쳐 보기 (10건)</summary>
@@ -224,6 +192,6 @@ $mem = ((Invoke-AzRestMethod -Uri "$B/groups/$($grp.id)/members?`$select=display
 - **조회**: 그룹 9→10, 규칙, 구성원 0→1→0, 라이선스 `lic=1`, SKU 20/25 (Entra와 관리 센터 화면 + Graph)
 - **조회**: 규칙 반응 시간은 감사 로그 기준 들어올 때 9초, 나갈 때 5분 35초 (Cloud Shell(Graph) + Entra 감사 로그, [측정 글]({{ "/m365/troubleshooting/dynamic-group-reaction-time/" | relative_url }}))
 - **조회**: 겹친 동안 직접+그룹 2건 Active, 원복 후 그룹 할당만 회수, DG-Practice-01 생성자와 생성 시각 (Entra 사용자 라이선스, 감사 로그)
-- **확인 불가**: 직접+그룹 중복의 운영 기준(팀 기준 없음), DG-Practice-01을 계속 둘지(판단 기준 없음). 위 8절
+- **확인 불가**: 직접+그룹 중복의 운영 기준(팀 기준 없음), DG-Practice-01을 계속 둘지(판단 기준 없음). 위 5절
 
 </details>

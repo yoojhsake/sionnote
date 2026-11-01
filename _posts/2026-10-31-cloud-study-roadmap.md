@@ -55,7 +55,7 @@ excerpt: "AD는 익숙한데 클라우드는 낯설다면, 하루 30분 12주로
 - [온프레미스 ↔ 클라우드 대응표, 옛 이름 ↔ 새 이름]({{ "/study/onprem-cloud-mapping/" | relative_url }})
 - [용어 전집과 영상·자료]({{ "/study/cloud-study-glossary/" | relative_url }})
 
-Entra ID를 더 깊게 보려면 [IAM 시리즈: Microsoft Entra ID 핵심 개념]({{ "/iam/what-is-entra-id/" | relative_url }})을 함께 보세요. 신원 용어는 [IAM 용어집]({{ "/iam/entra-id-glossary/" | relative_url }})에도 정리돼 있습니다.
+Entra ID를 더 깊게 보려면 [IAM 시리즈: Microsoft Entra ID 핵심 개념]({{ "/iam/what-is-entra-id/" | relative_url }})을 함께 보세요. 신원 용어는 [IAM 용어집]({{ "/study/cloud-study-glossary/" | relative_url }})에도 정리돼 있습니다.
 
 ### 2. 큰 그림
 

@@ -36,7 +36,7 @@ Diagnostic settings는 리소스의 플랫폼 로그를 Log Analytics workspace,
 
 Alert는 조건을 만족하면 Action group(메일, SMS, 웹훅, 자동화)을 실행합니다.
 
-Entra Sign-in logs와 Audit logs도 workspace로 내보내면 KQL로 분석할 수 있습니다. 보존 기간과 내보내기 가능 여부는 라이선스마다 다릅니다([하이브리드·라이선스·로그]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}) 글도 참고).
+Entra Sign-in logs와 Audit logs도 workspace로 내보내면 KQL로 분석할 수 있습니다. 보존 기간과 내보내기 가능 여부는 라이선스마다 다릅니다([라이선스·운영]({{ "/iam/entra-id-licensing-operations/" | relative_url }}) 글도 참고).
 
 #### Sentinel
 

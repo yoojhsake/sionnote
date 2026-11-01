@@ -58,6 +58,7 @@ plugins:
   - jekyll-gist
   - jekyll-include-cache
   - jekyll-remote-theme
+  - jekyll-redirect-from   # 합쳐서 없앤 글의 옛 주소를 새 글로 넘긴다(redirect_from)
 
 permalink: /:categories/:title/
 category_archive:

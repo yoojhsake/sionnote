@@ -149,4 +149,4 @@ AuditLogs
 ### 7. 영상과 자료 (한글 우선)
 
 - 한글: Microsoft Korea의 [Azure 교육·웨비나 페이지](https://www.microsoft.com/ko-kr/azureall)에서 모니터링, 보안 주제를 찾아 보세요. Log Analytics와 KQL 한글 유튜브는 확인 불가입니다(유튜브 검색으로 찾았지만 해당 영상을 찾지 못함).
-- 영문 보완: [Entra ID Security: MFA, Conditional Access & Risk Protection](https://www.youtube.com/watch?v=q-OkGHwXAj0), AZ-104 공식 시리즈([1편](https://www.youtube.com/watch?v=6rs-oGmz3pk))에서 모니터링 편
+- 영문 보완: AZ-104 공식 시리즈(Microsoft Learn, 전 29편)의 [27편 Introduction to Azure Monitor](https://www.youtube.com/watch?v=p7Kw1YJl2S4), [28편 alerting](https://www.youtube.com/watch?v=AGkyh3jlaw8), [29편 Azure Monitor logs 분석](https://www.youtube.com/watch?v=Spf9SMfK000). [AZ-104 Full Course - 12 Hours](https://www.youtube.com/watch?v=qXk8_0z_HsU)는 모니터링 모듈이 7:15:25부터입니다.

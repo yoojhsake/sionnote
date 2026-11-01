@@ -119,8 +119,9 @@ Zero Trust는 세 원칙으로 말합니다. Verify explicitly, Use least privil
 
 - 한글: 확인 불가. Conditional Access와 PIM을 다룬 한글 유튜브 영상을 검색으로 찾아봤지만 찾지 못했습니다. 대신 Microsoft Learn(한국어)의 "조건부 액세스란?" 문서를 먼저 읽으세요.
 - 영문 보완
-    - [Enforce MFA with Conditional Access (Step-by-Step Lab)](https://www.youtube.com/watch?v=MIvuAHIVTT4)
-    - [Entra ID Security: Identity Perimeter, Conditional Access, MFA & PIM](https://www.youtube.com/watch?v=4mTV4nb5Ex4)
+    - [Enforce MFA with Conditional Access (Step-by-Step Lab)](https://www.youtube.com/watch?v=MIvuAHIVTT4): CyberMax, 5분. 조건부 액세스 정책으로 MFA를 강제하고 테스트 기기로 로그인해 보는 실습
+    - [Entra ID Security: Identity Perimeter, Conditional Access, MFA & PIM](https://www.youtube.com/watch?v=4mTV4nb5Ex4): m365 Show, 19분. 조건부 액세스, MFA, PIM을 개념 중심으로 설명(화면 실습은 거의 없음)
+    - [Entra ID Security: MFA, Conditional Access & Risk Protection](https://www.youtube.com/watch?v=q-OkGHwXAj0): KryptoMindz, 9분. 위험 기반 보호(Identity Protection), 보고 전용(report-only) 모드, P2 필요 범위
 
 ### 8. 근거 자료
 

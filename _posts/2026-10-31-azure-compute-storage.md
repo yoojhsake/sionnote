@@ -120,5 +120,5 @@ Access tier는 Hot, Cool, Cold, Archive 순서로 저장 비용이 낮아지고 
 
 ### 7. 영상과 자료 (한글 우선)
 
-- 한글: [Az-900 Azure Fundamentals](https://www.youtube.com/watch?v=GgKAkAWLnPw)에서 컴퓨팅과 스토리지 구간(목차는 직접 확인하세요), Microsoft Learn(한국어) Azure 교육의 컴퓨팅, 스토리지 모듈
-- 영문 보완: [AZ-104 Course Introduction (공식 29편 시리즈)](https://www.youtube.com/watch?v=6rs-oGmz3pk)에서 컴퓨팅과 스토리지 편, [AZ-104 Full Course - 12 Hours](https://www.youtube.com/watch?v=qXk8_0z_HsU)
+- 한글: [Az-900 Azure Fundamentals 2주차](https://www.youtube.com/watch?v=892Nhkhwk4A) (Microsoft Developer Korea, 1시간 56분). Azure 핵심 서비스(데이터베이스, 스토리지, 네트워크, 가상 머신·컨테이너)를 다룹니다. Microsoft Learn(한국어) Azure 교육의 컴퓨팅, 스토리지 모듈도 함께 보세요.
+- 영문 보완: AZ-104 공식 시리즈(Microsoft Learn, 전 29편)의 [16편 Configure storage accounts](https://www.youtube.com/watch?v=NKmq1t41Zys), [20편 Introduction to Azure virtual machines](https://www.youtube.com/watch?v=mCMpIUGYI48), [21편 Configure virtual machine availability](https://www.youtube.com/watch?v=Sz6yhVDs4yY). [AZ-104 Full Course - 12 Hours](https://www.youtube.com/watch?v=qXk8_0z_HsU)(Certsqill)는 스토리지 모듈이 1:56:11, 컴퓨팅 모듈이 3:29:08부터입니다.

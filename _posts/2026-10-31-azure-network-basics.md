@@ -114,4 +114,4 @@ Azure 제공 DNS의 가상 IP는 168.63.129.16입니다. Azure에 DC를 두는 �
 ### 7. 영상·자료 (한글 우선)
 
 - 한글: Azure 네트워크 한글 유튜브는 확인 불가입니다(유튜브 검색으로 찾았지만 해당 영상을 찾지 못함). Microsoft Korea의 [Azure 교육·웨비나 페이지](https://www.microsoft.com/ko-kr/azureall)에 온디맨드 웨비나와 Training Day(무료 등록)가 있으니 네트워크 주제를 찾아 보세요.
-- 영문 보완: AZ-104 공식 시리즈([1편](https://www.youtube.com/watch?v=6rs-oGmz3pk))에서 가상 네트워킹 편, [AZ-104 Full Course - 12 Hours](https://www.youtube.com/watch?v=qXk8_0z_HsU)
+- 영문 보완: AZ-104 공식 시리즈(Microsoft Learn, 전 29편)의 [8편 Configure virtual networks](https://www.youtube.com/watch?v=PLwE82PNEpg), [9편 Configure network security groups](https://www.youtube.com/watch?v=6Gr17HqHfUw), [11편 Configure Azure Virtual Network peering](https://www.youtube.com/watch?v=gxvdN8hZRtQ), [12편 routes로 트래픽 제어](https://www.youtube.com/watch?v=EReu507KLUs). [AZ-104 Full Course - 12 Hours](https://www.youtube.com/watch?v=qXk8_0z_HsU)는 네트워킹 모듈이 5:31:32부터입니다.

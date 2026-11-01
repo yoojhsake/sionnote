@@ -16,7 +16,7 @@ excerpt: "50076은 MFA를 해야 함, 50079는 먼저 등록해야 함. 사람 �
 - 사람은 등록을 안내하고 자동화는 관리 ID나 서비스 주체로 옮김
 - Azure 필수 MFA는 사용자 계정 단위 예외가 없음
 
-> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다. 함께 볼 글: [Entra ID 핵심 개념: 인증 편]({{ "/iam/entra-id-authentication/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
+> Microsoft Learn 문서(2026-11-01 확인) 기준입니다. 오류 상황은 테넌트에서 재현하지 않았고, 설정 화면은 샌드박스 테넌트에서 직접 열어 캡처했습니다. 함께 볼 글: [Entra ID 핵심 개념: 인증 편]({{ "/iam/entra-id-authentication/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
 
 ---
 
@@ -76,6 +76,21 @@ excerpt: "50076은 MFA를 해야 함, 50079는 먼저 등록해야 함. 사람 �
 3. 하지 말 것
     - MFA를 끄거나 정책을 지우기(관리자 계정은 피싱 저항 MFA 권장 대상)
     - 공용 계정을 여럿이 MFA 없이 쓰기(개인 계정 + 역할 할당으로 전환)
+
+<details markdown="1">
+<summary>화면으로 경로 따라가기: 로그인 로그의 조건부 액세스 탭과 What If (그림 2장)</summary>
+
+![로그인 세부 정보의 조건부 액세스 탭. 적용된 정책이 없어 해당 없음 표시]({{ "/assets/images/2026/11/guide-signin-ca-tab.png" | relative_url }})
+
+*그림 2. Entra ID > 로그인 로그에서 해당 항목을 열고 조건부 액세스 탭을 봅니다. 어떤 정책이 MFA를 요구했는지 여기에 나옵니다. 이 샌드박스는 정책이 없어 "해당 없음"입니다. 정책이 안 보이는데 MFA가 요구됐다면 본문의 보안 기본값, 사용자별 MFA, Azure 필수 MFA를 의심합니다. 이 화면은 다른 오류(50126) 항목으로, 탭 위치를 보여 주는 용도입니다.*
+
+![가상(What If) 화면. 사용자, 클라우드 앱, 로그인 조건을 입력하는 양식]({{ "/assets/images/2026/11/guide-ca-whatif.png" | relative_url }})
+
+*그림 3. Entra ID > 조건부 액세스 > 정책 > 가상(What If). 의도하지 않은 MFA 요구의 원인 정책을 찾을 때 사용자, 앱, 로그인 조건을 넣어 평가합니다. 이번 캡처에서는 평가는 돌리지 않았습니다.*
+
+화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름, 테넌트 ID, 계정, IP, 요청 ID는 가렸고, 사용 중인 라이선스와 정책에 따라 메뉴 이름과 값은 다를 수 있습니다.
+
+</details>
 
 ### 근거 자료
 

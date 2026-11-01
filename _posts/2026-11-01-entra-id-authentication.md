@@ -151,6 +151,21 @@ Microsoft 제공 SMS·음성이 종료되어, 로그인 중 **패스키 등록�
 
 </details>
 
+<details markdown="1">
+<summary>화면으로 경로 따라가기: 인증 방법 정책과 보안 기본값 (그림 2장)</summary>
+
+![Entra ID 인증 방법 정책 목록. 메서드별 대상과 활성화 여부가 보임]({{ "/assets/images/2026/11/guide-authmethods-policies.png" | relative_url }})
+
+*그림 3. Entra 관리 센터 > Entra ID > 인증 방법(Authentication methods) > 정책(Policies). MFA, SSPR, 패스키 방법을 이 한 곳에서 관리합니다. 메서드마다 대상과 활성화 여부가 나오고, 왼쪽 안쪽 메뉴에 등록 캠페인과 활동이 있습니다.*
+
+![Entra ID 개요의 속성 탭 아래쪽 보안 기본값 영역. 조직이 보안 기본값으로 보호됨 표시와 보안 기본값 관리 링크]({{ "/assets/images/2026/11/guide-security-defaults.png" | relative_url }})
+
+*그림 4. Entra ID > 개요(Overview) > 속성(Properties) 탭 맨 아래의 보안 기본값(Security defaults) 영역. "보안 기본값 관리" 링크를 눌러 켜거나 끕니다.*
+
+화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름, 테넌트 ID, 계정, IP, 요청 ID는 가렸고, 사용 중인 라이선스와 정책에 따라 메뉴 이름과 값은 다를 수 있습니다.
+
+</details>
+
 ### 5. 근거 자료
 
 <details markdown="1">

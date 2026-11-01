@@ -16,7 +16,7 @@ excerpt: "'관리자 승인 필요'·AADSTS65001이 뜨면 동의부터 누르�
 - 요청이 잦으면 관리자 동의 워크플로를 켜서 검토자가 처리하게 함
 - 확인 없이 동의하면 앱에 메일과 파일 권한을 넘겨 동의 피싱에 당함
 
-> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다. 함께 볼 글: [Entra ID 핵심 개념: 기초와 구조 편]({{ "/iam/what-is-entra-id/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
+> Microsoft Learn 문서(2026-11-01 확인) 기준입니다. 오류 상황은 테넌트에서 재현하지 않았고, 설정 화면은 샌드박스 테넌트에서 직접 열어 캡처했습니다. 함께 볼 글: [Entra ID 핵심 개념: 기초와 구조 편]({{ "/iam/what-is-entra-id/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
 
 ---
 
@@ -90,6 +90,21 @@ excerpt: "'관리자 승인 필요'·AADSTS65001이 뜨면 동의부터 누르�
 - Entra ID > Enterprise apps > Consent and permissions > Admin consent settings(관리자 동의 설정)에서 Users can request admin consent to apps they are unable to consent to = **Yes**
 - 검토자(사용자, 그룹, 역할), 이메일 알림, 요청 만료 기간 설정 후 저장
 - 검토자 지정으로 권한이 올라가지 않으며, 승인에는 그 앱에 관리자 동의를 줄 권한이 필요합니다. Microsoft Graph **애플리케이션 권한**을 요청하는 앱은 전역 관리자만 승인할 수 있습니다.
+
+</details>
+
+<details markdown="1">
+<summary>화면으로 경로 따라가기: 사용자 동의 설정과 관리자 동의 요청 (그림 2장)</summary>
+
+![동의 및 권한의 사용자 동의 설정 화면. 사용자 동의 허용 범위를 고르는 세 가지 선택지]({{ "/assets/images/2026/11/guide-consent-user.png" | relative_url }})
+
+*그림 2. Entra ID > 엔터프라이즈 앱(Enterprise apps) > 동의 및 권한(Consent and permissions) > 사용자 동의 설정. 사용자가 어떤 앱에 스스로 동의할 수 있는지 고릅니다. 이 샌드박스는 "Microsoft에서 동의 설정을 관리하도록 허용(권장)"입니다.*
+
+![동의 및 권한의 관리자 동의 설정 화면. 사용자가 관리자 동의를 요청할 수 있는지 예, 아니요]({{ "/assets/images/2026/11/guide-consent-admin.png" | relative_url }})
+
+*그림 3. 같은 메뉴의 관리자 동의 설정. "사용자는 동의할 수 없는 앱의 관리자 동의를 요청할 수 있습니다"를 "예"로 켠 뒤, 같은 화면 아래에서 요청을 검토할 사용자, 그룹, 역할을 지정합니다. 이 샌드박스는 "아니요"입니다.*
+
+화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름, 테넌트 ID, 계정, IP, 요청 ID는 가렸고, 사용 중인 라이선스와 정책에 따라 메뉴 이름과 값은 다를 수 있습니다.
 
 </details>
 

@@ -79,6 +79,21 @@ Managed identity는 VM이나 앱이 비밀번호 없이 Entra ID 토큰으로 �
 3. 정책(Policy) > 정의(Definitions)에서 정책 목록과 effect를 보고, 준수(Compliance) 화면의 구성을 확인합니다.
 4. Cost Management와 Defender for Cloud 개요(Secure Score)에 보이는 항목을 확인합니다.
 
+<details markdown="1">
+<summary>화면으로 경로 따라가기: 구독 IAM 역할 할당과 Azure Policy 정의 (그림 2장)</summary>
+
+![구독의 액세스 제어(IAM) 역할 할당 탭. 소유자와 독자 할당 목록]({{ "/assets/images/2026/11/guide-azure-iam-roles.png" | relative_url }})
+
+*그림 1. 구독 > 액세스 제어(IAM) > 역할 할당 탭. 역할(소유자, 독자)별로 누구에게 어떤 범위로 할당됐는지와 상태(영구 활성, 활성 시간 제한, 적격 시간 제한)가 나옵니다. 계정, 이름, 구독 이름은 가렸습니다.*
+
+![Azure 정책의 정의 목록]({{ "/assets/images/2026/11/guide-azure-policy.png" | relative_url }})
+
+*그림 2. Azure 포털 > 정책(Policy) > 정의(Definitions). 내장 정책과 이니셔티브 정의 목록이 나오고, 정의 유형, 정책 유형, 범주로 거릅니다. 범위(구독) 칩은 가렸습니다.*
+
+화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, IP는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
+
+</details>
+
 ### 5. 전문가처럼 말하기
 
 > "RBAC는 who can do what, Policy는 what state is allowed입니다."

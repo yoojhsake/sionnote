@@ -74,6 +74,33 @@ Get-Mailbox -ResultSize 5 | Select-Object DisplayName, RecipientTypeDetails
 Get-AcceptedDomain | Select-Object DomainName, DomainType
 ```
 
+<details markdown="1">
+<summary>화면으로 경로 따라가기: 사서함, 메시지 추적, 규칙, 커넥터, 허용된 도메인 (그림 5장)</summary>
+
+![Exchange 관리 센터의 사서함 목록]({{ "/assets/images/2026/11/guide-exo-mailboxes.png" | relative_url }})
+
+*그림 1. Exchange 관리 센터(admin.exchange.microsoft.com) > Recipients > Mailboxes. 이메일 주소, 받는 사람 형식(UserMailbox), 보관 상태를 봅니다. 공유 사서함은 위쪽 Add a shared mailbox로 만듭니다. 이 화면은 영어로 표시됐고, 이메일 주소는 가렸습니다.*
+
+![Exchange 관리 센터의 메시지 추적 화면. 기본 쿼리 목록]({{ "/assets/images/2026/11/guide-exo-messagetrace.png" | relative_url }})
+
+*그림 2. Exchange 관리 센터 > Mail flow > Message trace. Default queries 탭에 자주 쓰는 추적이 있고, Start a trace로 조건을 직접 넣습니다. 도메인은 가렸습니다.*
+
+![Exchange 관리 센터의 메일 흐름 규칙 화면]({{ "/assets/images/2026/11/guide-exo-rules.png" | relative_url }})
+
+*그림 3. Exchange 관리 센터 > Mail flow > Rules. 이 샌드박스는 규칙이 없어 "No data available"입니다. Add a rule로 만들고, 목록에는 Priority(우선순위)와 Stop processing rules 열이 있습니다.*
+
+![Exchange 관리 센터의 커넥터 화면]({{ "/assets/images/2026/11/guide-exo-connectors.png" | relative_url }})
+
+*그림 4. Exchange 관리 센터 > Mail flow > Connectors. 이 샌드박스는 커넥터가 없습니다. 화면 안내는 대부분의 조직에 커넥터가 필요 없으니 만들기 전에 필요한지 먼저 확인하라고 말합니다.*
+
+![Exchange 관리 센터의 허용된 도메인 화면]({{ "/assets/images/2026/11/guide-exo-domains.png" | relative_url }})
+
+*그림 5. Exchange 관리 센터 > Mail flow > Accepted domains. 도메인 이름과 형식(Authoritative), 보내기 허용 여부가 나옵니다. 도메인을 추가하려면 M365 관리 센터의 도메인 화면에서 합니다. 도메인 이름은 가렸습니다.*
+
+화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, IP는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
+
+</details>
+
 ### 5. 전문가처럼 말하기
 
 > "외부 메일은 MX가 EOP를 가리키고, EOP에서 anti-malware와 anti-spam 검사를 거쳐 사서함으로 들어옵니다. 하이브리드나 파트너 경로는 connector로 따로 정의합니다."

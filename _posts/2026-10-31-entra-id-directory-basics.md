@@ -86,6 +86,17 @@ Get-MgUser -Top 5 | Select-Object DisplayName, UserPrincipalName, OnPremisesSync
 
 사용자와 그룹을 실제 테넌트에서 만들고 확인한 기록은 [Entra 사용자·그룹 실습]({{ "/m365/d2-identity-groups/" | relative_url }})에 있습니다.
 
+<details markdown="1">
+<summary>화면으로 경로 따라가기: 사용자 목록 (그림 1장)</summary>
+
+![Entra 관리 센터의 모든 사용자 목록]({{ "/assets/images/2026/11/guide-entra-users.png" | relative_url }})
+
+*그림 1. Entra 관리 센터 > Entra ID > 사용자 > 모든 사용자. 표시 이름, 사용자 계정 이름, 사용자 유형(구성원, 게스트) 열이 있고, 필터 추가로 사용자 유형을 걸러 게스트만 볼 수 있습니다. 이 샌드박스는 전원 구성원입니다. 사용자 계정 이름은 가렸습니다.*
+
+화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, IP는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
+
+</details>
+
 ### 5. 전문가처럼 말하기
 
 > "Entra ID는 AD DS의 클라우드 버전이 아니라 OAuth 2.0과 OIDC 기반의 flat directory라서 OU나 GPO가 없고, 위임은 administrative unit과 Entra role로 합니다."

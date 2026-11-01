@@ -72,6 +72,7 @@ excerpt: "같은 계정도 위치, 기기, 위험에 따라 다르게 다룹니�
 
 관련 오류: [AADSTS53003: 조건부 액세스 정책 때문에 차단될 때]({{ "/iam/troubleshooting/aadsts53003-blocked-by-ca/" | relative_url }}) · [조건부 액세스 정책 실수로 관리자까지 잠겼을 때: 긴급 액세스 계정]({{ "/iam/troubleshooting/ca-lockout-emergency-access/" | relative_url }}) · [Exchange Online 장치 코드 로그인이 AADSTS530035로 막힘]({{ "/m365/troubleshooting/aadsts530035-device-code/" | relative_url }})(보안 기본값의 디바이스 코드 차단 실제 사례)
 
+
 ### 2. PIM(Privileged Identity Management)
 
 관리자 권한을 필요할 때만 켜는(JIT, Just-In-Time) 기능으로, P2 또는 ID Governance가 필요합니다.
@@ -116,6 +117,17 @@ Microsoft의 신호(signals)로 위험한 로그인과 위험한 사용자를 �
 - 사용자 위험에는 위험 해결 요구(Require risk remediation) 제어를 권장합니다. 암호 사용자에게는 안전한 암호 변경을, 암호 없는 사용자에게는 세션 해지 후 재로그인을 요구합니다.
 - 유출 자격 증명으로 사용자 위험이 높음이 되면, 이 정책이 다음 로그인 때 MFA 후 안전한 암호 변경을 요구하고 변경이 끝나면 위험이 해제됩니다.
 - 동기화 사용자를 검사하려면 PHS가 필요하고(클라우드 전용 사용자는 PHS 없이 탐지), 하이브리드 사용자가 클라우드에서 암호를 바꿔 해결하려면 쓰기 저장도 켜져 있어야 합니다.
+
+<details markdown="1">
+<summary>화면으로 경로 따라가기: 조건부 액세스 정책 목록 (그림 1장)</summary>
+
+![조건부 액세스 정책 목록 화면. 새 정책, 가상 버튼이 있는 도구 모음]({{ "/assets/images/2026/11/guide-ca-policies.png" | relative_url }})
+
+*그림 4. Entra ID > 조건부 액세스 > 정책. 새 정책으로 만들고, 가상(What If)으로 로그인 조건을 넣어 어떤 정책이 적용될지 시험합니다. 이 샌드박스는 정책이 없어 안내 화면이 나옵니다.*
+
+화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, IP는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
+
+</details>
 
 ### 4. 확인 문제
 

@@ -116,6 +116,21 @@ excerpt: "401은 토큰이 없거나 만료, 403은 권한 없음. 상태 코드
 - **Azure 활동 로그**: Azure 포털 > 해당 리소스 그룹 > Activity log. 실패한 작업과 AuthorizationFailed 메시지가 남습니다.
 - **Graph Explorer**: 같은 요청을 직접 보내 상태 코드와 오류 본문을 보고, 권한(Modify permissions) 탭에서 필요한 동의를 확인합니다.
 
+<details markdown="1">
+<summary>화면으로 경로 따라가기: 로그인 로그에서 오류 코드 찾기 (그림 2장)</summary>
+
+![로그인 이벤트 목록. 날짜, 앱, 상태, 조건부 액세스 열]({{ "/assets/images/2026/11/guide-signin-list.png" | relative_url }})
+
+*그림 2. Entra ID > 로그인 로그(Sign-in logs)의 사용자 로그인(대화형) 탭. 날짜, 앱, 상태, 조건부 액세스 열이 있습니다. 실패한 줄(상태 "실패")을 선택하면 세부 정보가 열립니다. 요청 ID, 계정, IP는 가렸습니다.*
+
+![로그인 활동 세부 정보의 기본 정보 탭. 상태와 로그인 오류 코드, 실패 이유]({{ "/assets/images/2026/11/guide-signin-detail.png" | relative_url }})
+
+*그림 3. 세부 정보 창의 기본 정보 탭. 위쪽 탭 줄에 위치, 디바이스 정보, 인증 세부 정보, 조건부 액세스, 보고 전용 탭이 있고, 아래에 상태와 로그인 오류 코드, 실패 이유가 나옵니다. 이 예는 암호 오류(50126) 로그인입니다.*
+
+화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, IP는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
+
+</details>
+
 ### 6. 오류 코드별 대처
 
 오류 코드별 뜻과 대처 순서는 [트러블슈팅 플레이북]({{ "/m365/troubleshooting/troubleshooting-playbook/" | relative_url }})에 모아 두었습니다.

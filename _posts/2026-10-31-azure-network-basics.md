@@ -82,6 +82,17 @@ Azure 제공 DNS의 가상 IP는 168.63.129.16입니다. Azure에 DC를 두면 V
 3. Microsoft Learn(한국어) "하이브리드 연결 옵션" 문서로 전용 회선과 VPN 비교표를 만듭니다.
 4. Hub-and-spoke를 종이에 그려 비전이적 피어링을 표시합니다.
 
+<details markdown="1">
+<summary>화면으로 경로 따라가기: 가상 네트워크 목록 (그림 1장)</summary>
+
+![Azure 포털의 가상 네트워크 목록. 표시할 가상 네트워크 없음]({{ "/assets/images/2026/11/guide-azure-vnet.png" | relative_url }})
+
+*그림 1. Azure 포털 > 가상 네트워크. 구독 범위의 VNet 목록이고 위쪽 만들기로 새로 만듭니다. 이 샌드박스는 VNet이 없습니다. 구독 이름은 가렸습니다.*
+
+화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, IP는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
+
+</details>
+
 ### 5. 전문가처럼 말하기
 
 > "VNet peering은 non-transitive라서 spoke 간 통신은 hub의 Azure Firewall이나 NVA로 UDR을 걸어 넘깁니다."

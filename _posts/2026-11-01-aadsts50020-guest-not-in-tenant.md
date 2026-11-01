@@ -75,6 +75,29 @@ excerpt: "협력사 게스트가 50020으로 막힐 때. 다른 계정 로그인
 2. 확인: 리소스가 열리고, 우리 테넌트 로그인 로그에 그 게스트의 성공 기록이 있으면 해결입니다.
 3. 하지 말 것: 원계정이 재생성된 게스트를 지우기(초대 수락 상태 초기화로 해결)
 
+<details markdown="1">
+<summary>화면으로 경로 따라가기: 사용자, 엔터프라이즈 앱 속성, 테넌트 간 액세스 설정 (그림 4장)</summary>
+
+![Entra 관리 센터의 모든 사용자 목록]({{ "/assets/images/2026/11/guide-entra-users.png" | relative_url }})
+
+*그림 2. Entra 관리 센터 > Entra ID > 사용자 > 모든 사용자. 표시 이름, 사용자 계정 이름, 사용자 유형(구성원, 게스트) 열이 있고, 필터 추가로 사용자 유형을 걸러 게스트만 볼 수 있습니다. 이 샌드박스는 전원 구성원입니다. 사용자 계정 이름은 가렸습니다.*
+
+![엔터프라이즈 애플리케이션 모든 애플리케이션 목록]({{ "/assets/images/2026/11/guide-entra-apps.png" | relative_url }})
+
+*그림 3. Entra ID > 엔터프라이즈 앱(Enterprise apps) > 모든 애플리케이션. 앱 이름, 홈페이지 URL, 활성화 상태가 나오고, 앱 이름을 누르면 그 앱의 개요로 들어갑니다. 개체 ID와 애플리케이션 ID는 가렸습니다.*
+
+![엔터프라이즈 앱의 속성 화면. 할당이 필요합니까 항목]({{ "/assets/images/2026/11/guide-entra-app-properties.png" | relative_url }})
+
+*그림 4. 앱 > 관리 > 속성(Properties). 아래쪽 "할당이 필요합니까?"(Assignment required)로 이 앱을 할당된 사용자와 그룹만 쓰게 할지 정합니다. 이 샌드박스의 Graph Explorer는 "아니요"입니다. 애플리케이션 ID와 개체 ID는 가렸습니다.*
+
+![테넌트 간 액세스 설정의 기본 설정 탭. 인바운드 액세스 설정 표]({{ "/assets/images/2026/11/guide-entra-crosstenant.png" | relative_url }})
+
+*그림 5. Entra ID > External Identities > 테넌트 간 액세스 설정 > 기본 설정 탭. 인바운드 표에 B2B Collaboration, B2B 직접 연결, 신뢰 설정이 있습니다. 이 샌드박스는 B2B Collaboration이 "모두 허용", B2B 직접 연결이 "모두 차단됨", 신뢰 설정이 "사용 안 함"입니다. 특정 조직별 설정은 조직 설정 탭에서 합니다.*
+
+화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, IP는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
+
+</details>
+
 ### 근거 자료
 
 <details markdown="1">

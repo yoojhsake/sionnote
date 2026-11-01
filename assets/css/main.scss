@@ -142,3 +142,29 @@ $toc-size: 10pt;
 .sidebar .toc-fold > summary::-webkit-details-marker { display: none; }
 .sidebar .toc-fold > summary .nav__title::after { content: " ▾"; font-size: 0.85em; }
 .sidebar .toc-fold:not([open]) > summary .nav__title::after { content: " ▸"; }
+
+// ---- 가독성 개선 (v4.5) ----
+// 1) 본문 글자: 넓은 화면에서 16px는 작고 회색이 옅어 읽기 힘들다. 크기·대비·줄 간격을 올린다.
+.page__content { color: #1f2328; }
+.page__content p, .page__content li { line-height: 1.85; }
+.page__content li { margin-bottom: 0.3em; }
+@media (min-width: 64em) {
+  .page__inner-wrap { max-width: 52rem; }
+  .page__content { font-size: 17.5px; }
+}
+// 2) 요약: 글머리 3줄을 상자로 묶어 첫 화면에서 바로 눈에 띄게 한다.
+.page__content h2#요약 { margin-top: 1.2em; margin-bottom: 0.5em; border-bottom: 0; font-size: 1.05em; }
+.page__content h2#요약 + ul {
+  background: #f6f8fa; border: 1px solid #d0d7de; border-left: 4px solid #0969da; border-radius: 6px;
+  padding: 0.8em 1.2em 0.8em 2.2em; margin-bottom: 1em;
+}
+.page__content h2#요약 + ul li { margin-bottom: 0.15em; }
+// 3) 근거·시리즈 안내 상자: 본문보다 작고 옅게 해서 본문과 구분한다.
+.page__content blockquote {
+  font-size: 0.86em; color: #57606a; background: transparent; font-style: normal;
+  border-left: 3px solid #d0d7de; padding: 0.15em 0 0.15em 1em; margin: 0.6em 0 1em;
+}
+.page__content blockquote p { margin-bottom: 0.4em; }
+// 4) 절 제목: 큰 절(h2)은 밑줄로, 번호 절(h3)은 조금 크게 해서 구조가 보이게 한다.
+.page__content h2 { padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+.page__content h3 { font-size: 1.12em; }

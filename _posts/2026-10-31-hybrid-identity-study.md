@@ -108,6 +108,25 @@ PHS는 계정 정보 사본을 클라우드가 들고 직접 판단하는 방식
 
 PTA 에이전트 장애로 로그인이 실패할 때의 대처는 [PTA 장애 글]({{ "/iam/troubleshooting/pta-agent-sign-in-fails/" | relative_url }})에 있습니다.
 
+<details markdown="1">
+<summary>화면으로 경로 따라가기: Entra Connect와 클라우드 동기화 (그림 3장)</summary>
+
+![Microsoft Entra Connect 시작 화면. Connect Sync 레거시 인증 중단 안내]({{ "/assets/images/2026/11/guide-entra-connect-start.png" | relative_url }})
+
+*그림 1. Entra ID > Entra Connect > 시작. 위쪽 주황 안내는 2027년 4월 7일에 Entra Connect Sync의 레거시 인증을 중단할 예정이니 버전 2.6.84.0 이상으로 올리고 애플리케이션 기반 인증을 구성하라고 알립니다. 왼쪽 안쪽 메뉴는 시작, 클라우드 동기화, 동기화 연결입니다.*
+
+![Entra 클라우드 동기화 구성 화면. 구성이 없어 새 구성을 만들라는 안내]({{ "/assets/images/2026/11/guide-entra-cloudsync.png" | relative_url }})
+
+*그림 2. Entra ID > Entra Connect > 클라우드 동기화 > 구성. 이 샌드박스는 구성이 없어 "시작하려면 새 구성을 만듭니다"가 나옵니다. 온-프레미스 AD에서 Entra ID로 동기화하는 구성을 새 구성으로 만들며, 왼쪽 모니터 메뉴에 프로비전 로그, 감사 로그, 에이전트, 인사이트가 있습니다.*
+
+![Entra 관리 센터의 개요 화면. 기본 정보와 Microsoft Entra Connect 카드]({{ "/assets/images/2026/11/guide-entra-overview.png" | relative_url }})
+
+*그림 3. Entra 관리 센터 > Entra ID > 개요(Overview). 기본 정보에 이름, 테넌트 ID, 주 도메인, 라이선스(Microsoft Entra ID P2)와 사용자, 그룹, 애플리케이션, 디바이스 수가 나옵니다. 오른쪽 아래 Microsoft Entra Connect 카드는 "사용 안 함, 동기화 실행된 적 없음"입니다. 이름, 테넌트 ID, 주 도메인, 로그인한 사용자는 가렸습니다.*
+
+화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, 구독 이름과 ID는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
+
+</details>
+
 ### 5. 전문가처럼 말하기
 
 > "인증 방식은 PHS를 기본으로 켜고, 계정 상태를 로그인 시점에 즉시 반영해야 하면 PTA를 추가합니다. Federation은 AD FS 투자가 있거나 페더레이션 IdP가 꼭 필요한 인증 요건이 있을 때만 유지하고, 서드파티 MFA는 external MFA로 붙입니다."

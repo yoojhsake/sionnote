@@ -100,6 +100,29 @@ Entra의 기본 로그는 로그인 로그와 감사 로그 두 가지이고, En
 - 문의를 받으면 화면의 "추가 정보(More details)"에 나오는 **상관 관계 ID(Correlation ID)**와 시각을 받아 둡니다.
 - 보존 기간(1장)을 넘긴 기록은 유료로 바꿔도 되살아나지 않으니, 더 오래 보관하려면 진단 설정(Diagnostic settings)으로 Log Analytics, 스토리지, SIEM에 보냅니다. 이 내보내기는 P1 이상과 Azure 구독이 필요하고 Log Analytics 비용이 따로 듭니다.
 
+<details markdown="1">
+<summary>화면으로 경로 따라가기: 라이선스, 로그인 로그, 감사 로그, 진단 설정 (그림 4장)</summary>
+
+![Entra ID 라이선스의 모든 제품 화면]({{ "/assets/images/2026/11/guide-entra-licenses.png" | relative_url }})
+
+*그림 6. Entra ID > 라이선스 > 모든 제품. 제품별 합계, 할당됨, 사용 가능, 곧 만료됨이 나옵니다(예: 25, 17, 8, 0). 위쪽 경고는 라이선스 할당 추가, 제거, 재처리가 M365 관리 센터에서만 가능하다고 알립니다.*
+
+![로그인 이벤트 목록. 날짜, 앱, 상태, 조건부 액세스 열]({{ "/assets/images/2026/11/guide-signin-list.png" | relative_url }})
+
+*그림 7. Entra ID > 로그인 로그(Sign-in logs)의 사용자 로그인(대화형) 탭. 날짜, 앱, 상태, 조건부 액세스 열이 있습니다. 요청 ID, 계정, IP는 가렸습니다.*
+
+![Entra 감사 로그. PIM 역할 활성화 기록이 보임]({{ "/assets/images/2026/11/guide-entra-audit-log.png" | relative_url }})
+
+*그림 8. Entra ID > 감사 로그(Audit logs). 날짜, 서비스, 범주, 활동, 상태, 상태 이유 열이 있습니다. 맨 아래 줄은 PIM에서 역할을 활성화한 기록("Add member to role completed")이고 상태 이유에 입력한 사유가 남습니다. 위쪽에는 활성화가 끝난 뒤 역할이 자동 제거된 기록("Remove member from role"로 시작)이 있습니다.*
+
+![Entra 진단 설정 화면. 정의된 진단 설정이 없음과 내보낼 수 있는 로그 목록]({{ "/assets/images/2026/11/guide-entra-diagnostic-settings.png" | relative_url }})
+
+*그림 9. Entra ID > 모니터링 및 상태 > 진단 설정. 이 샌드박스는 정의된 설정이 없습니다. 진단 설정 추가로 AuditLogs, SignInLogs 같은 로그를 스토리지 계정, Event Hubs, Log Analytics 작업 영역, 파트너 솔루션으로 보냅니다. 화면 안내는 설정을 최대 5개까지 만들 수 있다고 알립니다.*
+
+화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, 구독 이름과 ID는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
+
+</details>
+
 ### 4. 스크립트는 Microsoft Graph PowerShell로
 
 GUI로 하기 어려운 대량 작업은 Microsoft Graph PowerShell SDK(`Connect-MgGraph`)로 합니다. AzureAD, AzureAD Preview, MSOnline 모듈은 지원이 끝났으므로(deprecated) 옛 예제(`Get-MsolUser`, `Get-AzureADUser`)는 Graph 명령(`Get-MgUser` 등)으로 바꿉니다(Microsoft Learn에 cmdlet 매핑 표가 있음).

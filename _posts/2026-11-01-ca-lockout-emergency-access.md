@@ -16,7 +16,7 @@ excerpt: "CA 정책 실수로 관리자까지 53003에 막혔다. 긴급 액세�
 - 클라우드 전용 긴급 계정 2개 이상을 모든 차단 정책에서 제외해 둬야 함
 - 긴급 계정도 필수 MFA 대상이므로 패스키 같은 인증을 등록해야 함
 
-> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다. 함께 볼 글: [Entra ID 핵심 개념: 접근 제어 편]({{ "/iam/entra-id-access-control/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
+> Microsoft Learn 문서(2026-11-01 확인) 기준입니다. 오류 상황은 테넌트에서 재현하지 않았고, 설정 화면은 샌드박스 테넌트에서 직접 열어 캡처했습니다. 함께 볼 글: [Entra ID 핵심 개념: 접근 제어 편]({{ "/iam/entra-id-access-control/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
 
 ---
 
@@ -73,6 +73,21 @@ excerpt: "CA 정책 실수로 관리자까지 53003에 막혔다. 긴급 액세�
 </details>
 
 관련 글: [AADSTS53003: 조건부 액세스 정책 때문에 접근이 차단될 때]({{ "/iam/troubleshooting/aadsts53003-blocked-by-ca/" | relative_url }}) · [Entra ID 핵심 개념: 접근 제어 편]({{ "/iam/entra-id-access-control/" | relative_url }})
+
+<details markdown="1">
+<summary>화면으로 경로 따라가기: 조건부 액세스 정책 만들기 화면 (그림 2장)</summary>
+
+![조건부 액세스 정책 목록 화면. 새 정책, 가상 버튼이 있는 도구 모음]({{ "/assets/images/2026/11/guide-ca-policies.png" | relative_url }})
+
+*그림 2. Entra ID > 조건부 액세스 > 정책. 이 샌드박스는 정책이 하나도 없어 안내 화면이 나옵니다.*
+
+![조건부 액세스 새 정책 화면. 사용자 제외 탭과 정책 사용 보고서 전용]({{ "/assets/images/2026/11/guide-ca-new-policy.png" | relative_url }})
+
+*그림 3. Entra ID > 조건부 액세스 > 정책 > 새 정책. 왼쪽에서 할당(사용자, 대상 리소스, 네트워크, 조건)과 액세스 제어를 정하고, 사용자 > 제외 탭에서 게스트 또는 외부 사용자, 디렉터리 역할, 사용자 및 그룹을 제외합니다. 아래 "정책 사용"의 기본값은 "보고서 전용"입니다. 이 샌드박스는 보안 기본값이 켜져 있어 정책을 켜려면 먼저 보안 기본값을 꺼야 한다는 경고가 같이 나옵니다. 이번에는 만들기를 누르지 않았습니다.*
+
+화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, 구독 이름과 ID는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
+
+</details>
 
 ### 근거 자료
 

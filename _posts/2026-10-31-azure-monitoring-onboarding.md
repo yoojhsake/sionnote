@@ -79,6 +79,33 @@ AuditLogs
 
 퇴사(Leaver)는 반대로 계정 비활성화, 세션과 토큰 폐기, license 회수, 디바이스 retire 또는 wipe, 접근 권한 회수 순입니다.
 
+<details markdown="1">
+<summary>화면으로 경로 따라가기: Azure 모니터, Log Analytics, 활동 로그, Entra 진단 설정 (그림 5장)</summary>
+
+![Azure 모니터 개요 화면. 활동 로그, 경고, 메트릭, 로그 메뉴]({{ "/assets/images/2026/11/guide-azure-monitor.png" | relative_url }})
+
+*그림 1. Azure 포털 > 모니터 > 개요. 왼쪽 메뉴에 활동 로그, 경고, 메트릭, 로그가 있고, 가운데에 인사이트(Application Insights, VM Insights 등)와 검색, 심사 및 진단 카드(메트릭, 경고, 로그, 상태 모델)가 있습니다.*
+
+![Log Analytics 작업 영역 목록. 표시할 작업 영역 없음]({{ "/assets/images/2026/11/guide-azure-loganalytics.png" | relative_url }})
+
+*그림 2. Azure 포털 > Log Analytics 작업 영역. 이 샌드박스에는 작업 영역이 없어 "표시할 Log Analytics 작업 영역 없음"입니다. 위쪽 만들기로 새로 만들며, 이번에는 만들지 않았습니다. 구독 이름은 가렸습니다.*
+
+![구독 활동 로그 화면. 필터와 진단 설정 버튼]({{ "/assets/images/2026/11/guide-azure-activity-log.png" | relative_url }})
+
+*그림 3. 구독 > 활동 로그. 필터(관리 그룹, 구독, 이벤트 심각도, 시간 간격)로 좁히고, 위쪽 진단 설정으로 로그를 내보냅니다. 이 시점에는 지난 6시간의 이벤트가 없어 "표시할 이벤트가 없습니다"입니다. 구독 이름은 가렸습니다.*
+
+![Entra 진단 설정 화면. 정의된 진단 설정이 없음과 내보낼 수 있는 로그 목록]({{ "/assets/images/2026/11/guide-entra-diagnostic-settings.png" | relative_url }})
+
+*그림 4. Entra ID > 모니터링 및 상태 > 진단 설정. 이 샌드박스는 정의된 설정이 없습니다. 진단 설정 추가로 AuditLogs, SignInLogs 같은 로그를 스토리지 계정, Event Hubs, Log Analytics 작업 영역, 파트너 솔루션으로 보냅니다. 화면 안내는 설정을 최대 5개까지 만들 수 있다고 알립니다.*
+
+![Entra 감사 로그. PIM 역할 활성화 기록이 보임]({{ "/assets/images/2026/11/guide-entra-audit-log.png" | relative_url }})
+
+*그림 5. Entra ID > 감사 로그(Audit logs). 날짜, 서비스, 범주, 활동, 상태, 상태 이유 열이 있습니다. 맨 아래 줄은 PIM에서 역할을 활성화한 기록("Add member to role completed")이고 상태 이유에 입력한 사유가 남습니다. 위쪽에는 활성화가 끝난 뒤 역할이 자동 제거된 기록("Remove member from role"로 시작)이 있습니다.*
+
+화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, 구독 이름과 ID는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
+
+</details>
+
 ### 4. 3분 설명 스크립트 (빈칸을 채워 외우기)
 
 1. 신원은 \_\_\_\_\_\_ 가 기준이고, 온프레미스와는 \_\_\_\_\_\_ 로 동기화합니다.

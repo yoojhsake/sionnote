@@ -122,6 +122,21 @@ External ID는 회사 밖 사람(협력사, 고객)의 계정과 로그인을 �
 
 라이선스 단계, 로그, Graph PowerShell, 처음 테넌트를 맡았을 때 확인 순서는 [라이선스와 운영]({{ "/iam/entra-id-licensing-operations/" | relative_url }}) 글에 있습니다.
 
+<details markdown="1">
+<summary>화면으로 경로 따라가기: Entra Connect, 외부 협업 설정 (그림 2장)</summary>
+
+![Microsoft Entra Connect 시작 화면. Connect Sync 레거시 인증 중단 안내]({{ "/assets/images/2026/11/guide-entra-connect-start.png" | relative_url }})
+
+*그림 4. Entra ID > Entra Connect > 시작. 위쪽 주황 안내는 2027년 4월 7일에 Entra Connect Sync의 레거시 인증을 중단할 예정이니 버전 2.6.84.0 이상으로 올리고 애플리케이션 기반 인증을 구성하라고 알립니다. 왼쪽 안쪽 메뉴는 시작, 클라우드 동기화, 동기화 연결입니다.*
+
+![외부 협업 설정 화면. 게스트 액세스 제한, 게스트 초대 제한, 협업 제한 사항]({{ "/assets/images/2026/11/guide-entra-external-collab.png" | relative_url }})
+
+*그림 5. Entra ID > External Identities > 외부 협업 설정. 게스트 사용자 액세스 제한 3단계, 게스트 초대 제한 4단계, 외부 사용자 나가기 설정, 협업 제한 사항(도메인 허용 또는 거부)이 있습니다. 이 샌드박스는 게스트 액세스가 가운데 단계, 초대는 모든 사용자 가능, 도메인 제한 없음입니다. 이번 캡처에서는 값을 바꾸지 않았습니다.*
+
+화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, 구독 이름과 ID는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
+
+</details>
+
 ### 4. 확인 문제
 
 <details markdown="1">

@@ -1,14 +1,14 @@
 ---
 title: "[Troubleshooting] 동적 그룹 규칙이 얼마 만에 반응하는지 알 수 없다"
-date: 2026-10-23 12:00:00 +0900
+date: 2026-10-23 22:00:00 +0900
 categories: [m365, troubleshooting]
 area: 라이선스·그룹
 seq: 5
 tags: [Troubleshooting, 동적 그룹, 반응 시간, Graph, 감사 로그]
-excerpt: "부서를 바꾼 뒤 동적 그룹 반영을 재 보니 들어올 때 9초, 나갈 때 5분 35초. \"즉시\"로 가정하면 안 된다"
+excerpt: "부서를 바꾼 뒤 동적 그룹 반영을 재 보니 들어올 때 9초, 나갈 때 1회차 23~44초와 2회차 5분 35초. \"즉시\"로 가정하면 안 된다"
 ---
 
-부서를 바꾸면 동적 그룹에는 얼마 만에 반영될까요? 구성원 수를 약 20초 간격으로 읽고 Entra 감사 로그로 시각을 맞춰 보니, 들어올 때는 9초였지만 나갈 때는 5분 35초가 걸렸습니다.
+부서를 바꾸면 동적 그룹에는 얼마 만에 반영될까요? 구성원 수를 약 20초 간격으로 읽고 Entra 감사 로그로 시각을 맞춰 보니, 들어올 때는 9초였지만 나갈 때는 1회차 23~44초, 2회차 5분 35초로 편차가 컸습니다.
 
 ## 요약
 
@@ -28,7 +28,7 @@ excerpt: "부서를 바꾼 뒤 동적 그룹 반영을 재 보니 들어올 때 
 
 ### 2. 원인 및 분석
 
-문서는 속성이 바뀌면 규칙이 다시 평가된다고만 설명합니다([Dynamic membership rules](https://learn.microsoft.com/entra/identity/users/groups-dynamic-membership)). 그래서 직접 쟀습니다.
+문서는 속성이 바뀌면 규칙이 다시 평가된다고 설명하고([Dynamic membership rules](https://learn.microsoft.com/entra/identity/users/groups-dynamic-membership)), 처리 시간은 소규모 디렉터리는 수 분 안팎, 대규모는 30분 이상, 경우에 따라 24시간을 넘길 수 있다고 설명합니다([그룹 문제 해결](https://learn.microsoft.com/entra/identity/users/groups-troubleshooting), [동적 그룹 처리](https://learn.microsoft.com/entra/identity/users/manage-dynamic-group)). 그래서 이 테넌트에서 직접 쟀습니다.
 
 감사 로그 기준 들어올 때 9초(21:29:42→21:29:51), 나갈 때 5분 35초(21:30:03→21:35:38)였고, 약 18초 뒤(21:35:56) 그룹 라이선스가 회수됐습니다. 각 방향 2회 측정한 구간 값이고, 작은 테넌트와 그룹 1개 조건입니다.
 
@@ -45,6 +45,8 @@ Cloud Shell에서 시험 사용자의 부서를 Practice02로 바꾼 시각(07:5
 
 들어올 때는 +2초에는 0, +23초에 1이었습니다. 부서를 다시 비웠을 때(07:56:50 UTC)는 +23초에 1, +44초에 0으로 빠졌습니다.
 
+같은 시각대(16:54~16:57 KST)의 감사 로그에 Change user license 항목(16:54:49 ×5, 16:57:30 ×1)이 있고 자세한 내용은 [Planner 글]({{ "/m365/troubleshooting/planner-unchecked-license-audit/" | relative_url }})에 있습니다(시각 근접, 추정).
+
 이때의 화면은 글자가 작아 읽기 어려워서 한 번 더 측정했습니다.
 
 #### 2회차 측정(조회)
@@ -54,12 +56,12 @@ Cloud Shell에서 시험 사용자의 부서를 Practice02로 바꾼 시각(07:5
 부서를 Practice02로 바꾼 시각(12:29:42 UTC)에 구성원 0이었고 +20초(12:30:03)에 1이 되었습니다. 그런데 부서를 비운 시각(12:30:03 UTC)부터는 +331초(12:35:34)까지 계속 1이었고, **+352초(12:35:54)에야 0**이 되었습니다. 부서 값이 비어 있다는 것도 같은 스크립트로 확인했습니다(출력 True).
 
 ![동적 그룹 구성원 수 변화를 20초 간격으로 읽은 Cloud Shell 출력]({{ "/assets/images/2026/10/m02-dyn-timing.png" | relative_url }})
-*그림 1. 2회차 측정의 Cloud Shell 출력. 각 줄은 시각(UTC), 부서를 바꾼 뒤 경과 초, 구성원 수. 위에서부터 부서 입력 → 구성원 1 → 부서 비움 → 약 6분 뒤 구성원 0. 프롬프트의 계정 부분은 가렸습니다.*
+*그림 1. 2회차 측정의 Cloud Shell 출력. 각 줄은 시각(UTC), 부서를 바꾼 뒤 경과 초, 구성원 수. 위에서부터 부서 입력 → 구성원 1 → 부서 비움 → 약 6분 뒤 구성원 0. 두 번째 대기는 원복 확인 줄과 이어 실행되어 있습니다(줄 끝은 캡처에서 잘림). 프롬프트의 계정 부분은 가렸습니다.*
 
 2회차에 돌린 스크립트입니다. 준비 코드 3줄(토큰, `$h`, `$B`)을 먼저 실행합니다. 시험 사용자의 표시 이름은 게시하지 않아 자리표시로 적었습니다.
 
 <details markdown="1">
-<summary>스크립트 전체 보기 (23줄)</summary>
+<summary>스크립트 전체 보기 (22줄)</summary>
 
 ```powershell
 $tk = [System.Net.NetworkCredential]::new('', (Get-AzAccessToken -ResourceUrl 'https://graph.microsoft.com').Token).Password
@@ -83,7 +85,7 @@ function Wait-Count($want) { # 약 20초 간격으로 그룹 구성원 수를 �
 }
 $t0 = Get-Date; Wait-Count 0; Set-Dept 'Practice02'; Wait-Count 1; Set-Dept $null; Wait-Count 0
 Wait-Count 0   # 12회(약 4분) 안에 0이 되지 않아 한 번 더 실행
-(Invoke-RestMethod -Headers $h -Uri "$B/users/$uid`?`$select=department").department -eq $null   # 원복 확인(True)
+(Invoke-RestMethod -Headers $h -Uri "$B/users/$uid`?`$select=department").department -eq $null   # 원복 확인(True). 화면 기준으로는 이 줄이 두 번째 Wait-Count 0 앞에서 실행됨
 ```
 
 </details>
@@ -114,11 +116,11 @@ Entra 관리 센터 > 모니터링 및 상태 > 감사 로그(최근 24시간, K
 
 부서 변경 → 규칙 재평가 → 가입 9초, 제거 44초 이하~5분 35초(같은 사용자·그룹에서도 일정하지 않음)
 
-문서에서 규칙 처리가 지연될 수 있다는 설명은 확인 불가입니다(시도: 해당 문서 재확인 안 함, 사유: 측정만 진행, 다음 방법: 동적 멤버십 문서의 처리 시간 설명 확인).
+문서는 규칙 처리 지연을 인정합니다. 소규모 디렉터리는 수 분 이내, 대규모는 30분 이상(문서).
 
 ### 4. 권고방안
 
-1. 동적 그룹 변경은 "즉시"로 가정하지 않고 몇 분 단위로 기다린 뒤 확인합니다("1분 안쪽"으로 잡으면 부족합니다).
+1. 동적 그룹 변경은 "즉시"로 가정하지 않고 몇 분 단위로 기다린 뒤 확인합니다("1분 안쪽"으로 잡으면 부족합니다). 큰 환경은 30분~수 시간 이상 걸릴 수 있다고 문서가 설명하니 감사 로그 시각으로 확인합니다.
 2. 정확한 시각은 감사 로그의 Add/Remove member to group, Change user license로 맞춥니다.
 
 관련 글: [Identity 구조: 동적 그룹과 그룹 라이선스]({{ "/m365/d2-identity-groups/" | relative_url }}) · [직접 라이선스와 그룹 라이선스가 겹침]({{ "/m365/troubleshooting/direct-and-group-license-overlap/" | relative_url }})
@@ -126,17 +128,15 @@ Entra 관리 센터 > 모니터링 및 상태 > 감사 로그(최근 24시간, K
 ### 근거 자료
 
 <details markdown="1">
-<summary>근거 자료 펼쳐 보기 (5건)</summary>
+<summary>근거 자료 펼쳐 보기 (4건)</summary>
 
-- **문서**: 동적 그룹 규칙, P1 필요, 속성 변경 시 재평가
-    - 출처: [Dynamic membership rules](https://learn.microsoft.com/entra/identity/users/groups-dynamic-membership), [규칙 만들기](https://learn.microsoft.com/entra/identity/users/groups-create-rule)
+- **문서**: 동적 그룹 규칙, P1 필요, 속성 변경 시 재평가, 처리 지연(소규모 수 분, 대규모 30분 이상, 최대 24시간 넘을 수 있음)
+    - 출처: [Dynamic membership rules](https://learn.microsoft.com/entra/identity/users/groups-dynamic-membership), [규칙 만들기](https://learn.microsoft.com/entra/identity/users/groups-create-rule), [그룹 문제 해결](https://learn.microsoft.com/entra/identity/users/groups-troubleshooting), [동적 그룹 처리](https://learn.microsoft.com/entra/identity/users/manage-dynamic-group)
 - **조회**: 1회차(07:54 UTC): 들어올 때 +2~23초, 나갈 때 +23~44초
     - 출처: Cloud Shell(Graph)
 - **조회**: 2회차(12:29 UTC): 들어올 때 0~20초, 나갈 때 +331~352초
     - 출처: Cloud Shell(Graph)
 - **조회**: 감사 로그 기준 들어올 때 9초, 나갈 때 5분 35초, 그룹 라이선스 회수는 그룹 제거 후 약 18초
     - 출처: Entra 감사 로그
-- **확인 불가**: 대규모 환경에서의 규칙 처리 지연(문서 설명 재확인 안 함)
-    - 시도 방법·사유는 3절
 
 </details>

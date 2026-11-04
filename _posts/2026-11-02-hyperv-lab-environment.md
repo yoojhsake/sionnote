@@ -5,19 +5,20 @@ categories: [iam]
 phase: 하이브리드 실습
 seq: 1
 tags: [IAM, Hyper-V, 실습 환경, 가상 스위치, 체크포인트, vTPM]
-excerpt: "내부 스위치 하나와 NAT 스위치 하나, 2세대 VM 4대로 AD·Entra 하이브리드 실습망을 만들었다. 외부로 나가는 길은 sync01 한 곳뿐이고, 체크포인트로 단계마다 되돌릴 수 있게 했다"
+excerpt: "내부 스위치 하나와 NAT 스위치 하나, 2세대 VM 4대로 AD·Entra 하이브리드 실습망을 만들었다. 도메인 컨트롤러(ad01)는 외부로 나가는 길이 없고, 체크포인트로 단계마다 되돌릴 수 있게 했다"
 toc: true
+last_modified_at: 2026-11-04 22:00:00 +0900
 ---
 
-온프레미스 AD와 Entra ID를 연결하는 실습을 한 대의 PC에서 반복하려고 Hyper-V로 작은 망을 만들었습니다. 도메인 컨트롤러·동기화 서버·클라이언트 2대를 내부 스위치에 묶고, 인터넷으로 나가는 통로는 동기화 서버 한 곳만 열어 두었습니다. 단계마다 체크포인트를 남겨서 어느 지점으로든 되돌릴 수 있습니다.
+온프레미스 AD와 Entra ID를 연결하는 실습을 한 대의 PC에서 반복하려고 Hyper-V로 작은 망을 만들었습니다. 도메인 컨트롤러·동기화 서버·클라이언트 2대를 내부 스위치에 묶고, 인터넷으로 나가는 통로는 도메인 컨트롤러만 막고 동기화 서버와 클라이언트 2대에만 열어 두었습니다. 단계마다 체크포인트를 남겨서 어느 지점으로든 되돌릴 수 있습니다.
 
 ## 요약
 
-- 스위치는 내부(lab-internal)와 NAT(Default Switch) 두 개이며, 외부 인터넷 경로는 sync01만 가짐
-- VM은 모두 2세대·구성 버전 12.0이고, 클라이언트 중 Win11만 가상 TPM을 켬
-- 이 구성 차이가 뒤 글의 `TpmProtected` 값 차이(NO/YES)를 그대로 설명함
+- 스위치는 내부(lab-internal)와 NAT(Default Switch) 두 개이며, 외부 인터넷 경로는 ad01만 없고 sync01·cl10·cl11이 NAT로 가짐
+- 실습 VM 4대는 모두 2세대이고(구성 버전 12.0은 6대 모두), 클라이언트 중 Win11만 가상 TPM을 켬
+- 이 구성 차이와 뒤 글의 `TpmProtected` 값 차이(NO/YES)가 일치함(추정: TPM만 켜고 끄는 비교는 하지 않았고 두 PC는 Windows 10/11도 다름)
 
-> 근거 표기: 조회 = 이 랩에서 직접 읽은 값 · 문서 = Microsoft Learn · 확인 불가 = 시도했지만 확인하지 못한 값(방법·사유 병기). 테넌트 ID·도메인·계정 등 비공개 정보는 가리거나 게시하지 않았습니다.
+> 근거 표기: 조회 = 이 랩에서 직접 읽은 값 · 문서 = Microsoft Learn · 확인 불가 = 시도했지만 확인하지 못한 값(방법·사유 병기). 테넌트 ID·테넌트 도메인·클라우드 계정(UPN)은 가렸고, 개인 실습용 도메인(sionnote.local)의 계정 이름·장치 이름·호스트 이름은 그대로 보일 수 있습니다.
 
 ---
 
@@ -26,6 +27,10 @@ toc: true
 ### 1. 목표
 
 하이브리드 조인과 Entra 조인을 AD 구축부터 끝까지 실습하되, 실패하면 직전 상태로 돌아가 다시 해 볼 수 있는 환경을 만듭니다. 실제 회사망처럼 "기본 차단, 필요한 프로그램만 허용"하는 방화벽 조건도 걸어 둡니다.
+
+전체 구성을 먼저 그림으로 보면 이렇습니다. 숫자는 아래 표에서 조회한 값입니다.
+
+<picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/11/lab-network-topology-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/11/lab-network-topology.png" | relative_url }}" alt="Hyper-V 실습망 구성도: 내부 스위치와 NAT 스위치, 네 대의 VM" loading="lazy"></picture>
 
 ### 2. 개념
 
@@ -44,7 +49,11 @@ toc: true
 
 #### 3-1. 가상 스위치
 
-![Hyper-V 가상 스위치 관리자]({{ "/assets/images/2026/11/hv-01-vswitch.png" | relative_url }})
+가상 스위치 관리자(Hyper-V 관리자 → 가상 스위치 관리자)에서 스위치별 속성을 봅니다. 호스트 PC 이름, NIC 모델, MAC 주소 범위는 가렸습니다.
+
+[![가상 스위치 관리자: lab-internal(내부 네트워크)]({{ "/assets/images/2026/11/hv-01-vswitch-lab-internal.png" | relative_url }})]({{ "/assets/images/2026/11/hv-01-vswitch-lab-internal.png" | relative_url }}){:target="_blank"}
+
+[![가상 스위치 관리자: Default Switch(기본 네트워크)]({{ "/assets/images/2026/11/hv-01-vswitch-default.png" | relative_url }})]({{ "/assets/images/2026/11/hv-01-vswitch-default.png" | relative_url }}){:target="_blank"}
 
 | 스위치 | 유형 | 비고(조회) |
 |---|---|---|
@@ -63,10 +72,7 @@ toc: true
 | sionnote_cl11 | Windows 11 클라이언트 | 2 | 8 | 4096MB | lab-internal + Default Switch |
 | sionnote_exchange01, sionnote_mecm01 | 이번 시리즈 범위 아님(꺼짐) | - | - | - | - |
 
-- 구성 버전은 6대 모두 12.0이고, VM 설정 파일은 `D:\Hyper-V\VMs`, 가상 디스크는 `D:\Hyper-V\VHDs`에 있습니다(조회).
-- 세대는 요약 창의 "세대" 항목으로, vCPU와 시작 RAM은 설정의 프로세서·메모리 화면으로 읽었습니다. cl10·cl11의 vCPU 숫자는 화면이 흐려서 "총 시스템 리소스 백분율 50"(vCPU 2개일 때 12)을 같이 보고 8개로 판단했습니다.
-- 메모리는 동적 메모리로 운영합니다. ad01은 만들 때 마법사에서 "이 가상 컴퓨터에 동적 메모리를 사용합니다"를 체크한 화면이 남아 있어 직접 확인됩니다(아래 5절 캡처). 다른 VM은 설정 화면의 체크박스가 실행 중에는 비활성이라 값을 읽지 못했고, 관리자 목록의 "할당된 메모리"가 시작 RAM과 다르게 움직이는 것(sync01 3526MB 등)과 최소 512MB·최대 1048576MB 표시로 판단했습니다(확인 불가: 방법 = 실행 중 설정 화면, 사유 = 실행 중에는 항목이 잠김).
-- 호스트 PC의 CPU 모델과 총 메모리는 이번에 조회하지 않았습니다(확인 불가: 방법 = 미조회, 사유 = 글 목적과 무관).
+- 구성 버전은 6대 모두 12.0입니다(조회).
 
 #### 3-3. IP 구성(두 서버에서 조회)
 
@@ -75,7 +81,7 @@ toc: true
 | ad01 | 10.10.10.10 (DC 조회 결과의 IPv4) | 없음(NIC가 lab-internal 한 개뿐) |
 | sync01 | 10.10.10.40/24, DNS 10.10.10.10 | 192.168.213.170/20, 게이트웨이 192.168.208.1 |
 
-- ad01은 외부로 나가는 NIC가 없어 인터넷 접근이 원천적으로 막힙니다. sync01만 NAT 쪽 NIC로 Microsoft 클라우드와 통신합니다.
+- ad01은 외부로 나가는 NIC가 없어 인터넷 접근이 원천적으로 막힙니다. Microsoft 클라우드와 통신하는 쪽은 NAT 쪽 NIC가 있는 sync01(과 클라이언트 2대)이고, 그중 서버 쪽 통신은 sync01이 맡습니다.
 - 클라이언트(cl10·cl11)는 NIC가 두 개이지만, 도메인 통신은 lab-internal(10.10.10.51·.52)로 합니다.
 
 ### 4. 운영 판단
@@ -92,30 +98,48 @@ Hyper-V 관리자 → 동작 → 새로 만들기 → **가상 컴퓨터**로 �
 
 | 마법사 페이지 | 입력값 | 고른 이유 |
 |---|---|---|
-| 이름 및 위치 지정 | 이름 `sionnote_ad01`, 위치 `D:\Hyper-V\VMs` | VM 설정 파일을 D 드라이브로 모아 관리 |
+| 이름 및 위치 지정 | 이름 `sionnote_ad01`, 위치는 기본값 대신 실습용 폴더 | VM 파일을 한 곳으로 모아 관리 |
 | 세대 지정 | **2세대** | 만든 뒤에는 세대를 바꿀 수 없음(마법사 경고, 문서 동일) |
 | 메모리 할당 | 시작 4096MB, **동적 메모리 사용** 체크 | 켜 둔 VM 여러 대가 호스트 메모리를 나눠 쓰게 함 |
 | 네트워킹 구성 | `lab-internal` | DC는 내부 스위치에만 연결 |
-| 가상 하드 디스크 연결 | 새로 만들기 `sionnote_ad01.vhdx`, `D:\Hyper-V\VHDs`, 60GB | 동적 확장 VHDX라 실제 사용량만큼만 차지 |
-| 설치 옵션 | 부팅 가능 이미지 `D:\iso\SERVER_EVAL_x64FRE_en-us.iso` | Windows Server 평가판 설치 |
+| 가상 하드 디스크 연결 | 새로 만들기 `sionnote_ad01.vhdx`, 60GB | 동적 확장 VHDX라 실제 사용량만큼만 차지 |
+| 설치 옵션 | 부팅 가능 이미지 Windows Server 평가판 ISO | Windows Server 평가판 설치 |
 
-![새 가상 컴퓨터 마법사: 이름과 위치]({{ "/assets/images/2026/11/hv-wiz-01-name.png" | relative_url }})
-![새 가상 컴퓨터 마법사: 세대 지정]({{ "/assets/images/2026/11/hv-wiz-02-generation.png" | relative_url }})
-![새 가상 컴퓨터 마법사: 메모리 할당(동적 메모리 체크)]({{ "/assets/images/2026/11/hv-wiz-03-memory.png" | relative_url }})
-![새 가상 컴퓨터 마법사: 네트워킹 구성]({{ "/assets/images/2026/11/hv-wiz-04-network.png" | relative_url }})
-![새 가상 컴퓨터 마법사: 가상 하드 디스크 연결]({{ "/assets/images/2026/11/hv-wiz-05-disk.png" | relative_url }})
-![새 가상 컴퓨터 마법사: 설치 옵션]({{ "/assets/images/2026/11/hv-wiz-06-install.png" | relative_url }})
-![새 가상 컴퓨터 마법사: 요약]({{ "/assets/images/2026/11/hv-wiz-07-summary.png" | relative_url }})
+[![새 가상 컴퓨터 마법사: 이름과 위치]({{ "/assets/images/2026/11/hv-wiz-01-name.png" | relative_url }})]({{ "/assets/images/2026/11/hv-wiz-01-name.png" | relative_url }}){:target="_blank"}
 
-마법사는 vCPU 수를 묻지 않아서(기본 1개), 만든 뒤 **설정 → 프로세서**에서 2개로 올렸습니다. 마법사 입력값은 ad01만 캡처가 남아 있고, sync01·cl10·cl11은 같은 방식으로 만들었지만 당시 캡처가 없어 위 3절의 설정값(조회)만 적었습니다(확인 불가: 방법 = 캡처 폴더 검색, 사유 = 해당 시점 캡처 없음).
+[![새 가상 컴퓨터 마법사: 세대 지정]({{ "/assets/images/2026/11/hv-wiz-02-generation.png" | relative_url }})]({{ "/assets/images/2026/11/hv-wiz-02-generation.png" | relative_url }}){:target="_blank"}
 
-#### 5-2. 만든 뒤 확인하는 경로
+[![새 가상 컴퓨터 마법사: 메모리 할당(동적 메모리 체크)]({{ "/assets/images/2026/11/hv-wiz-03-memory.png" | relative_url }})]({{ "/assets/images/2026/11/hv-wiz-03-memory.png" | relative_url }}){:target="_blank"}
+
+[![새 가상 컴퓨터 마법사: 네트워킹 구성]({{ "/assets/images/2026/11/hv-wiz-04-network.png" | relative_url }})]({{ "/assets/images/2026/11/hv-wiz-04-network.png" | relative_url }}){:target="_blank"}
+
+[![새 가상 컴퓨터 마법사: 가상 하드 디스크 연결]({{ "/assets/images/2026/11/hv-wiz-05-disk.png" | relative_url }})]({{ "/assets/images/2026/11/hv-wiz-05-disk.png" | relative_url }}){:target="_blank"}
+
+[![새 가상 컴퓨터 마법사: 설치 옵션]({{ "/assets/images/2026/11/hv-wiz-06-install.png" | relative_url }})]({{ "/assets/images/2026/11/hv-wiz-06-install.png" | relative_url }}){:target="_blank"}
+
+[![새 가상 컴퓨터 마법사: 요약]({{ "/assets/images/2026/11/hv-wiz-07-summary.png" | relative_url }})]({{ "/assets/images/2026/11/hv-wiz-07-summary.png" | relative_url }}){:target="_blank"}
+
+#### 5-2. 만든 직후 설정 확인과 변경
+
+마법사는 vCPU 수를 묻지 않습니다. VM을 만든 뒤 Hyper-V 관리자에서 VM을 선택하고 **설정**을 열어 확인하고 고칩니다(2026-11-02 촬영, 호스트 PC 이름과 폴더 경로는 가렸습니다).
+
+먼저 **펌웨어** 화면입니다. 2세대 VM이라 UEFI 펌웨어를 쓰고, 부팅 순서는 DVD 드라이브(설치 ISO) → 네트워크 어댑터 → 하드 드라이브입니다. 왼쪽 목록에는 보안(보안 부팅 사용), 메모리 4096MB, 프로세서 8개, SCSI 컨트롤러의 VHDX와 DVD, 네트워크 어댑터 `lab-internal`이 한눈에 보입니다. 이 시점의 프로세서는 기본값인 **8개**였습니다.
+
+[![VM 설정 > 펌웨어: 부팅 순서와 하드웨어 목록(GUI)]({{ "/assets/images/2026/11/hv-set-01-firmware.png" | relative_url }})]({{ "/assets/images/2026/11/hv-set-01-firmware.png" | relative_url }}){:target="_blank"}
+
+ad01은 DC 한 대라 vCPU를 **프로세서** 화면에서 2개로 줄였습니다. 왼쪽 목록의 프로세서 항목이 "2개 가상 프로세서"로 바뀐 것이 변경 결과입니다.
+
+[![VM 설정 > 프로세서: 가상 프로세서 수를 2로 지정(GUI)]({{ "/assets/images/2026/11/hv-set-02-processor.png" | relative_url }})]({{ "/assets/images/2026/11/hv-set-02-processor.png" | relative_url }}){:target="_blank"}
+
+#### 5-3. 만든 뒤 확인하는 경로
 
 1. Hyper-V 관리자 → 동작 → **가상 스위치 관리자**에서 스위치 이름·유형을 확인합니다.
 2. VM 선택 → **설정**에서 펌웨어(UEFI), 보안(보안 부팅·TPM), 메모리, 프로세서, SCSI 컨트롤러(디스크 경로), 네트워크 어댑터(연결된 스위치)를 차례로 봅니다. 설정 창 맨 위 드롭다운으로 VM을 바꿔 가며 확인할 수 있습니다.
 3. 체크포인트는 VM 선택 후 하단 **검사점** 패널에서 트리로 확인합니다.
 
-![VM 목록과 체크포인트 트리]({{ "/assets/images/2026/11/hv-02-vmlist-checkpoints.png" | relative_url }})
+[![ad01의 검사점 트리(Hyper-V 관리자 하단 검사점 패널)]({{ "/assets/images/2026/11/hv-02-checkpoints-ad01.png" | relative_url }})]({{ "/assets/images/2026/11/hv-02-checkpoints-ad01.png" | relative_url }}){:target="_blank"}
+
+[![sync01의 검사점 트리]({{ "/assets/images/2026/11/hv-02-checkpoints-sync01.png" | relative_url }})]({{ "/assets/images/2026/11/hv-02-checkpoints-sync01.png" | relative_url }}){:target="_blank"}
 
 ### 6. 막힌 곳
 
@@ -123,17 +147,9 @@ Hyper-V 관리자 → 동작 → 새로 만들기 → **가상 컴퓨터**로 �
 
 ### 7. 정리·남은 일
 
-- cl10에는 가상 TPM이 꺼져 있고(보안 화면의 "신뢰할 수 있는 플랫폼 모듈 사용" 해제), cl11에는 켜져 있습니다. 뒤 글에서 보게 될 `TpmProtected` NO/YES 차이는 이 설정 차이로 설명됩니다(조회). cl10의 TPM을 켜서 다시 비교해 보는 것은 하지 않았습니다.
+- cl10에는 가상 TPM이 꺼져 있고(보안 화면의 "신뢰할 수 있는 플랫폼 모듈 사용" 해제), cl11에는 켜져 있습니다. 뒤 글에서 보게 될 `TpmProtected` NO/YES 차이와 이 설정 차이는 일치합니다. 설정 값은 Hyper-V 관리자에서 읽었고(조회), 설정 차이가 값 차이의 원인이라는 연결은 추정입니다. cl10의 TPM을 켜서 다시 비교해 보는 것은 하지 않았습니다.
 - 다음 글: 도메인 컨트롤러(ad01) 구축.
 
-<details markdown="1">
-<summary>확인 불가 항목 (3건)</summary>
-
-- ad01 외 VM의 동적 메모리 체크박스 상태: 실행 중에는 비활성이라 값으로 읽지 못함. 할당 메모리 변동과 최소/최대 값으로 판단.
-- sync01·cl10·cl11을 만들 때의 마법사 입력값: 당시 캡처 없음.
-- 호스트 PC 사양: 이번 글에서는 조회하지 않음.
-
-</details>
 
 ### 부록. 사용한 명령과 출력
 

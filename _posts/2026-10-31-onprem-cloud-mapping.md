@@ -14,7 +14,7 @@ GPO는 클라우드에서 무엇이 되고, Domain Admins 상시 권한은 어�
 
 - 온프레미스 구성요소와 딱 맞는 클라우드 짝은 드물어 달라지는 점까지 봐야 함
 - 옛 이름이 섞인 자료는 바뀐 이름 표와 함께 찾아 읽으면 됨
-- AzureAD와 MSOnline 모듈이 공지대로 실제 멈췄는지는 확인 불가임
+- AzureAD와 MSOnline 모듈의 실제 중단 여부는 직접 실행해 확인하지 않았고, 공지 일정만 문서로 확인함
 
 12주 학습 로드맵의 부록입니다. 이전 글은 [모니터링과 통합 (12주차)]({{ "/study/azure-monitoring-onboarding/" | relative_url }}), 다음 글은 [용어 전집과 영상, 자료]({{ "/study/cloud-study-glossary/" | relative_url }})이고, 전체는 [전체 로드맵]({{ "/study/cloud-study-roadmap/" | relative_url }})에 있습니다.
 
@@ -46,7 +46,7 @@ GPO는 클라우드에서 무엇이 되고, Domain Admins 상시 권한은 어�
 | 이벤트 로그 수집 서버 | Log Analytics, Sentinel | 로그 수집과 분석이 서비스로 제공됨 |
 | 서버 대수와 장비 구매 | VM, 구독, 종량제 | CapEx에서 OpEx로 |
 
-Entra ID와 AD DS의 차이, 하이브리드 인증 방식, PIM은 IAM 시리즈의 [기초와 구조]({{ "/iam/what-is-entra-id/" | relative_url }}), [접근 제어]({{ "/iam/entra-id-access-control/" | relative_url }}), [하이브리드와 외부 사용자]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}) 글에서 자세히 다룹니다.
+Entra ID와 AD DS의 차이, 하이브리드 인증 방식, PIM은 IAM 시리즈의 [기초와 구조]({{ "/iam/what-is-entra-id/" | relative_url }}), [접근 제어]({{ "/iam/entra-id-access-control/" | relative_url }}), [하이브리드와 라이선스]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}) 글에서 자세히 다룹니다.
 
 ### 2. 옛 이름 ↔ 새 이름
 
@@ -77,7 +77,7 @@ Entra ID와 AD DS의 차이, 하이브리드 인증 방식, PIM은 IAM 시리즈
 
 - AzureAD, MSOnline PowerShell 모듈은 이름만 바뀐 것이 아니라 지원이 끝난(deprecated) 모듈이라, 새 스크립트는 위 표의 대체 모듈로 씁니다.
     - MSOnline: 2025년 4월 초~5월 말 은퇴(작동 중지) 일정으로 공지됐습니다.
-    - AzureAD: 2025년 3월 30일 이후 지원 종료, 은퇴는 2025년 7월 초로 공지됐습니다. 두 모듈이 공지대로 실제로 멈췄는지는 확인 불가입니다(Microsoft Learn의 Entra 새 소식 기록을 검색했지만 공지 일정만 있고 완료 기록은 찾지 못했습니다).
+    - AzureAD: 2025년 3월 30일 이후 지원 종료, 은퇴는 2025년 7월 초로 공지됐습니다. 두 모듈이 공지대로 실제로 멈췄는지는 이 글에서 직접 실행해 보지 않았고, Microsoft Learn의 Entra 새 소식에서 공지 일정만 확인했습니다.
     - Microsoft Entra PowerShell은 AzureAD, AzureAD Preview 모듈과 98% 이상 호환되는 cmdlet을 제공합니다.
 
 ### 3. 근거 자료

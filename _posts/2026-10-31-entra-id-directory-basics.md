@@ -81,21 +81,10 @@ Administrative unit은 위임용 OU와 비슷하지만 정책 상속이 없습�
 Connect-MgGraph -Scopes "User.Read.All","Group.Read.All","Domain.Read.All"
 Get-MgOrganization | Select-Object DisplayName, Id
 Get-MgDomain | Select-Object Id, IsDefault, IsVerified
-Get-MgUser -Top 5 | Select-Object DisplayName, UserPrincipalName, OnPremisesSyncEnabled
+Get-MgUser -Top 5 -Property DisplayName,UserPrincipalName,OnPremisesSyncEnabled | Select-Object DisplayName, UserPrincipalName, OnPremisesSyncEnabled
 ```
 
 사용자와 그룹을 실제 테넌트에서 만들고 확인한 기록은 [Entra 사용자·그룹 실습]({{ "/m365/d2-identity-groups/" | relative_url }})에 있습니다.
-
-<details markdown="1">
-<summary>화면으로 경로 따라가기: 사용자 목록 (그림 1장)</summary>
-
-![Entra 관리 센터의 모든 사용자 목록]({{ "/assets/images/2026/11/guide-entra-users.png" | relative_url }})
-
-*그림 1. Entra 관리 센터 > Entra ID > 사용자 > 모든 사용자. 표시 이름, 사용자 계정 이름, 사용자 유형(구성원, 게스트) 열이 있고, 필터 추가로 사용자 유형을 걸러 게스트만 볼 수 있습니다. 이 샌드박스는 전원 구성원입니다. 사용자 계정 이름은 가렸습니다.*
-
-화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, IP는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
-
-</details>
 
 ### 5. 전문가처럼 말하기
 
@@ -121,7 +110,7 @@ Get-MgUser -Top 5 | Select-Object DisplayName, UserPrincipalName, OnPremisesSync
 
 ### 7. 영상 (한글 우선)
 
-- 한글: 확인 불가(시도: 유튜브 검색, 사유: Entra ID 기초를 다룬 한글 영상을 찾지 못함). 대신 [Microsoft Entra 학습 경로(한국어)](https://adoption.microsoft.com/ko-kr/microsoft-security/entra/)와 Microsoft Learn(한국어)의 Entra 학습 경로를 먼저 읽으세요.
+- 한글: 확인 불가(시도: 유튜브 검색, 사유: Entra ID 기초를 다룬 한글 영상을 찾지 못함). 대신 [Microsoft Entra 도입(Adoption) 허브(한국어)](https://adoption.microsoft.com/ko-kr/microsoft-security/entra/)와 Microsoft Learn의 [Manage identity and access in Microsoft Entra ID 학습 경로](https://learn.microsoft.com/training/paths/manage-identity-and-access/)를 먼저 읽으세요.
 - 영문 보완: [Understand Microsoft Entra ID (AZ-104 공식 시리즈 2편)](https://www.youtube.com/watch?v=iQfhi0712bM) (Microsoft Learn, 42분). 테넌트, 사용자, 그룹, 라이선스, Free·P1·P2 차이를 다룹니다.
 
 ### 8. 근거 자료

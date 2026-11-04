@@ -50,7 +50,7 @@ Teams·SharePoint에 파일을 올리려는데 브라우저의 파일 선택 대
 #### 올려 본 결과
 
 ![채널별 시험 파일 업로드 결과 출력]({{ "/assets/images/2026/10/m13-1-upload-result.png" | relative_url }})
-*그림 1. Cloud Shell에서 채널마다 시험 파일을 올린 결과. 표준 채널과 General은 `UPLOAD OK`, 비공개·공유 채널은 `403 (Forbidden) accessDenied`. 계정이 보이던 프롬프트 부분은 가렸습니다.*
+*그림 1. 같은 방식으로 다시 올린 결과(파일명 zz-test.txt). 첫 시험(D3-test-<채널명>.txt)의 출력 화면은 남아 있지 않습니다. Cloud Shell에서 채널마다 시험 파일을 올린 결과. 표준 채널과 General은 `UPLOAD OK`, 비공개·공유 채널은 `403 (Forbidden) accessDenied`. 계정이 보이던 프롬프트 부분은 가렸습니다.*
 
 ![채널별 SharePoint 문서 화면]({{ "/assets/images/2026/10/d3-sharepoint-files.png" | relative_url }})
 *그림 2. 같은 시험 뒤 SharePoint 문서 화면. 위: 팀 사이트의 ch-standard 폴더, 가운데: 별도 사이트(ch-private), 아래: 별도 사이트(ch-shared). 사용자 이름은 가렸습니다.*
@@ -75,7 +75,7 @@ foreach ($c in $ch) {
 }
 ```
 
-*이 스크립트는 채널마다 파일 폴더의 driveId·itemId를 읽은 뒤 `PUT .../content`로 시험 파일을 올리고, 실패하면 HTTP 코드와 오류 코드만 출력합니다. 처음 시험 때 입력한 명령 원문은 복구하지 못해, 같은 방식으로 정리한 형태입니다.*
+*이 스크립트는 채널마다 파일 폴더의 driveId·itemId를 읽은 뒤 `PUT .../content`로 시험 파일을 올리고, 실패하면 HTTP 코드와 오류 코드만 출력합니다. 처음 시험 때 입력한 명령 원문은 복구하지 못해, 같은 방식으로 정리한 형태입니다(파일명은 재실행판의 zz-test.txt).*
 
 </details>
 
@@ -83,7 +83,7 @@ foreach ($c in $ch) {
 
 `선택창 불가 → Graph PUT 대체 → 비공개·공유 403, 파일은 셋 다 있음`
 
-이 방식 때문에 403이 났을 수도 있습니다.
+비공개·공유 채널의 403은 토큰 범위와 관련이 있습니다([비공개·공유 채널 파일 403]({{ "/m365/troubleshooting/channel-upload-403-membership-or-scope/" | relative_url }}) 참고). 직접 업로드와의 차이는 확인 불가입니다.
 
 <details markdown="1">
 <summary>확인 불가 항목 펼쳐 보기 (1건)</summary>

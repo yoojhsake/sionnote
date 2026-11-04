@@ -74,7 +74,7 @@ Azure Backup은 Recovery Services vault에 보관하고, ASR은 다른 Region으
 | Availability zone | 다른 서버실 |
 | Azure Files와 File Sync | 파일 서버와 DFS 복제 |
 | Update Manager | WSUS와 MECM 패치 |
-| Azure Arc | "에이전트 하나로 모든 서버를 한 콘솔에서 관리"하는 접근 |
+| Azure Arc | 직접 대응 없음(온프레미스 서버에 에이전트를 깔아 Azure 관리 대상으로 연결하는 방식) |
 
 ### 4. 실습 (GUI 우선, 비용이 생기지 않는 범위)
 
@@ -82,21 +82,6 @@ Azure Backup은 Recovery Services vault에 보관하고, ASR은 다른 Region으
 2. 스토리지 계정 > 만들기에서 Redundancy 옵션과 설명을 읽고 만들지 않습니다.
 3. 기존 VM이나 스토리지가 있으면 개요, 디스크, 네트워킹 탭만 읽습니다.
 4. Azure Arc와 Update Manager는 Microsoft Learn(한국어) 문서로 구조만 정리합니다.
-
-<details markdown="1">
-<summary>화면으로 경로 따라가기: 가상 머신 목록과 스토리지 중복도 (그림 2장)</summary>
-
-![Azure 포털의 가상 머신 목록. 표시할 가상 머신 없음]({{ "/assets/images/2026/11/guide-azure-vm.png" | relative_url }})
-
-*그림 1. Azure 포털 > 가상 머신. 구독 범위의 VM 목록이고, 위쪽 만들기로 새 VM을 만듭니다. 이 샌드박스는 VM이 없어 "표시할 가상 머신 없음"입니다. 이번에는 만들지 않았습니다. 구독 이름은 가렸습니다.*
-
-![스토리지 계정 만들기의 중복도 드롭다운. LRS, GRS, ZRS, GZRS 설명]({{ "/assets/images/2026/11/guide-azure-storage-redundancy.png" | relative_url }})
-
-*그림 2. Azure 포털 > 스토리지 계정 > 만들기 > 기본 탭의 중복도(Redundancy) 드롭다운. LRS(로컬), GRS(지역), ZRS(영역), GZRS(지역 영역)와 권장 시나리오가 나옵니다. 기본 선택은 GRS입니다. 목록만 열었고 만들기는 누르지 않았습니다.*
-
-화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, IP는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
-
-</details>
 
 ### 5. 전문가처럼 말하기
 

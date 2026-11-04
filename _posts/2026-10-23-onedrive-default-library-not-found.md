@@ -12,7 +12,7 @@ excerpt: "오전엔 '기본 문서 라이브러리를 찾을 수 없음'과 403,
 
 ## 요약
 
-- OneDrive는 실제로 있었고 Graph 403은 토큰의 Files 범위 부족으로 보임
+- OneDrive는 오후에 열려 존재가 확인됐고, 오전 Graph 403은 토큰의 Files 범위 부족일 수 있음(추정)
 - 403은 권한 없음과 대상 없음을 나누고, 시간을 두고 다시 열어 확인하면 됨
 - 오전 오류가 사라진 이유는 확인 불가
 
@@ -29,10 +29,10 @@ excerpt: "오전엔 '기본 문서 라이브러리를 찾을 수 없음'과 403,
 ### 2. 원인 및 분석
 
 - 오전 오류 / 오후 정상(Recordings 등 폴더 3개, 모두 0개)
-- OneDrive가 있으니 403은 "대상 없음"이 아니라 토큰의 Files 범위 부족으로 보입니다. 같은 원인의 채널 사이트 파일은 Files.Read.All, Sites.Read.All 동의 후 200이었습니다([비공개·공유 채널 파일 403]({{ "/m365/troubleshooting/channel-upload-403-membership-or-scope/" | relative_url }})).
+- 오후에 OneDrive가 열렸으니 403은 "대상 없음"이 아니라 토큰의 Files 범위 부족으로 보입니다. 같은 원인의 채널 사이트 파일은 Files.Read.All, Sites.Read.All 동의 후 200이었습니다([비공개·공유 채널 파일 403]({{ "/m365/troubleshooting/channel-upload-403-membership-or-scope/" | relative_url }})).
 
 <details markdown="1">
-<summary>확인 과정 자세히 보기 (그림 1장)</summary>
+<summary>확인 과정 자세히 보기 (그림 2장)</summary>
 
 #### 살펴본 순서
 
@@ -47,14 +47,18 @@ excerpt: "오전엔 '기본 문서 라이브러리를 찾을 수 없음'과 403,
 ![OneDrive My files 화면. Meetings, Microsoft Copilot Chat Files, Recordings 폴더, 모두 0 items]({{ "/assets/images/2026/10/m03-4-onedrive.png" | relative_url }})
 *그림 1. 관리자 OneDrive의 My files(GUI 경로: Microsoft 365 앱 시작 관리자 → OneDrive → My files). Meetings, Microsoft Copilot Chat Files, Recordings 폴더 3개가 모두 0 items입니다. 계정 이름 부분은 가렸습니다.*
 
-문서가 설명하는 "개인 회의 녹화는 진행자의 OneDrive에 저장"되는 대상 폴더(Recordings)는 있는 상태입니다.
+문서가 설명하는 회의 녹화 저장 위치(주최자의 OneDrive Recordings 폴더)에 해당하는 폴더(Recordings)는 있는 상태입니다.
+
+#### 동의된 토큰으로 `/me/drive` 다시 조회
+
+오전 403이 토큰의 Files 범위 부족이라는 추정을 확인하려고, 2026-11-04에 Graph 탐색기(같은 계정, 이전에 Files·Sites 동의를 해 둔 토큰)로 `GET /v1.0/me/drive?$select=driveType,name`을 조회했습니다. 200 OK이고 `name`은 OneDrive, `driveType`은 business였습니다. 같은 호출이 Cloud Shell 토큰에서는 403이었던 것과 비교하면 "범위가 없는 토큰이라 403"이라는 추정과 맞습니다. 다만 이것은 현재(오후 이후) 상태의 결과라서 오전에 OneDrive가 없었는지 여부까지 가리지는 못합니다.
+
+![Graph 탐색기에서 /me/drive가 200 OK로 name OneDrive, driveType business를 돌려준 화면]({{ "/assets/images/2026/10/m13-7-me-drive-200-1104.png" | relative_url }})
+
+*그림 2. 2026-11-04 Graph 탐색기의 `/me/drive` 조회 결과(200 OK).*
 
 #### 확인 불가로 남은 것
 
-- **동의 후 `/me/drive`가 200으로 열리는지**
-    - 시도: 동의 전 조회(403).
-    - 사유: 동의 후에 `/me/drive`를 다시 조회하지 않음.
-    - 다음 방법: 읽기 범위를 동의한 토큰으로 `GET /me/drive`를 다시 실행.
 - **오전의 "기본 문서 라이브러리를 찾을 수 없음" 오류가 사라진 이유**
     - 시도: 시간을 두고 같은 화면을 다시 열기(오후에 정상).
     - 사유: 다시 열었을 때 이미 정상이어서 오류 상태를 더 확인할 수 없음. 프로비저닝 지연으로 추정할 뿐입니다.
@@ -68,11 +72,11 @@ excerpt: "오전엔 '기본 문서 라이브러리를 찾을 수 없음'과 403,
 
 ### 3. 결론
 
-토큰에 Files 범위 없음(추정) → `/me/drive` 403 → OneDrive는 실제로 있음
+토큰에 Files 범위 없음(추정) → `/me/drive` 403 → OneDrive는 오후에 열림
 
-처음 추정("OneDrive가 없어서")은 틀렸습니다. 조회만 해서 원복할 것은 없습니다.
+처음 추정("OneDrive가 없어서")은 오후에 열려 근거가 약해졌지만, 오전에 없었는지는 확인 불가입니다. 조회만 해서 원복할 것은 없습니다.
 
-확인 불가: 동의 후 `/me/drive` 결과, 오전 오류가 사라진 이유(프로비저닝 지연 추정), 녹화·채팅 파일의 실제 저장(시도·사유는 확인 과정에).
+동의된 토큰의 `/me/drive`는 11-04에 200으로 확인했습니다(그림 2). 확인 불가: 오전 오류가 사라진 이유(프로비저닝 지연 추정), 녹화·채팅 파일의 실제 저장(시도·사유는 확인 과정에).
 
 ### 4. 권고방안
 
@@ -84,7 +88,7 @@ excerpt: "오전엔 '기본 문서 라이브러리를 찾을 수 없음'과 403,
 ### 근거 자료
 
 <details markdown="1">
-<summary>근거 자료 펼쳐 보기 (5건)</summary>
+<summary>근거 자료 펼쳐 보기 (6건)</summary>
 
 - **조회**: 관리자 OneDrive가 열림. My files에 Meetings, Microsoft Copilot Chat Files, Recordings 폴더(모두 0개)
     - 출처: OneDrive 웹
@@ -94,7 +98,10 @@ excerpt: "오전엔 '기본 문서 라이브러리를 찾을 수 없음'과 403,
     - 출처: [Teams meeting recording and transcript storage and permissions](https://learn.microsoft.com/microsoftteams/tmr-meeting-recording-change#recording-storage)
 - **문서**: 1:1·회의 채팅과 녹화의 저장 위치
     - 출처: [Finding content in Microsoft Teams in eDiscovery](https://learn.microsoft.com/purview/edisc-search-teams#where-teams-content-is-stored)
-- **확인 불가**: 동의 후 `/me/drive` 결과 / 오류가 사라진 이유(프로비저닝 지연으로 추정) / 녹화·채팅 파일의 실제 저장
+    - 참고: 이 eDiscovery 문서는 "녹화한 사용자" 기준으로 표현하며, 저장 위치는 녹화 문서(주최자) 기준으로 봅니다.
+- **조회**: 동의된 토큰(Graph 탐색기)으로 `/me/drive` 200 OK, name OneDrive, driveType business (2026-11-04)
+    - 출처: Graph 탐색기, 그림 2
+- **확인 불가**: 오류가 사라진 이유(프로비저닝 지연으로 추정) / 녹화·채팅 파일의 실제 저장
     - 시도, 사유, 다음 방법은 2절 확인 과정 '확인 불가로 남은 것'
 
 </details>

@@ -16,7 +16,7 @@ excerpt: "퇴사자 계정을 막았는데 메일이 계속 열린다면 남은 
 - 퇴사 절차에 세션 해지를 넣고 하이브리드는 사내 AD부터 막아야 함
 - 자체 세션을 쓰는 SaaS 앱은 그 앱 관리 화면에서 따로 끊어야 할 수 있음
 
-> Microsoft Learn 문서(2026-11-01 확인) 기준입니다. 1~2번 화면(계정 사용 안 함, 세션 취소)은 샌드박스 테넌트에서 직접 캡처했고, 나머지는 문서 기준이며 재현하지 않았습니다. 함께 볼 글: [Entra ID 핵심 개념: 인증 편]({{ "/iam/entra-id-authentication/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
+> Microsoft Learn 문서(2026-11-01 확인) 기준입니다. 그림 2~6의 화면(계정 사용 안 함, 세션 취소)은 샌드박스 테넌트에서 직접 캡처했고, 나머지는 문서 기준이며 재현하지 않았습니다. 함께 볼 글: [Entra ID 핵심 개념: 인증 편]({{ "/iam/entra-id-authentication/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
 
 ---
 
@@ -24,7 +24,9 @@ excerpt: "퇴사자 계정을 막았는데 메일이 계속 열린다면 남은 
 
 ### 1. 증상
 
-- 인사팀 요청으로 퇴사자 계정을 오전 10시에 **사용 안 함**으로 바꿨습니다.
+※ 아래 증상은 문서 내용을 바탕으로 가정한 예시이며 실제 테넌트에서 재현한 것이 아닙니다.
+
+- 인사팀 요청으로 퇴사자 계정을 예: 오전 10시에 **사용 안 함**으로 바꿨습니다.
 - 그 뒤에도 개인 휴대폰 메일 앱, 열려 있던 SaaS 앱 탭에서 한동안 접근 기록이 남습니다.
 
 ### 2. 원인 및 분석
@@ -41,23 +43,23 @@ excerpt: "퇴사자 계정을 막았는데 메일이 계속 열린다면 남은 
 
 <picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/11/ts-disabled-user-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/11/ts-disabled-user.png" | relative_url }}" alt="계정을 막은 뒤에도 로그인이 남는 이유 4가지와 즉시 끊는 4단계" loading="lazy"></picture>
 
-*그림 1. 남는 이유와 즉시 끊는 순서*
+*그림 1. 남는 이유와 즉시 끊는 순서. 표의 액세스 토큰 계열(1~3행)을 그림에서는 '액세스 토큰'과 'CAE'로 묶어 4가지로 정리했습니다.*
 
 ### 3. 결론
 
 `사용 안 함만 실행 → 남은 토큰·앱 세션(·동기화 대기) → 개인 휴대폰 메일, 열린 탭에서 접근 지속`
 
-세 단계(사용 안 함, 세션 해지, 기기 사용 안 함)를 한 번에 실행해야 끊깁니다.
+앞의 세 단계(사용 안 함, 세션 해지, 기기 사용 안 함)를 한 번에 실행해야 끊기고, 4번 인증 방법 정리는 재입사·계정 재사용 사고를 막는 후속 정리입니다.
 
 ### 4. 권고방안
 
 1. 조치(GUI, Entra 관리 센터):
-    1. **사용 안 함**: Entra ID > Users > All users > 해당 사용자 > Account status 옆 Edit > Properties에서 Account enabled(계정 사용) 해제 > Save
-    2. **세션 해지**: 사용자 개요 위쪽 Revoke sessions(세션 해지). 모든 리프레시 토큰이 무효화되어 다시 로그인해야 함
+    1. **사용 안 함**: Entra ID > Users > All users > 해당 사용자 > Account status 옆 Edit(편집) > Properties(속성 편집)의 설정 탭에서 Account enabled(화면 표기 '사용하는 계정') 해제 > Save(저장). 클라우드 전용 사용자 기준이며, 동기화된 하이브리드 사용자는 이 단계를 사내 AD에서 합니다
+    2. **세션 해지**: 사용자 개요 위쪽 Revoke sessions(화면 표기 '세션 취소', 이 글의 '세션 해지'와 같음). 모든 리프레시 토큰이 무효화되어 다시 로그인해야 함
     3. **기기 사용 안 함**: Entra ID > Devices > All devices에서 해당 사용자의 기기를 **Disable**(문서는 PowerShell로 안내하므로 아래 스크립트도 제시)
     4. **인증 방법 정리**: 사용자 > Authentication methods에서 등록된 방법 제거(재입사·계정 재사용 사고 방지)
     5. 필요하면 라이선스 회수, 메일 전달·사서함 보존은 회사 규정대로
-2. 하이브리드: 사내 AD에서 먼저 **사용 안 함** + 암호 두 번 재설정(pass-the-hash 위험 완화, 침해되지 않았다고 확신하면 한 번도 가능) 후, 동기화를 기다리지 말고 Entra에서도 1~4번을 실행하고 필요하면 델타 동기화를 돌립니다.
+2. 하이브리드: 사내 AD에서 먼저 **사용 안 함** + 암호 두 번 재설정(pass-the-hash 위험 완화, 침해되지 않았다고 확신하면 한 번도 가능) 후, 동기화를 기다리지 말고 Entra에서는 2~4번(세션 해지, 기기 사용 안 함, 인증 방법 정리)을 실행하고(문서 기준이며, 동기화 사용자의 계정 사용 여부는 AD 기준이라 Entra에서 직접 바꾸기 어렵다는 점이 문서에 있습니다. 2~4번이 동기화 사용자에게 실제로 적용되는지는 이 글에서 시험하지 않았습니다) 필요하면 델타 동기화를 돌립니다.
 3. 조치 후 확인: 로그인 로그에서 새 로그인 시도가 **50057(UserDisabled)** 등으로 실패하고, 사용자 속성의 SignInSessionsValidFromDateTime이 세션 해지 시각으로 바뀌면 됩니다.
 4. 절차화: 퇴사 체크리스트에 **세션 해지**를 넣고, ID Governance가 있으면 Lifecycle Workflows로 자동화합니다.
 5. 자체 세션을 쓰는 SaaS 앱은 그 앱의 관리 화면에서 세션을 따로 끊습니다.
@@ -83,7 +85,7 @@ excerpt: "퇴사자 계정을 막았는데 메일이 계속 열린다면 남은 
 
 ![로그인 세션을 취소했다는 완료 알림]({{ "/assets/images/2026/11/ts-disabled-user-5-toast.png" | relative_url }})
 
-*그림 6. "로그인 세션을 취소했습니다." 알림. 시험이 끝난 뒤 계정 사용을 다시 켜 원래대로 돌려놓았습니다.*
+*그림 6. "로그인 세션을 취소했습니다." 알림. 시험이 끝난 뒤 계정 사용을 다시 켜 원래대로 돌려놓았습니다(복구 화면은 캡처하지 않았습니다).*
 
 </details>
 
@@ -101,6 +103,7 @@ Connect-MgGraph -Scopes "User.ReadWrite.All","Directory.AccessAsUser.All"
 $upn  = "leaver@contoso.com"   # 퇴사자 UPN
 $User = Get-MgUser -Filter "userPrincipalName eq '$upn'"
 
+# 클라우드 전용 사용자만. 동기화 사용자는 AD에서 사용 안 함
 # 1) 계정 사용 안 함
 Update-MgUser -UserId $User.Id -AccountEnabled:$false
 

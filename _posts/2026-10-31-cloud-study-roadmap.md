@@ -5,16 +5,16 @@ categories: [study]
 phase: 학습 로드맵
 seq: 1
 tags: [Study, Azure, Microsoft 365, Entra ID, 학습 로드맵]
-excerpt: "AD는 익숙한데 클라우드는 낯설다면, 하루 30분 12주로 Entra ID·M365·Azure 구조를 전문 용어로 설명하게 됩니다"
+excerpt: "AD는 익숙한데 클라우드는 낯설다면, 30분씩 12주로 Entra ID·M365·Azure 구조를 전문 용어로 설명하게 됩니다"
 ---
 
-온프레미스 AD·PKI 경험을 발판으로 하루 30분씩 12주를 따라가면, Microsoft Entra ID, Microsoft 365, Azure의 구조를 이해하고 전문 용어로 설명할 수 있게 됩니다. 시험 합격보다 "왜 이렇게 생겼는지" 말할 수 있는 것이 목표입니다.
+온프레미스 AD·PKI 경험을 발판으로 30분씩 12주를 따라가면, Microsoft Entra ID, Microsoft 365, Azure의 구조를 이해하고 전문 용어로 설명할 수 있게 됩니다. 시험 합격보다 "왜 이렇게 생겼는지" 말할 수 있는 것이 목표입니다.
 
 ## 요약
 
 - Entra ID 테넌트가 신원의 경계이고 M365와 Azure는 그 위에 올라탐
 - 글 16편을 순서대로 읽고 매주 자가 점검으로 진도를 체크함
-- 샌드박스 실습에서도 삭제와 비용이 생기는 작업은 하지 않음
+- 샌드박스 실습에서 비용이 생기는 작업은 강의와 문서로 대체함
 
 > 원문: 직접 만든 "Azure·M365 클라우드 입문 학습서" v1.0(2026-10-31)을 블로그 글로 옮긴 것입니다. 이 글은 12주 학습 로드맵의 시작 글이고, 다음 글은 [기초 개념과 핵심 용어 (0주차)]({{ "/study/cloud-basics-key-terms/" | relative_url }})입니다.
 
@@ -55,19 +55,19 @@ excerpt: "AD는 익숙한데 클라우드는 낯설다면, 하루 30분 12주로
 - [온프레미스 ↔ 클라우드 대응표, 옛 이름 ↔ 새 이름]({{ "/study/onprem-cloud-mapping/" | relative_url }})
 - [용어 전집과 영상·자료]({{ "/study/cloud-study-glossary/" | relative_url }})
 
-Entra ID를 더 깊게 보려면 [IAM 시리즈: Microsoft Entra ID 핵심 개념]({{ "/iam/what-is-entra-id/" | relative_url }})을 함께 보세요. 신원 용어는 [IAM 용어집]({{ "/study/cloud-study-glossary/" | relative_url }})에도 정리돼 있습니다.
+Entra ID를 더 깊게 보려면 [IAM 시리즈: Microsoft Entra ID 핵심 개념]({{ "/iam/what-is-entra-id/" | relative_url }})을 함께 보세요. 신원 용어는 [IAM 용어집]({{ "/iam/entra-id-glossary/" | relative_url }})에도 정리돼 있습니다.
 
 ### 2. 큰 그림
 
-<picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/10/study-big-picture-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/10/study-big-picture.png" | relative_url }}" alt="구조도: Tenant가 신원의 경계이고 M365와 Azure가 그 위에 올라탄다" loading="lazy"></picture>
+<picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/10/study-big-picture-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/10/study-big-picture.png" | relative_url }}" alt="구조도: Tenant(Entra ID 디렉터리)가 중앙에 있고, 왼쪽 온프레미스 AD DS는 Entra Connect Sync 또는 Cloud Sync로 연결되고, 오른쪽에 M365(SaaS)와 Azure(IaaS·PaaS)가 올라탄 구조" loading="lazy"></picture>
 
 *그림 1. 구조도: Tenant가 신원의 경계이고 M365와 Azure가 그 위에 올라탄다*
 
-Tenant(Microsoft Entra ID 디렉터리)에는 사용자, 그룹, 디바이스, 앱 같은 객체와 MFA, Conditional Access 같은 보호 기능이 있습니다. Microsoft 365는 SaaS로, 구독(license)을 사서 테넌트의 사용자에게 service plan 단위로 할당합니다. Azure는 IaaS·PaaS로, Subscription이 하나의 Tenant를 신뢰(trust)하고 그 아래에 Resource group과 Resource를 만듭니다. 온프레미스 AD DS를 Entra Connect Sync 또는 Cloud Sync로 Tenant와 동기화하는 것이 hybrid identity입니다.
+Tenant(Microsoft Entra ID 디렉터리)에는 사용자, 그룹, 디바이스, 앱 같은 객체와 MFA, Conditional Access 같은 보호 기능이 있습니다. Microsoft 365는 SaaS로, 구독(subscription)으로 구매한 라이선스(license, SKU)를 테넌트의 사용자에게 할당하면 그 안의 service plan별로 서비스가 켜집니다. Azure는 IaaS·PaaS로, Subscription이 하나의 Tenant를 신뢰(trust)하고 그 아래에 Resource group과 Resource를 만듭니다. 온프레미스 AD DS를 Entra Connect Sync 또는 Cloud Sync로 Tenant와 동기화하는 것이 hybrid identity입니다.
 
 ### 3. 12주 로드맵
 
-<picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/10/study-roadmap-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/10/study-roadmap.png" | relative_url }}" alt="12주 로드맵" loading="lazy"></picture>
+<picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/10/study-roadmap-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/10/study-roadmap.png" | relative_url }}" alt="0~12주를 4단계(준비, 구조와 신원, M365, Azure)로 나눈 로드맵" loading="lazy"></picture>
 
 *그림 2. 12주 로드맵*
 
@@ -110,14 +110,14 @@ Tenant(Microsoft Entra ID 디렉터리)에는 사용자, 그룹, 디바이스, �
 
 용어는 쉬운 말로 풀지 않고 영어 원어와 약어를 그대로 익히며, 한글 풀이는 이해용 보조입니다.
 
-#### 하루 30분 루틴
+#### 30분 루틴
 
 - 10분 읽기: 이번 주 용어와 개념 설명 읽기
 - 15분 보기 또는 실습: 영상 한 편, 포털 화면 열어 보기, 캡처 남기기
 - 5분 한 줄 정리: 온프레미스 말로 번역해 적기
     - 예: "Entra ID의 Group은 AD의 Security Group에 해당하지만 OU 계층은 없다"
 
-주 3일은 평일 30분, 주말에 1시간 복습합니다. 빠진 날은 따라잡지 않고 다음 날 이어서 합니다.
+한 번에 30분 루틴으로 하며, 일정은 각자 상황에 맞게 조정합니다(권장: 주 3일 평일 30분 + 주말 1시간 복습). 빠진 날은 따라잡지 않고 다음 날 이어서 합니다.
 
 - 15분 넘게 막히면 모르는 용어를 [용어 전집]({{ "/study/cloud-study-glossary/" | relative_url }})에 표시하고 넘어갑니다. 같은 용어를 다시 만나면 풀립니다.
 

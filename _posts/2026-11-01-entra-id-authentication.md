@@ -8,15 +8,21 @@ excerpt: "SMS·음성 MFA는 2027-02-01부터 종료(전역 관리자·외부 �
 
 Microsoft 제공 SMS·음성 MFA는 2027-02-01부터 종료되고(전역 관리자·외부 사용자는 2027-07-01), 2026-09-01부터는 패스키가 기본값이 됐습니다. 지금 쓰는 MFA 방식이 얼마나 강한지, 무엇으로 어떻게 켜야 하는지 이 글로 판단할 수 있습니다.
 
+**이 글에서 배우는 것** (약 25분)
+
+- MFA 요소와 인증 방식별 강도, 패스키가 피싱을 막는 이유
+- SMS·음성 종료와 필수 MFA 일정, 보안 기본값과 조건부 액세스의 차이
+- SSPR과 SSO의 동작, 계정을 막아도 접근이 남는 이유
+
 ## 요약
 
 - SMS·음성은 피싱에 약하고 곧 종료되므로 패스키로 옮겨야 함
 - P1이 없으면 보안 기본값, 있으면 조건부 액세스로 MFA를 켬
 - Azure 생성·변경 작업은 필수 MFA 대상이라 사람 계정 자동화가 실패할 수 있음
 
-> Entra ID 핵심 개념 시리즈: [기초]({{ "/iam/what-is-entra-id/" | relative_url }}) · [오류 코드]({{ "/iam/entra-id-error-codes/" | relative_url }}) · **인증**(지금 글) · [접근 제어]({{ "/iam/entra-id-access-control/" | relative_url }}) · [하이브리드·외부 사용자]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}) · [라이선스·운영]({{ "/iam/entra-id-licensing-operations/" | relative_url }}) · [용어집]({{ "/study/cloud-study-glossary/" | relative_url }})
+> Entra ID 핵심 개념 시리즈: [기초]({{ "/iam/what-is-entra-id/" | relative_url }}) · [오류 코드]({{ "/iam/entra-id-error-codes/" | relative_url }}) · **인증**(지금 글) · [접근 제어]({{ "/iam/entra-id-access-control/" | relative_url }}) · [하이브리드·운영]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}) · [용어집]({{ "/iam/entra-id-glossary/" | relative_url }})
 
-> 근거: Microsoft Learn 공식 문서(2026-11-01 확인). 날짜나 라이선스처럼 바뀔 수 있는 내용은 문서로 다시 확인했습니다. 낯선 용어는 [용어집]({{ "/study/cloud-study-glossary/" | relative_url }})을 함께 보세요.
+근거: Microsoft Learn 공식 문서(2026-11-01 확인). 날짜나 라이선스처럼 바뀔 수 있는 내용은 문서로 다시 확인했습니다. 낯선 용어는 [용어집]({{ "/iam/entra-id-glossary/" | relative_url }})을 함께 보세요.
 
 ---
 
@@ -24,7 +30,7 @@ Microsoft 제공 SMS·음성 MFA는 2027-02-01부터 종료되고(전역 관리�
 
 ### 1. 다단계 인증(MFA)과 패스키
 
-MFA(Multi-Factor Authentication)는 서로 다른 종류의 인증 요소를 2개 이상 조합하는 방식입니다.
+MFA(Multi-Factor Authentication)는 서로 **다른 종류**의 인증 요소를 2개 이상 조합하는 방식입니다.
 
 <picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/11/entra-mfa-factors-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/11/entra-mfa-factors.png" | relative_url }}" alt="MFA 세 가지 요소와 인증 방식의 강도" loading="lazy"></picture>
 
@@ -40,95 +46,101 @@ SMS 코드나 Authenticator 푸시는 가짜 로그인 페이지가 코드와 �
 - Windows Hello for Business, macOS용 Platform Credential
 - 인증서 기반 인증(CBA, 스마트카드)
 
-패스키는 등록한 사이트(도메인)에만 응답하므로 철자 하나를 바꾼 가짜 도메인에서는 동작하지 않습니다. 기기 바인딩 패스키는 개인 키가 그 기기(보안 키, 휴대폰의 Authenticator) 밖으로 나가지 않고, 동기화된 패스키는 iCloud 키체인, Google 암호 관리자 같은 자격 증명 관리자를 통해 여러 기기로 동기화됩니다.
+패스키는 **등록한 사이트(도메인)에만 응답**하므로 철자 하나를 바꾼 가짜 도메인에서는 동작하지 않습니다. 종류는 두 가지입니다.
+
+- 기기 바인딩 패스키: 개인 키가 그 기기(보안 키, 휴대폰의 Authenticator) 밖으로 나가지 않습니다.
+- 동기화된 패스키: iCloud 키체인, Google 암호 관리자 같은 자격 증명 관리자를 통해 사용자의 여러 기기로 동기화됩니다.
 
 #### SMS·음성 MFA 종료와 패스키 기본값
 
-SMS·음성만 등록된 사용자는 종료 이후 로그인할 때 패스키를 등록해야 계속 쓸 수 있습니다. SSPR(2장)의 SMS·음성에도 같은 기준이 적용됩니다.
+- **2026-09-01**: SMS·음성이 켜져 있는 사용자에게 패스키가 자동 활성화되고, MFA 로그인 때 패스키 등록 안내가 나옴
+- **2027-02-01 (예정)**: Microsoft가 제공하는 SMS·음성 인증 종료(전역 관리자와 외부 사용자 제외, 내부 게스트는 포함). SMS·음성만 등록된 사용자는 로그인할 때 패스키를 등록해야 계속 쓸 수 있음
+- **2027-07-01 (예정)**: 전역 관리자와 외부 사용자의 Microsoft 제공 SMS·음성 종료
 
-<details markdown="1">
-<summary>종료 일정과 전화 사업자 예외</summary>
+규정상 SMS·음성이 꼭 필요하면 Microsoft Security Store의 전화 사업자(telephony provider)를 따로 계약해서 계속 쓸 수 있습니다(별도 비용, 2026-10-30부터 구성 가능. 현재 프라이빗 프리뷰이며 초기 사업자는 Soprano·Telesign). SSPR(아래 2장)의 SMS·음성에도 같은 기준이 적용됩니다.
 
-- 2026-09-01: SMS·음성이 켜져 있는 사용자에게 패스키가 자동 활성화되고, MFA 로그인 때 패스키 등록 안내가 나옴
-- 2027-02-01 (예정): Microsoft가 제공하는 SMS·음성 인증 종료(전역 관리자와 외부 사용자 제외, 내부 게스트는 포함)
-- 2027-07-01 (예정): 전역 관리자와 외부 사용자의 Microsoft 제공 SMS·음성 종료
+#### 인증 방법을 관리하는 위치도 바뀌었다
 
-규정상 SMS·음성이 꼭 필요하면 Microsoft Security Store의 전화 사업자(telephony provider)를 따로 계약해서 계속 쓸 수 있습니다(별도 비용, 2026-10-30부터 구성 가능).
+2025-09-30부터 레거시 MFA, SSPR 정책에서는 인증 방법을 관리할 수 없고, 인증 방법 정책(Authentication methods policy) 한 곳에서 관리합니다.
 
-</details>
+- GUI 경로: Microsoft Entra 관리 센터 > Entra ID > Authentication methods(인증 방법) > Policies(정책)
+- 같은 화면의 마이그레이션 가이드로 기존 설정을 옮길 수 있음
+- 예외: 보안 질문은 아직 레거시 SSPR 정책에서 관리
 
-#### MFA를 켜는 방법과 관리 위치
+#### MFA를 켜는 세 가지 방법
 
-- 인증 방법은 2025-09-30부터 인증 방법 정책(Authentication methods policy) 한 곳에서 관리합니다(레거시 MFA, SSPR 정책에서는 불가). 경로는 Microsoft Entra 관리 센터 > Entra ID > Authentication methods(인증 방법) > Policies(정책)이고, 같은 화면의 마이그레이션 가이드로 기존 설정을 옮깁니다. 예외로 보안 질문은 아직 레거시 SSPR 정책에서 관리합니다.
-- P1이 없으면 보안 기본값(Security defaults, Free), P1 이상이면 조건부 액세스로 켭니다. 조건부 액세스 정책이 있으면 보안 기본값은 켤 수 없습니다. 사용자별 MFA(레거시, 모든 M365 조직 Free)는 권장하지 않으며 위 두 방법을 쓸 수 없을 때만 씁니다.
-- 보안 기본값 경로: Entra ID > Overview(개요) > Properties(속성) > Manage security defaults(보안 기본값 관리)
+- **보안 기본값(Security defaults)**
+    - 라이선스: Free
+    - 특징: 스위치 하나로 기본 보호를 한꺼번에 켬(아래 목록)
+- **조건부 액세스**
+    - 라이선스: P1 이상
+    - 특징: 대상, 조건, 예외를 세밀하게 설정. 조건부 액세스 정책이 있으면 보안 기본값은 켤 수 없음
+- **사용자별 MFA(레거시)**
+    - 라이선스: Free(모든 M365 조직)
+    - 특징: 권장하지 않음. 위 두 방법을 쓸 수 없을 때만
 
-<details markdown="1">
-<summary>보안 기본값을 켜면 적용되는 것</summary>
+보안 기본값을 켜면 다음이 적용됩니다.
 
 - 모든 사용자 MFA 등록, 관리자는 항상 MFA, 일반 사용자는 필요할 때 MFA
-- 레거시 인증 차단: IMAP, POP3, SMTP 기본 인증이나 오래된 Office처럼 MFA를 지원하지 않아 우회 통로가 되는 방식
+- **레거시 인증 차단**
 - Azure 관리(포털, Entra 관리 센터, PowerShell, CLI) 접근 시 MFA
-- 디바이스 코드 흐름 차단: 2026-07-01부터 새로 만드는 테넌트에는 기본으로 포함됩니다. 디바이스 코드 흐름은 브라우저 없는 기기에서 화면의 코드를 다른 기기에 입력해 로그인하는 방식으로, 피싱에 악용될 수 있습니다.
+- **디바이스 코드 흐름 차단**: 2026-07-01부터 새로 만드는 테넌트에는 기본으로 포함됩니다. 실제 사례: [Exchange Online 장치 코드 로그인이 AADSTS530035로 막힘]({{ "/m365/troubleshooting/aadsts530035-device-code/" | relative_url }})
 - 2019-10-22 이후 만든 테넌트는 켜져 있을 수 있고, 새 테넌트는 24시간 유예 후 적용됩니다.
 
-</details>
+레거시 인증은 IMAP, POP3, SMTP 기본 인증이나 오래된 Office처럼 MFA를 지원하지 않아 우회 통로가 되는 방식입니다. 디바이스 코드 흐름은 브라우저 없는 기기에서 화면의 코드를 다른 기기에 입력해 로그인하는 방식으로, 피싱에 악용될 수 있습니다.
+
+- GUI 경로(보안 기본값): Entra ID > Overview(개요) > Properties(속성) > Manage security defaults(보안 기본값 관리)
 
 #### Azure 관리에는 MFA가 필수
 
-Azure 포털과 관리 포털 로그인, Azure 도구의 생성·변경·삭제 작업에는 MFA가 필수이며 테스트 테넌트라도 예외가 없습니다.
+Azure 포털과 관리 포털 로그인에는 MFA가 필수이며, 테스트 테넌트라도 예외가 없습니다.
 
-<details markdown="1">
-<summary>필수 MFA 1·2단계 일정과 대상</summary>
-
-- 1단계
+- **1단계**
     - 시작: 2024-10부터(M365 관리 센터는 2025-02부터)
     - 대상: Azure 포털, Entra 관리 센터, Intune 관리 센터 로그인
-- 2단계
+- **2단계**
     - 시작: 2025-10-01부터 점진 적용(테넌트별로 2026-07-01까지 연기 가능했음)
-    - 대상: Azure CLI, Azure PowerShell, 모바일 앱, IaC, Azure SDK, REST API의 생성, 변경, 삭제 작업. 읽기는 대상 아님
+    - 대상: Azure CLI, Azure PowerShell, 모바일 앱, IaC, Azure SDK, REST API의 **생성, 변경, 삭제** 작업. 읽기는 대상 아님
 
-</details>
-
-- 사람 계정(ID와 암호)으로 Azure PowerShell을 돌리는 예약 작업은 2단계 이후 생성, 변경 작업에서 실패할 수 있습니다.
-- 관리 ID(Managed Identity, Azure 리소스에 자동으로 주어지는 자격 증명 없는 ID)나 서비스 주체(Service principal, 인증서 자격 증명 권장)로 바꾸면 필수 MFA 대상에서 빠집니다.
-- 적용 대상은 `management.azure.com`으로 가는 요청이고, Microsoft Graph API는 일반적으로 대상이 아닙니다.
-
-관련 오류: [AADSTS50126: 사용자 이름 또는 암호가 잘못됨]({{ "/iam/troubleshooting/aadsts50126-wrong-password/" | relative_url }}) · [AADSTS50076·50079: MFA가 필요하거나 등록하라고 막힐 때]({{ "/iam/troubleshooting/aadsts50076-mfa-required/" | relative_url }}) · [SMS·음성으로만 MFA를 하는 사용자가 있을 때]({{ "/iam/troubleshooting/sms-voice-mfa-retirement/" | relative_url }}) · [보안 기본값 관리가 보이지 않을 때]({{ "/iam/troubleshooting/security-defaults-cannot-enable/" | relative_url }}) · [Exchange Online 장치 코드 로그인이 AADSTS530035로 막힘]({{ "/m365/troubleshooting/aadsts530035-device-code/" | relative_url }})(디바이스 코드 차단 실제 사례)
+사람 계정(ID와 암호)으로 Azure PowerShell을 돌리는 예약 작업은 2단계 이후 생성, 변경 작업에서 실패할 수 있습니다. 관리 ID(Managed Identity, Azure 리소스에 자동으로 주어지는 자격 증명 없는 ID)나 서비스 주체(Service principal)로 바꾸면 필수 MFA 대상에서 빠집니다(서비스 주체는 보안상 인증서 자격 증명을 권장). 적용 대상은 `management.azure.com`으로 가는 요청이고, Microsoft Graph API는 일반적으로 대상이 아닙니다.
 
 ### 2. 셀프 서비스 암호 재설정(SSPR)
 
-사용자가 등록해 둔 인증 방법으로 본인 확인을 한 뒤 직접 암호를 재설정하는 기능입니다.
+사용자가 등록해 둔 인증 방법으로 본인 확인을 한 뒤 **직접 암호를 재설정**하는 기능입니다.
 
-예: 금요일 밤에 암호를 잊은 직원이 `https://aka.ms/sspr`에 접속해 Authenticator 승인과 이메일 코드로 본인 확인 → 새 암호 설정 → 하이브리드 사용자라면 쓰기 저장(Writeback)으로 사내 AD 암호도 같이 바뀝니다. 쓰기 저장은 Entra Connect Sync 또는 Cloud Sync에서 켭니다.
+예: 금요일 밤에 암호를 잊은 직원이 `https://aka.ms/sspr`에 접속해 Authenticator 승인과 이메일 코드로 본인 확인 → 새 암호 설정 → 하이브리드 사용자라면 **쓰기 저장(Writeback)**으로 사내 AD 암호도 같이 바뀝니다. 쓰기 저장은 Entra Connect Sync 또는 Cloud Sync에서 켭니다.
 
-라이선스는 "변경"과 "재설정"이 다릅니다. Free는 변경만, 클라우드 사용자 재설정은 M365 Business Standard 이상, 하이브리드 쓰기 저장은 M365 Business Premium 또는 Entra ID P1/P2부터입니다.
+라이선스는 "변경"과 "재설정"이 다릅니다.
 
-<details markdown="1">
-<summary>SSPR 라이선스 구분</summary>
-
-- 클라우드 사용자 암호 변경(현재 암호를 앎): Free, M365 Business Standard, M365 Business Premium, Entra ID P1/P2 모두 가능
-- 클라우드 사용자 암호 재설정(잊어버림): M365 Business Standard, M365 Business Premium, Entra ID P1/P2 (Free는 불가)
-- 하이브리드 사용자 변경·재설정 + 온-프레미스 쓰기 저장: M365 Business Premium, Entra ID P1/P2 (Free와 Business Standard는 불가)
-
-</details>
-
-관련 오류: [SSPR이 되지 않을 때: 오류 코드와 쓰기 저장]({{ "/iam/troubleshooting/sspr-cannot-reset/" | relative_url }})
+- **클라우드 사용자 암호 변경(현재 암호를 앎)**: Free, M365 Business Standard, M365 Business Premium, Entra ID P1/P2 모두 가능
+- **클라우드 사용자 암호 재설정(잊어버림)**: M365 Business Standard, M365 Business Premium, Entra ID P1/P2 (Free는 불가)
+- **하이브리드 사용자 변경·재설정 + 온-프레미스 쓰기 저장**: M365 Business Premium, Entra ID P1/P2 (Free와 Business Standard는 불가)
 
 ### 3. Single Sign-On(SSO)
 
-한 번 로그인으로 연결된 여러 앱을 쓰는 기능으로, Entra ID가 앱마다 OIDC/OAuth 2.0 또는 SAML 토큰을 발급해 줍니다. 앱 갤러리에는 SAML이나 OIDC로 바로 연결할 수 있는 SaaS 앱이 많습니다.
+한 번 로그인으로 연결된 여러 앱을 쓰는 기능으로, Entra ID가 앱마다 **OIDC/OAuth 2.0** 또는 **SAML** 토큰을 발급해 주는 방식입니다.
 
 <picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/11/entra-sso-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/11/entra-sso.png" | relative_url }}" alt="한 번 로그인으로 여러 앱에 토큰 발급" loading="lazy"></picture>
 
 *그림 2. 한 번 로그인으로 여러 앱에 토큰이 발급되는 SSO 구조*
 
-- 퇴사자 계정을 사용 안 함으로 바꾸면 새 토큰 발급은 막히지만, 이미 발급된 액세스 토큰(보통 60~90분)이나 앱 자체 세션은 만료될 때까지 남을 수 있습니다.
-- 바로 끊어야 하면 사용자 화면에서 세션 해지(Revoke sessions)를 함께 실행합니다. Exchange, SharePoint, Teams는 CAE(Continuous Access Evaluation, 연속 액세스 평가)를 지원해 몇 분 안에(문서상 최대 15분 지연 가능) 반영합니다.
+앱 갤러리에는 SAML이나 OIDC로 바로 연결할 수 있는 SaaS 앱이 많습니다.
 
-관련 오류: [계정을 막았는데 퇴사자가 여전히 메일·파일에 접근할 때]({{ "/iam/troubleshooting/disabled-user-still-signed-in/" | relative_url }})
+퇴사자 계정을 **사용 안 함**으로 바꾸면 **새 토큰 발급**은 막히지만, 이미 발급된 액세스 토큰(보통 60~90분)이나 앱 자체 세션은 만료될 때까지 남을 수 있습니다.
 
-### 4. 확인 문제
+바로 끊어야 하면 사용자 화면에서 세션 해지(Revoke sessions)를 함께 실행합니다. Exchange, SharePoint, Teams는 CAE(Continuous Access Evaluation, 연속 액세스 평가)를 지원해 계정 사용 안 함과 세션 해지를 몇 분 안에(문서상 최대 15분 지연 가능) 반영합니다.
+
+### 4. 관련 트러블슈팅
+
+- 암호가 맞다는데 로그인 실패 → [AADSTS50126: 사용자 이름 또는 암호가 잘못됨]({{ "/iam/troubleshooting/aadsts50126-wrong-password/" | relative_url }})
+- MFA 필요나 등록 필요, Azure CLI 필수 MFA → [AADSTS50076·50079: MFA가 필요하거나 등록하라고 막힐 때]({{ "/iam/troubleshooting/aadsts50076-mfa-required/" | relative_url }})
+- 막은 계정이 계속 접근 → [계정을 막았는데 퇴사자가 여전히 메일·파일에 접근할 때]({{ "/iam/troubleshooting/disabled-user-still-signed-in/" | relative_url }})
+- 보안 기본값을 켤 수 없음 → [보안 기본값 관리가 보이지 않을 때]({{ "/iam/troubleshooting/security-defaults-cannot-enable/" | relative_url }})
+- 셀프 서비스 암호 재설정 실패 → [SSPR이 되지 않을 때: 오류 코드와 쓰기 저장]({{ "/iam/troubleshooting/sspr-cannot-reset/" | relative_url }})
+- SMS·음성 MFA 종료 대비 → [SMS·음성으로만 MFA를 하는 사용자가 있을 때]({{ "/iam/troubleshooting/sms-voice-mfa-retirement/" | relative_url }})
+- 보안 기본값의 디바이스 코드 차단(실제 사례) → [Exchange Online 장치 코드 로그인이 AADSTS530035로 막힘]({{ "/m365/troubleshooting/aadsts530035-device-code/" | relative_url }})
+
+### 5. 확인 문제
 
 <details markdown="1">
 <summary>1. 암호 + 보안 질문이 MFA가 아닌 이유는?</summary>
@@ -151,22 +163,7 @@ Microsoft 제공 SMS·음성이 종료되어, 로그인 중 **패스키 등록�
 
 </details>
 
-<details markdown="1">
-<summary>화면으로 경로 따라가기: 인증 방법 정책과 보안 기본값 (그림 2장)</summary>
-
-![Entra ID 인증 방법 정책 목록. 메서드별 대상과 활성화 여부가 보임]({{ "/assets/images/2026/11/guide-authmethods-policies.png" | relative_url }})
-
-*그림 3. Entra 관리 센터 > Entra ID > 인증 방법(Authentication methods) > 정책(Policies). MFA, SSPR, 패스키 방법을 이 한 곳에서 관리합니다. 메서드마다 대상과 활성화 여부가 나오고, 왼쪽 안쪽 메뉴에 등록 캠페인과 활동이 있습니다.*
-
-![Entra ID 개요의 속성 탭 아래쪽 보안 기본값 영역. 조직이 보안 기본값으로 보호됨 표시와 보안 기본값 관리 링크]({{ "/assets/images/2026/11/guide-security-defaults.png" | relative_url }})
-
-*그림 4. Entra ID > 개요(Overview) > 속성(Properties) 탭 맨 아래의 보안 기본값(Security defaults) 영역. "보안 기본값 관리" 링크를 눌러 켜거나 끕니다.*
-
-화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름, 테넌트 ID, 계정, IP, 요청 ID는 가렸고, 사용 중인 라이선스와 정책에 따라 메뉴 이름과 값은 다를 수 있습니다.
-
-</details>
-
-### 5. 근거 자료
+### 6. 근거 자료
 
 <details markdown="1">
 <summary>근거 자료 펼쳐 보기 (7건)</summary>

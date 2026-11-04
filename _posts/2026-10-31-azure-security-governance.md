@@ -49,7 +49,8 @@ Defender for Cloud는 보안 상태 점검(CSPM)과 워크로드 보호(CWPP)를
 Key Vault는 비밀(secrets), 키(keys), 인증서(certificates)를 보관하고 인증서 수명주기 관리를 지원합니다.
 
 - 문서: API 버전 2026-02-01부터는 새 key vault의 기본값도 Azure RBAC입니다([Azure RBAC vs. access policies](https://learn.microsoft.com/azure/key-vault/general/rbac-access-policy#data-plane-access-control-recommendation)).
-- AD CS의 자동 등록(autoenrollment)과 비교하며 읽으면 이해가 빠릅니다.
+
+비교(저자 의견): AD CS의 자동 등록(autoenrollment)과 비교하며 읽으면 이해가 빠릅니다.
 
 Managed identity는 VM이나 앱이 비밀번호 없이 Entra ID 토큰으로 다른 Azure 리소스에 접근하는 신원입니다. System-assigned는 리소스 수명을 따르고, User-assigned는 따로 만들어 여러 리소스에 붙입니다.
 
@@ -78,21 +79,6 @@ Managed identity는 VM이나 앱이 비밀번호 없이 Entra ID 토큰으로 �
 2. 같은 화면의 역할(Roles) 탭에서 Owner, Contributor, Reader의 권한을 읽습니다.
 3. 정책(Policy) > 정의(Definitions)에서 정책 목록과 effect를 보고, 준수(Compliance) 화면의 구성을 확인합니다.
 4. Cost Management와 Defender for Cloud 개요(Secure Score)에 보이는 항목을 확인합니다.
-
-<details markdown="1">
-<summary>화면으로 경로 따라가기: 구독 IAM 역할 할당과 Azure Policy 정의 (그림 2장)</summary>
-
-![구독의 액세스 제어(IAM) 역할 할당 탭. 소유자와 독자 할당 목록]({{ "/assets/images/2026/11/guide-azure-iam-roles.png" | relative_url }})
-
-*그림 1. 구독 > 액세스 제어(IAM) > 역할 할당 탭. 역할(소유자, 독자)별로 누구에게 어떤 범위로 할당됐는지와 상태(영구 활성, 활성 시간 제한, 적격 시간 제한)가 나옵니다. 계정, 이름, 구독 이름은 가렸습니다.*
-
-![Azure 정책의 정의 목록]({{ "/assets/images/2026/11/guide-azure-policy.png" | relative_url }})
-
-*그림 2. Azure 포털 > 정책(Policy) > 정의(Definitions). 내장 정책과 이니셔티브 정의 목록이 나오고, 정의 유형, 정책 유형, 범주로 거릅니다. 범위(구독) 칩은 가렸습니다.*
-
-화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, IP는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
-
-</details>
 
 ### 5. 전문가처럼 말하기
 

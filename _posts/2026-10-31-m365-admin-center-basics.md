@@ -62,33 +62,6 @@ Get-MgUserLicenseDetail -UserId "user@contoso.com" |
   Select-Object SkuPartNumber
 ```
 
-<details markdown="1">
-<summary>화면으로 경로 따라가기: 사용자, 라이선스, 도메인, 역할, 서비스 상태 (그림 5장)</summary>
-
-![활성 사용자 목록. 표시 이름, 사용자 이름, 라이선스 열]({{ "/assets/images/2026/11/guide-m365-users.png" | relative_url }})
-
-*그림 1. Microsoft 365 관리 센터(admin.microsoft.com) > 사용자 > 활성 사용자. 표시 이름, 사용자 이름, 라이선스 열이 있고, 위쪽 도구 모음에서 사용자 추가, 다단계 인증, 암호 초기화를 합니다. 사용자 이름(로그인 계정)은 가렸습니다.*
-
-![라이선스 화면. 제품별 사용 가능한 라이선스와 할당된 라이선스]({{ "/assets/images/2026/11/guide-m365-licenses.png" | relative_url }})
-
-*그림 2. M365 관리 센터 > 청구 > 라이선스. 제품별로 사용 가능한 라이선스 수와 할당된 라이선스(예: 17/25)가 나옵니다. 제품 이름을 눌러 사용자나 그룹에 할당합니다.*
-
-![도메인 화면. 도메인 이름과 상태]({{ "/assets/images/2026/11/guide-m365-domains.png" | relative_url }})
-
-*그림 3. M365 관리 센터 > 설정(Setup) > 도메인(Domains). 도메인별 상태가 나옵니다. 이 샌드박스는 기본 onmicrosoft.com 도메인 하나뿐이고 "정상"입니다. 도메인 이름은 가렸습니다.*
-
-![역할 할당 화면. Microsoft Entra ID, Exchange, Intune, 청구 탭과 역할 목록]({{ "/assets/images/2026/11/guide-m365-roles.png" | relative_url }})
-
-*그림 4. M365 관리 센터 > 역할 > 역할 할당. 위쪽 탭이 Microsoft Entra ID, Exchange, Intune, 청구로 나뉘고, 아래에 관리자 역할 이름과 설명, 범주(공동 작업, 읽기 전용)가 나옵니다.*
-
-![서비스 상태 화면. Microsoft이 처리 중인 활성 문제 목록]({{ "/assets/images/2026/11/guide-m365-health.png" | relative_url }})
-
-*그림 5. M365 관리 센터 > 상태(Health) > 서비스 상태. 개요 탭에 Microsoft가 처리 중인 활성 문제와 영향을 받는 서비스가 나오고, 문제 기록과 보고된 문제 탭이 이어집니다.*
-
-화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, IP는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
-
-</details>
-
 ### 5. 전문가처럼 말하기
 
 > "License는 SKU 단위로 사고, 실제로 켜지는 건 service plan입니다. 그룹 기반 licensing과 dynamic group을 같이 쓰면 joiner, mover, leaver 때 license가 자동으로 따라갑니다."

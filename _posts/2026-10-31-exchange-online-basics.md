@@ -14,7 +14,7 @@ Exchange Online에서는 DAG도 Edge Transport도 직접 구성하지 않고, �
 
 - DAG는 Microsoft가 운영하므로 업무 중심은 메일 흐름과 정책 구성임
 - 외부 메일은 MX가 가리키는 EOP를 거치며 특수 경로는 Connector로 정의함
-- Exchange hybrid는 HCW로 구성하고 Entra Connect 동기화가 전제임
+- Exchange hybrid는 HCW로 구성하고 Entra Connect(또는 Cloud Sync) 동기화가 전제임
 
 12주 학습 로드맵의 6주차입니다. 이전 글은 [5주차 M365 관리 센터]({{ "/study/m365-admin-center-basics/" | relative_url }}), 다음 글은 [7주차 SharePoint·OneDrive·Teams]({{ "/study/sharepoint-onedrive-teams-structure/" | relative_url }})이고, 전체는 [학습 로드맵]({{ "/study/cloud-study-roadmap/" | relative_url }})에 있습니다.
 
@@ -42,7 +42,7 @@ SPF는 발신 허용 서버를 DNS에 선언하고, DKIM은 서명하며, DMARC�
 
 #### Exchange hybrid
 
-온프레미스 Exchange를 두고 일부 사서함만 Exchange Online에 두는 구성으로, 사서함은 이동(move)으로 옮깁니다([하이브리드 ID]({{ "/study/hybrid-identity-study/" | relative_url }}) 참고).
+온프레미스 Exchange를 두고 일부 사서함만 Exchange Online에 두는 구성으로, 사서함은 이동(move)으로 옮깁니다([문서](https://learn.microsoft.com/exchange/hybrid-deployment/move-mailboxes)).
 
 #### 관리 도구와 규정 준수
 
@@ -68,38 +68,12 @@ SPF는 발신 허용 서버를 DNS에 선언하고, DKIM은 서명하며, DMARC�
 사서함 유형과 수락된 도메인은 PowerShell로도 맞춰 봅니다.
 
 ```powershell
+# 회사 PC에서 사용자 폴더 모듈이 정책에 막히면 관리자 창에서 -Scope AllUsers로 설치합니다(사례: 회사 PC 모듈 글)
 Install-Module ExchangeOnlineManagement -Scope CurrentUser
 Connect-ExchangeOnline
 Get-Mailbox -ResultSize 5 | Select-Object DisplayName, RecipientTypeDetails
 Get-AcceptedDomain | Select-Object DomainName, DomainType
 ```
-
-<details markdown="1">
-<summary>화면으로 경로 따라가기: 사서함, 메시지 추적, 규칙, 커넥터, 허용된 도메인 (그림 5장)</summary>
-
-![Exchange 관리 센터의 사서함 목록]({{ "/assets/images/2026/11/guide-exo-mailboxes.png" | relative_url }})
-
-*그림 1. Exchange 관리 센터(admin.exchange.microsoft.com) > Recipients > Mailboxes. 이메일 주소, 받는 사람 형식(UserMailbox), 보관 상태를 봅니다. 공유 사서함은 위쪽 Add a shared mailbox로 만듭니다. 이 화면은 영어로 표시됐고, 이메일 주소는 가렸습니다.*
-
-![Exchange 관리 센터의 메시지 추적 화면. 기본 쿼리 목록]({{ "/assets/images/2026/11/guide-exo-messagetrace.png" | relative_url }})
-
-*그림 2. Exchange 관리 센터 > Mail flow > Message trace. Default queries 탭에 자주 쓰는 추적이 있고, Start a trace로 조건을 직접 넣습니다. 도메인은 가렸습니다.*
-
-![Exchange 관리 센터의 메일 흐름 규칙 화면]({{ "/assets/images/2026/11/guide-exo-rules.png" | relative_url }})
-
-*그림 3. Exchange 관리 센터 > Mail flow > Rules. 이 샌드박스는 규칙이 없어 "No data available"입니다. Add a rule로 만들고, 목록에는 Priority(우선순위)와 Stop processing rules 열이 있습니다.*
-
-![Exchange 관리 센터의 커넥터 화면]({{ "/assets/images/2026/11/guide-exo-connectors.png" | relative_url }})
-
-*그림 4. Exchange 관리 센터 > Mail flow > Connectors. 이 샌드박스는 커넥터가 없습니다. 화면 안내는 대부분의 조직에 커넥터가 필요 없으니 만들기 전에 필요한지 먼저 확인하라고 말합니다.*
-
-![Exchange 관리 센터의 허용된 도메인 화면]({{ "/assets/images/2026/11/guide-exo-domains.png" | relative_url }})
-
-*그림 5. Exchange 관리 센터 > Mail flow > Accepted domains. 도메인 이름과 형식(Authoritative), 보내기 허용 여부가 나옵니다. 도메인을 추가하려면 M365 관리 센터의 도메인 화면에서 합니다. 도메인 이름은 가렸습니다.*
-
-화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, IP는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
-
-</details>
 
 ### 5. 전문가처럼 말하기
 
@@ -119,7 +93,7 @@ Get-AcceptedDomain | Select-Object DomainName, DomainType
 - [ ] SPF, DKIM, DMARC의 역할을 각각 한 문장으로 말할 수 있다.
     - 답: SPF는 발신 허용 서버를 DNS에 선언, DKIM은 서명, DMARC는 SPF·DKIM 실패 시 처리 정책 선언입니다.
 - [ ] Exchange hybrid가 무엇이고 무엇이 전제인지 말할 수 있다.
-    - 답: 온프레미스 Exchange를 두고 일부 사서함만 Exchange Online에 두는 구성으로, HCW로 구성합니다. Entra Connect 동기화가 전제입니다.
+    - 답: 온프레미스 Exchange를 두고 일부 사서함만 Exchange Online에 두는 구성으로, HCW로 구성합니다. Entra Connect(또는 Cloud Sync) 동기화가 전제입니다.
 
 </details>
 
@@ -127,3 +101,14 @@ Get-AcceptedDomain | Select-Object DomainName, DomainType
 
 - 한글: 확인 불가(시도: 유튜브 검색, 사유: Exchange Online을 다룬 한글 영상을 찾지 못함). Microsoft Learn(한국어)의 Exchange Online 문서를 먼저 읽으세요.
 - 영문 보완: [How to Use Exchange Online Admin Center](https://www.youtube.com/watch?v=J0OWaStDkMc) (28분, 사서함과 공유 사서함 등 관리 센터 작업), [Creating and Managing User Mailboxes](https://www.youtube.com/watch?v=yvhwHjNVMvw) (12분, 사용자 사서함 생성과 관리), [Beginners Tutorial for Exchange Online & Microsoft 365 Administration 재생목록](https://www.youtube.com/playlist?list=PLUZTRmXEpBy0W9bJNme2P9h5XiOnRIFUI) (43편, 2022년 2월 마지막 업데이트라 화면이 지금과 다를 수 있음)
+
+### 8. 근거 자료
+
+<details markdown="1">
+<summary>근거 자료 펼쳐 보기 (3건)</summary>
+
+- 문서: [Exchange hybrid deployments](https://learn.microsoft.com/exchange/exchange-hybrid): 디렉터리 동기화가 하이브리드 구성의 요건
+- 문서: [Exchange hybrid deployment prerequisites](https://learn.microsoft.com/exchange/hybrid-deployment-prerequisites): Entra Connect 또는 cloud sync 배포
+- 문서: [Move mailboxes in a hybrid deployment](https://learn.microsoft.com/exchange/hybrid-deployment/move-mailboxes): 하이브리드에서 사서함 이동(remote move)
+
+</details>

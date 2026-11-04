@@ -64,7 +64,7 @@ PIM은 관리자 역할을 상시(permanent) 부여하지 않고 Eligible(자격
 - Eligible·기간 제한 할당을 받는 사용자, 활성화 요청을 승인·거절하는 사용자, access review 대상자·검토자 수만큼 필요합니다.
 - 라이선스가 만료되면 Entra role의 Eligible 할당은 제거되고, 상시(permanent) 할당은 그대로 남습니다.
 
-AD/ADFS에는 대응 개념이 없어 시간을 가장 많이 써야 하는 영역입니다.
+AD에서는 MIM 기반 PAM(Privileged Access Management)의 시간 제한 그룹 멤버십이 비슷한 기능이지만 기본 제공 기능이 아니어서, AD 운영자에게 가장 낯설고 시간을 가장 많이 써야 하는 영역입니다([What's new in Windows Server 2016: PAM for AD DS](https://learn.microsoft.com/windows-server/get-started/whats-new-in-windows-server-2016#privileged-access-management)).
 
 #### Zero Trust
 
@@ -84,25 +84,6 @@ AD/ADFS에는 대응 개념이 없어 시간을 가장 많이 써야 하는 영�
 5. Entra ID > 개요(Overview) > 속성(Properties)에서 Security defaults 상태를 확인합니다.
 
 관련 사례: 정책이 걸린 이유를 로그로 읽기는 [AADSTS53003 글]({{ "/iam/troubleshooting/aadsts53003-blocked-by-ca/" | relative_url }}), Security defaults가 켜지지 않을 때는 [보안 기본값 관리가 보이지 않을 때]({{ "/iam/troubleshooting/security-defaults-cannot-enable/" | relative_url }}).
-
-<details markdown="1">
-<summary>화면으로 경로 따라가기: 인증 방법 정책, 조건부 액세스, 보안 기본값 (그림 3장)</summary>
-
-![Entra ID 인증 방법 정책 목록. 메서드별 대상과 활성화 여부]({{ "/assets/images/2026/11/guide-authmethods-policies.png" | relative_url }})
-
-*그림 1. Entra ID > 인증 방법(Authentication methods) > 정책(Policies). 메서드별로 대상과 활성화 여부가 나옵니다. 이 샌드박스는 SMS와 음성 통화가 "아니요", 암호 키(FIDO2)와 Authenticator가 모든 사용자 "예"입니다.*
-
-![조건부 액세스 정책 목록 화면. 새 정책, 가상 버튼이 있는 도구 모음]({{ "/assets/images/2026/11/guide-ca-policies.png" | relative_url }})
-
-*그림 2. Entra ID > 조건부 액세스 > 정책. 새 정책으로 만들고, 가상(What If)으로 로그인 조건을 넣어 어떤 정책이 적용될지 시험합니다. 이 샌드박스는 정책이 없어 안내 화면이 나옵니다.*
-
-![Entra ID 속성 탭 아래쪽 보안 기본값 영역. 보안 기본값 관리 링크]({{ "/assets/images/2026/11/guide-security-defaults.png" | relative_url }})
-
-*그림 3. Entra ID > 개요(Overview) > 속성(Properties) 탭 맨 아래의 보안 기본값(Security defaults) 영역. "조직이 보안 기본값으로 보호됩니다"와 "보안 기본값 관리" 링크가 보입니다. 테넌트 이름과 ID, 기술 담당자, 계정은 가렸습니다.*
-
-화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, IP는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
-
-</details>
 
 ### 5. 전문가처럼 말하기
 

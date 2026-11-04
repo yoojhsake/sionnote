@@ -1,15 +1,16 @@
 ---
 title: "[IAM] AD 조인·하이브리드 조인·Entra 조인 비교 실측"
-date: 2026-11-04 12:30:00 +0900
+date: 2026-11-04 16:30:00 +0900
 categories: [iam]
 phase: 하이브리드 실습
 seq: 9
 tags: [IAM, AD 조인, 하이브리드 조인, Entra 조인, dsregcmd, PRT, Connect Sync, Cloud Sync]
-excerpt: "PC 두 대를 AD 조인, 하이브리드 조인, Entra 조인 상태로 만들어 dsregcmd 값을 비교했다. 조인 방식은 AzureAdJoined와 DomainJoined 조합에서 갈리고, 사용자 로그인 뒤 PRT는 두 방식 모두 YES였다"
+excerpt: "PC 두 대를 AD 조인, 하이브리드 조인, Entra 조인 상태로 만들어 dsregcmd 값을 비교했다. 조인 방식은 AzureAdJoined와 DomainJoined 조합에서 갈리고, Cloud Test02로 로그인한 뒤 PRT는 하이브리드·Entra 조인 모두 YES였고, 관리자 계정(범위 밖, UPN 접미사 .local)은 NO였다"
 toc: true
+last_modified_at: 2026-11-05 00:40
 ---
 
-Windows 10과 Windows 11 PC를 각각 AD 조인, 하이브리드 조인, Entra 조인 상태로 만들어 `dsregcmd /status` 값을 비교했습니다. 세 상태는 AzureAdJoined와 DomainJoined 조합, 그리고 AD 컴퓨터 계정의 필요 여부에서 갈렸고, 하이브리드와 Entra 조인은 동기화된 사용자가 로그인한 뒤 PRT가 모두 발급됐습니다.
+Windows 10과 Windows 11 PC를 각각 AD 조인, 하이브리드 조인, Entra 조인 상태로 만들어 `dsregcmd /status` 값을 비교했습니다. 세 상태는 AzureAdJoined와 DomainJoined 조합, 그리고 AD 컴퓨터 계정의 필요 여부에서 갈렸고, 하이브리드와 Entra 조인은 동기화된 사용자(Cloud Test02)가 로그인한 뒤 PRT가 발급됐습니다(범위 밖이면서 UPN 접미사가 `.local`인 관리자 계정은 하이브리드에서 NO).
 
 ## 요약
 
@@ -17,7 +18,7 @@ Windows 10과 Windows 11 PC를 각각 AD 조인, 하이브리드 조인, Entra �
 - 하이브리드는 SCP와 동기화가 필요하고, Entra 조인은 인터넷과 Entra 계정만 있으면 됨
 - 하이브리드 조인 방식(Connect Sync, Cloud Sync)이 달라도 PC 쪽 결과는 같았음
 
-> 근거 표기: 조회 = 이 랩에서 직접 읽은 값 · 문서 = Microsoft Learn · 확인 불가 = 시도했지만 확인하지 못한 값(방법·사유 병기). 테넌트 ID·도메인·계정 등 비공개 정보는 가리거나 게시하지 않았습니다.
+> 근거 표기: 조회 = 이 랩에서 직접 읽은 값 · 문서 = Microsoft Learn · 추정 = 조회·문서로 직접 확인하지 못하고 관찰값에서 이어 붙인 해석. 테넌트 ID·테넌트 도메인·클라우드 계정(UPN)은 가렸고, 개인 실습용 도메인(sionnote.local)의 계정 이름·장치 이름·호스트 이름은 그대로 보일 수 있습니다.
 
 ---
 
@@ -25,7 +26,7 @@ Windows 10과 Windows 11 PC를 각각 AD 조인, 하이브리드 조인, Entra �
 
 ### 1. 목표
 
-같은 PC를 조인 방식만 바꿔 가며 어떤 값이 달라지는지 한 표로 정리합니다. 두 PC는 sionnote-cl10(Windows 10 Enterprise, Connect Sync 경로)과 sionnote-cl11(Windows 11 Enterprise, Cloud Sync 경로)입니다.
+같은 PC를 조인 방식만 바꿔 가며 어떤 값이 달라지는지 한 표로 정리합니다. 두 PC는 sionnote-cl10(Windows 10 Enterprise 22H2, Connect Sync 경로)과 sionnote-cl11(Windows 11 Enterprise, Cloud Sync 경로)입니다.
 
 ### 2. 개념
 
@@ -35,16 +36,26 @@ Windows 10과 Windows 11 PC를 각각 AD 조인, 하이브리드 조인, Entra �
 
 ### 3. 결과
 
-각 칸은 `dsregcmd /status`에서 읽은 값입니다(조회).
+<picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/11/lab-join-types-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/11/lab-join-types.png" | relative_url }}" alt="AD 조인, 하이브리드 조인, Entra 조인 비교" loading="lazy"></picture>
+
+AzureAdJoined·DomainJoined·DeviceAuthStatus·TenantName·KeyProvider·TpmProtected·AzureAdPrt는 `dsregcmd /status`에서 읽은 값입니다(조회). AD 조인 칸의 AzureAdJoined·DomainJoined·AzureAdPrt는 하이브리드 조인이 끝나기 전 같은 PC에서 읽은 값이고([0x801c03f3 글]({{ "/iam/troubleshooting/hybrid-join-0x801c03f3/" | relative_url }}) 참고), DeviceAuthStatus·TenantName은 이후 하이브리드 조인으로 상태가 바뀐 PC 대신 AD 조인만 된 서버 sionnote-sync01에서 읽었습니다. 사용자 PRT는 같은 글의 캡처에 `AzureAdPrt : NO`로 출력돼 있어 NO로 적었습니다.
 
 | 항목 | AD 조인 | 하이브리드 조인 | Entra 조인 |
 |---|---|---|---|
 | AzureAdJoined | NO | YES | YES |
 | DomainJoined | YES | YES | NO |
-| DeviceAuthStatus | 해당 없음 | SUCCESS | SUCCESS |
-| TenantName | 해당 없음 | 표시됨(11-04 조회). 조인 직후 첫 조회에는 TenantId만 보였음 | 표시됨 |
+| DeviceAuthStatus | 출력 줄 없음(sync01, 아래 캡처) | SUCCESS | SUCCESS |
+| TenantName | 출력 줄 없음(sync01, 아래 캡처) | 빈 값(cl10·cl11 모두, 하이브리드 조인 완료 뒤 조회) | 표시됨(캡처, 값은 가림) |
 | AD 컴퓨터 계정 | 필요함 | 필요함 | 필요 없음 |
-| 사용자 PRT | 해당 없음 | 로그인 뒤 YES | 로그인 뒤 YES |
+| 사용자 PRT | NO(하이브리드 조인 전 세션의 출력, 0x801c03f3 글의 캡처) | 계정에 따라 다름: Cloud Test02는 로그인 뒤 YES, 관리자 계정 yadmin은 NO([PRT 글]({{ "/iam/troubleshooting/hybrid-join-prt-no/" | relative_url }}) 참고) | 로그인 뒤 YES |
+
+AD 조인만 된 서버에서 같은 항목을 조회하면 AzureAdJoined와 DomainJoined 두 줄만 출력되고 DeviceAuthStatus·TenantName·TenantId 줄은 나오지 않습니다(조회, sionnote-sync01).
+
+```powershell
+dsregcmd /status | Select-String 'AzureAdJoined|DomainJoined|DeviceAuthStatus|TenantName|TenantId'
+```
+
+[![AD 조인만 된 서버의 dsregcmd 출력: AzureAdJoined NO, DomainJoined YES만 표시]({{ "/assets/images/2026/11/hj-ad-only-sync01-dsreg.png" | relative_url }})]({{ "/assets/images/2026/11/hj-ad-only-sync01-dsreg.png" | relative_url }}){:target="_blank"}
 
 두 상태의 `dsregcmd /status` 값을 같은 PC(cl10)에서 읽어 옮겨 적었습니다(장치 ID·테넌트 값은 생략).
 
@@ -69,24 +80,39 @@ dsregcmd /status
 <details markdown="1">
 <summary>원본 캡처 보기 (PowerShell 화면, 해상도 낮음)</summary>
 
-![하이브리드 조인과 Entra 조인의 dsregcmd 값(cl10)]({{ "/assets/images/2026/11/hj-compare-dsreg.png" | relative_url }})
-
+[![하이브리드 조인과 Entra 조인의 dsregcmd 값(cl10)]({{ "/assets/images/2026/11/hj-compare-dsreg.png" | relative_url }})]({{ "/assets/images/2026/11/hj-compare-dsreg.png" | relative_url }}){:target="_blank"}
 
 </details>
 
-두 PC의 키 보호 방식은 달랐습니다. 원인은 VM의 가상 TPM 설정입니다(cl10은 꺼짐, cl11은 켜짐, [환경 글]({{ "/iam/hyperv-lab-environment/" | relative_url }}) 참고).
+두 PC의 키 보호 방식은 달랐습니다. VM의 가상 TPM 설정은 cl10이 꺼짐, cl11이 켜짐이었습니다(조회). 이 설정 차이가 키 보호 방식의 차이를 만들었다고 보지만, Windows 10과 11이라는 차이도 겹쳐 있어 원인은 추정입니다([환경 글]({{ "/iam/hyperv-lab-environment/" | relative_url }}) 참고).
 
 | 항목 | Windows 10 PC | Windows 11 PC |
 |---|---|---|
 | KeyProvider | 소프트웨어 키 | Platform Crypto Provider |
 | TpmProtected | NO | YES |
 
+#### 설정 화면(GUI)에서 보이는 차이
+
+같은 Windows 10 PC(cl10)의 설정 → 계정 → **회사 또는 학교 액세스** 화면입니다(조회, 2026-11-04). 조인 방식에 따라 보이는 항목이 다릅니다.
+
+하이브리드 조인 상태에서는 "SIONNOTE AD 도메인에 연결됨(`sionnote.local`)" 한 줄만 보입니다. 도메인 쪽 연결만 표시되고 Entra 쪽 등록 여부는 이 화면에서 알 수 없습니다.
+
+[![하이브리드 조인 상태(cl10): SIONNOTE AD 도메인에 연결됨(GUI)]({{ "/assets/images/2026/11/hj-cl10-gui-01-work-school.png" | relative_url }})]({{ "/assets/images/2026/11/hj-cl10-gui-01-work-school.png" | relative_url }}){:target="_blank"}
+
+Entra 조인 상태에서는 "…의 Entra ID에 연결됨"과 연결한 계정이 표시되고, 항목을 선택하면 **연결 끊기** 버튼만 있습니다(조회, 테넌트와 계정은 가림).
+
+[![Entra 조인 상태(cl10): Entra ID에 연결됨(GUI)]({{ "/assets/images/2026/11/en-join-gui-06-connected.png" | relative_url }})]({{ "/assets/images/2026/11/en-join-gui-06-connected.png" | relative_url }}){:target="_blank"}
+
+조인 전(작업 그룹) 상태에서는 연결된 항목이 없고 **연결** 버튼만 있습니다.
+
+[![조인 전 상태(cl10): 연결된 계정 없음(GUI)]({{ "/assets/images/2026/11/en-join-gui-01-access-empty.png" | relative_url }})]({{ "/assets/images/2026/11/en-join-gui-01-access-empty.png" | relative_url }}){:target="_blank"}
+
 ### 4. 운영 판단
 
 - 하이브리드 조인은 SCP와 장치 동기화를 모두 갖춰야 합니다. PC가 한 번 시도해 인증서를 AD에 기록하면(이때 첫 시도는 0x801c03f3으로 실패) 동기화가 그 계정을 올리고, 그 뒤 재시도에서 성공합니다.
-- 하이브리드의 PRT는 로그인 사용자가 동기화 범위 안에 있어야 합니다. 이 랩에서 범위 밖 OU의 관리자 계정은 PRT가 NO였습니다(추정, 아래 PRT 글 참고).
-- Entra 조인은 도메인 가입 PC에서는 먼저 도메인에서 빼야 한다고 문서가 안내합니다(문서). 이 랩에서는 Windows 11 PC를 작업 그룹으로 바꾼 뒤 Entra 조인했고, Windows 10 PC는 도메인 가입 전 체크포인트에서 갈라져 조인했습니다.
-- 사용자 유형이 "관리자"로 표시되는 "조직 확인" 창이 Entra 조인 중에 나왔습니다. 이 표시의 의미는 문서로 확인하지 않았습니다.
+- 하이브리드의 PRT는 Entra에 사용자가 있어야 하며, 사용자가 없으면 AADSTS50034로 실패한다고 문서가 안내합니다(문서: Troubleshoot Microsoft Entra hybrid joined devices). 이 랩에서 범위 밖 OU의 관리자 계정(yadmin)은 PRT가 NO였지만 직접 원인은 UPN 접미사 `.local`(AADSTS90002)이었고, 사용자 부재(AADSTS50034)는 관측하지 못했습니다(조회, cl10 2026-11-05 00:01 로그온 1건, 아래 PRT 글 참고).
+- Entra 조인은 도메인 가입 PC에서는 먼저 도메인에서 빼야 한다고 문서가 안내합니다(문서). 이 랩은 문서 안내에 따라 Windows 11 PC를 작업 그룹으로 바꾼 뒤 Entra 조인했고(도메인에 가입된 채로 조인해 보는 시도는 하지 않았습니다), Windows 10 PC는 도메인 가입 전 체크포인트에서 갈라져 조인했습니다.
+- 사용자 유형이 "관리자"로 표시되는 "조직 확인" 창이 Entra 조인 중에 나왔습니다. 이 표시의 의미를 직접 설명하는 문서는 찾지 못했습니다(시도: Learn 검색 2회). 대신 조인을 마친 cl10에서 `net localgroup administrators`를 조회하니 조인한 사용자가 로컬 Administrators에 들어 있었고(조회, 2026-11-04 18:37), 문서도 같은 동작을 안내합니다(문서: 로컬 관리자 그룹 관리). 그래서 "관리자" 표시는 이 로컬 관리자 권한을 뜻하는 것으로 보입니다(추정).
 
 ### 5. 절차
 
@@ -124,28 +150,26 @@ dsregcmd /status | Select-String 'AzureAdJoined|DomainJoined|DeviceAuthStatus|Az
 
 ### 7. 정리·남은 일
 
-- 비교는 PC 두 대에서 한 번씩만 확인한 결과입니다.
+- AD 조인 칸은 조인 전 상태의 값입니다. 비교는 PC 두 대에서 한 번씩만 확인한 결과입니다.
+- 하이브리드 조인 레코드가 Entra에 남아 있던 PC(cl10)를 다시 도메인에 가입시켰을 때 조인이 0x801c005b(error_computer_signature_check_failure)로 실패한 사례가 한 건 있습니다(조회, 이 한 건만 확인). 사례와 해결은 [Connect Sync 글]({{ "/iam/hybrid-join-connect-sync/" | relative_url }})에 정리했습니다.
 - 하이브리드 조인 쪽 PRT 실패 원인은 [하이브리드 조인 후 AzureAdPrt가 NO일 때]({{ "/iam/troubleshooting/hybrid-join-prt-no/" | relative_url }})에 정리했습니다.
-
-### 8. 확인 불가
-
-<details markdown="1">
-<summary>확인 불가 펼쳐 보기 (1건)</summary>
-
-- **조직 확인 창의 "관리자" 표시**: Entra 조인 중 나온 창에서 사용자 유형이 "관리자"로 표시된 것을 봤지만, 그 의미를 문서로 확인하지 않았고 당시 캡처도 없습니다.
-
-</details>
 
 ## 근거 자료
 
 <details markdown="1">
-<summary>근거 자료 펼쳐 보기 (3건)</summary>
+<summary>근거 자료 펼쳐 보기 (6건)</summary>
 
 - **조회**: 세 상태의 dsregcmd 값(AzureAdJoined, DomainJoined, DeviceAuthStatus, TenantName, KeyProvider, TpmProtected, AzureAdPrt)
     - 출처: sionnote-cl10, sionnote-cl11 (2026-11-03~04)
+- **조회**: AD 조인만 된 서버의 dsregcmd 출력(AzureAdJoined NO, DomainJoined YES 두 줄만 출력)
+    - 출처: sionnote-sync01 (2026-11-04 23:00)
+- **조회**: 하이브리드 조인 PC의 PRT(Cloud Test02 YES, yadmin NO)와 TenantName 빈 값
+    - 출처: sionnote-cl10, sionnote-cl11 (2026-11-04)
 - **문서**: 하이브리드 조인 확인 방법(장치 목록의 등록됨 열이 보류 중이면 조인 미완료, 날짜면 완료)
     - 출처: [Verify Microsoft Entra hybrid join](https://learn.microsoft.com/entra/identity/devices/how-to-hybrid-join-verify)
 - **문서**: dsregcmd 진단 데이터(조인 단계와 오류 코드)
     - 출처: [Troubleshoot devices by using the dsregcmd command](https://learn.microsoft.com/entra/identity/devices/troubleshoot-device-dsregcmd)
+- **문서**: Entra 조인을 수행한 사용자는 기본으로 로컬 Administrators 그룹에 추가됨
+    - 출처: [How to manage the local administrators group on Microsoft Entra joined devices](https://learn.microsoft.com/entra/identity/devices/assign-local-admin)
 
 </details>

@@ -1,6 +1,7 @@
 ---
 title: "[IAM] 서버와 클라이언트를 AD 도메인에 가입시키기"
 date: 2026-11-02 22:55:00 +0900
+last_modified_at: 2026-11-04 22:00:00 +0900
 categories: [iam]
 phase: 하이브리드 실습
 seq: 3
@@ -9,15 +10,15 @@ excerpt: "DNS를 DC로 맞추고 컴퓨터 이름·도메인 변경 창에서 �
 toc: true
 ---
 
-동기화 서버(sync01)와 Windows 10·11 클라이언트(cl10, cl11)를 `sionnote.local`에 가입시켰습니다. 가입 전에 맞춰야 하는 것은 하나, **DNS를 도메인 컨트롤러로 향하게 하는 것**입니다. 이 글은 sync01의 가입 과정(캡처)과 클라이언트 두 대의 현재 가입 상태를 정리합니다.
+동기화 서버(sync01)와 Windows 10·11 클라이언트(cl10, cl11)를 `sionnote.local`에 가입시켰습니다. 가입 전에 맞춰야 하는 것은 하나, **DNS를 도메인 컨트롤러로 향하게 하는 것**입니다. 이 글은 sync01의 가입 과정(캡처)과 클라이언트 두 대의 2026-11-04 11:30 시점 가입 상태를 정리합니다(이후 Entra 조인 재현으로 두 PC는 도메인을 떠났고, 내용은 [Entra 조인 글]({{ "/iam/entra-join-cl10-cl11/" | relative_url }}) 7절에 있습니다).
 
 ## 요약
 
 - 가입 전 NIC의 DNS를 DC(10.10.10.10)로 지정해야 하고, 게이트웨이는 비워도 됨(내부 스위치)
 - sync01은 컴퓨터 이름을 바꾸면서 가입했고, 계정은 기본 `Computers` 컨테이너에 생김
-- cl10·cl11은 동기화 방식별 OU(`ConnectSync`, `CloudSync`)에 계정이 놓여 있고, 현재 보안 채널이 정상임
+- cl10·cl11은 동기화 방식별 OU(`ConnectSync`, `CloudSync`)에 계정이 놓여 있고, 2026-11-04 오전 조회 시점에 cl11은 보안 채널이 정상(NERR_Success)이었고, cl10은 가입 상태(PartOfDomain True)만 조회함(nltest 미실행)
 
-> 근거 표기: 조회 = 이 랩에서 직접 읽은 값 · 문서 = Microsoft Learn · 확인 불가 = 시도했지만 확인하지 못한 값(방법·사유 병기). 테넌트 ID·도메인·계정 등 비공개 정보는 가리거나 게시하지 않았습니다.
+> 근거 표기: 조회 = 이 랩에서 직접 읽은 값 · 문서 = Microsoft Learn · 확인 불가 = 시도했지만 확인하지 못한 값(방법·사유 병기). 테넌트 ID·테넌트 도메인·클라우드 계정(UPN)은 가렸고, 개인 실습용 도메인(sionnote.local)의 계정 이름·장치 이름·호스트 이름은 그대로 보일 수 있습니다.
 
 ---
 
@@ -31,7 +32,7 @@ toc: true
 
 | 구분 | 서버(sync01) | 클라이언트(cl10, cl11) |
 |---|---|---|
-| 운영체제(조회) | Windows Server 2022 Standard Evaluation | cl11: Windows 11 Enterprise 10.0.22631 · cl10: Windows 10 22H2 설치 이미지(VM 설정의 ISO 이름) |
+| 운영체제(조회) | Windows Server 2022 Standard Evaluation | cl11: Windows 11 Enterprise 10.0.22631 · cl10: Windows 10 Enterprise 10.0.19045(Entra 장치 목록 버전 열의 10.0.19045.5073에서 읽음) |
 | 가입 위치 | 서버 관리자 → 로컬 서버 → 컴퓨터 이름·도메인 변경 | 같은 창 또는 설정 → 계정 → 회사 또는 학교 액세스(문서) |
 | 컴퓨터 계정 위치(조회) | 기본 컨테이너 `CN=Computers` | `OU=CloudSyncLab` 아래 `ConnectSync`(cl10), `CloudSync`(cl11) |
 | 가입 뒤 할 일 | 동기화 에이전트 설치 | 하이브리드 조인·Entra 조인 시험 |
@@ -44,29 +45,26 @@ toc: true
 
 가입 전에 NIC(lab-internal 쪽 "Ethernet 2")를 고정 IP로 구성했습니다. 서브넷 마스크는 255.255.255.0, **기본 게이트웨이는 비움**, 기본 설정 DNS는 DC입니다(조회: 캡처 화면).
 
-![sync01 IPv4 속성: 10.10.10.40, DNS는 DC]({{ "/assets/images/2026/11/adj-01-sync01-ipv4.png" | relative_url }})
+[![sync01 IPv4 속성: 10.10.10.40, DNS는 DC]({{ "/assets/images/2026/11/adj-01-sync01-ipv4.png" | relative_url }})]({{ "/assets/images/2026/11/adj-01-sync01-ipv4.png" | relative_url }}){:target="_blank"}
 
 그다음 서버 관리자 → 로컬 서버에서 컴퓨터 이름을 `sionnote-sync01`로 바꾸고 멤버를 **도메인 `sionnote.local`** 로 선택했습니다. 이름을 바꾸기 전 이름은 설치 직후의 임의 이름(`WIN-…`)이었습니다.
 
-![컴퓨터 이름/도메인 변경: 이름과 도메인]({{ "/assets/images/2026/11/adj-02-join-dialog.png" | relative_url }})
+[![컴퓨터 이름/도메인 변경: 이름과 도메인]({{ "/assets/images/2026/11/adj-02-join-dialog.png" | relative_url }})]({{ "/assets/images/2026/11/adj-02-join-dialog.png" | relative_url }}){:target="_blank"}
 
 도메인 가입 권한이 있는 자격 증명을 입력하면(자격 증명 입력 화면은 캡처하지 않았습니다) "Welcome to the sionnote.local domain." 메시지가 뜹니다. 확인 후 재시작합니다.
 
-![도메인 가입 완료 메시지]({{ "/assets/images/2026/11/adj-03-welcome.png" | relative_url }})
+[![도메인 가입 완료 메시지]({{ "/assets/images/2026/11/adj-03-welcome.png" | relative_url }})]({{ "/assets/images/2026/11/adj-03-welcome.png" | relative_url }}){:target="_blank"}
 
 가입 뒤 DC에서 읽은 계정은 `CN=SIONNOTE-SYNC01,CN=Computers,DC=sionnote,DC=local`이고, 컴퓨터 암호가 설정된 시각은 2026-11-02 22:51입니다(조회). 캡처의 "Welcome" 메시지 시각(22:52)과 맞습니다.
 
-#### 3-2. 클라이언트 현재 상태
+#### 3-2. 클라이언트 상태(2026-11-04 오전)
 
-2026-11-04 11:30 두 클라이언트의 콘솔에서 읽은 값입니다.
+2026-11-04 11:30 두 클라이언트의 콘솔과 ad01(컴퓨터 계정 위치)에서 읽은 값입니다.
 
 | 항목 | cl10 | cl11 |
 |---|---|---|
 | 컴퓨터 이름·도메인 | SIONNOTE-CL10 · sionnote.local | SIONNOTE-CL11 · sionnote.local |
 | PartOfDomain | True | True |
-| 트러스트된 DC·보안 채널(`nltest /sc_query`) | 조회하지 않음 | ad01 · NERR_Success |
-| lab-internal NIC | 확인 불가(콘솔이 다시 잠겨 못 읽음) | 10.10.10.52, 게이트웨이 없음, DNS 10.10.10.10 |
-| 외부용 NIC(기본 스위치) | 확인 불가 | 192.168.x.x, DNS는 NAT 게이트웨이 |
 | AD 컴퓨터 계정 위치 | `OU=ConnectSync,OU=CloudSyncLab` | `OU=CloudSync,OU=CloudSyncLab` |
 
 cl11의 외부용 NIC에는 게이트웨이가 있고 lab-internal NIC에는 없어서, 도메인 통신은 내부 NIC로, 인터넷 통신은 NAT NIC로 나뉩니다(조회).
@@ -78,6 +76,38 @@ cl11의 외부용 NIC에는 게이트웨이가 있고 lab-internal NIC에는 없
 - **되돌린 뒤 확인**: 체크포인트를 적용하면 PC는 과거 상태가 되지만 AD 컴퓨터 계정은 그대로입니다. 되돌린 직후 `nltest /sc_query:도메인`과 `Get-ADComputer`로 둘이 맞는지 확인합니다(앞 글 6절 사례).
 
 ### 5. 절차
+
+#### 5-1. 사전 작업: sync01에 Windows Server 설치
+
+도메인에 가입시키기 전에 VM에 OS를 설치합니다. Hyper-V 관리자에서 VM에 연결하면 설치 ISO로 부팅되어 아래 순서로 진행됩니다(2026-11-02 22:36~22:41, sync01).
+
+1. **언어·시간·키보드**: 기본값(English (United States), US)을 그대로 두고 Next를 누릅니다.
+
+[![설치 1단계: 언어, 시간 및 통화 형식, 키보드]({{ "/assets/images/2026/11/sync01-os-01-language.png" | relative_url }})]({{ "/assets/images/2026/11/sync01-os-01-language.png" | relative_url }}){:target="_blank"}
+
+2. **Install now**를 누릅니다.
+
+[![설치 2단계: Install now]({{ "/assets/images/2026/11/sync01-os-02-install-now.png" | relative_url }})]({{ "/assets/images/2026/11/sync01-os-02-install-now.png" | relative_url }}){:target="_blank"}
+
+3. **운영 체제 선택**: 이 랩은 `Windows Server 2022 Standard Evaluation (Desktop Experience)`를 골랐습니다. 항목을 고르면 화면 아래 설명에 "전체 Windows 그래픽 환경을 설치하며 디스크 공간을 더 쓴다"는 취지의 문구(Description)가 나옵니다(조회).
+
+[![설치 3단계: 운영 체제 선택(Standard Evaluation, Desktop Experience)]({{ "/assets/images/2026/11/sync01-os-03-edition.png" | relative_url }})]({{ "/assets/images/2026/11/sync01-os-03-edition.png" | relative_url }}){:target="_blank"}
+
+4. **라이선스 약관**에 동의합니다. 이 설치 흐름에서는 제품 키를 묻는 화면이 없었습니다(조회).
+
+[![설치 4단계: 라이선스 약관 동의]({{ "/assets/images/2026/11/sync01-os-04-license.png" | relative_url }})]({{ "/assets/images/2026/11/sync01-os-04-license.png" | relative_url }}){:target="_blank"}
+
+5. **설치 유형**: Custom(새로 설치)을 고르면 디스크 선택 화면으로 넘어갑니다. Upgrade는 기존 OS가 실행 중일 때만 쓸 수 있습니다.
+
+[![설치 5단계: 설치 유형(Upgrade 또는 Custom)]({{ "/assets/images/2026/11/sync01-os-05-install-type.png" | relative_url }})]({{ "/assets/images/2026/11/sync01-os-05-install-type.png" | relative_url }}){:target="_blank"}
+
+6. **디스크 선택**: 60GB 빈 공간(Drive 0 Unallocated Space)을 선택하고 Next를 누르면 설치가 시작됩니다.
+
+[![설치 6단계: 설치할 디스크 선택(60GB 빈 공간)]({{ "/assets/images/2026/11/sync01-os-06-disk.png" | relative_url }})]({{ "/assets/images/2026/11/sync01-os-06-disk.png" | relative_url }}){:target="_blank"}
+
+설치가 끝나면 서버 관리자가 열립니다. 이어서 아래 도메인 가입 절차를 진행합니다.
+
+#### 5-2. 도메인 가입
 
 GUI 경로(문서 기준, sync01은 위 캡처로 확인)입니다.
 
@@ -95,21 +125,11 @@ nltest /sc_query:sionnote.local
 
 ### 6. 막힌 곳
 
-- 클라이언트 두 대의 가입 당시 화면은 캡처가 없어서 위 3-2의 현재 상태로 대신했습니다(확인 불가: 방법 = 사용자 스크린샷 폴더 검색, 사유 = 가입 시점의 캡처가 폴더에 없음).
-- IP를 막 부여한 직후에는 `Test-NetConnection`의 LDAP 389가 실패했고, 잠시 뒤 재시험하자 성공했습니다(타이밍 문제로 판단, 원인 확인 불가: 방법 = 같은 시험 재실행, 사유 = 실패 당시 로그 없음).
+- IP를 막 부여한 직후에는 `Test-NetConnection`의 LDAP 389가 실패했고, 잠시 뒤 재시험하자 성공했습니다(타이밍 문제로 보임, 추정: 당시 출력·캡처는 남기지 않음).
 
 ### 7. 정리·남은 일
 
 - 다음 글: sync01에 Connect Sync를 설치하고 방화벽 규칙을 여는 과정.
-
-<details markdown="1">
-<summary>확인 불가 항목 (3건)</summary>
-
-- 클라이언트 가입 당시 화면: 캡처 없음.
-- cl10의 NIC 구성: 조회 시점에 콘솔이 잠겨 읽지 못함.
-- `Test-NetConnection` 389 첫 시도 실패의 원인: 당시 로그 없음, 재시도로 성공만 확인.
-
-</details>
 
 ### 부록. 사용한 명령과 출력
 
@@ -160,9 +180,10 @@ Get-ADComputer -Filter * -Properties PasswordLastSet | Select Name,Distinguished
 ## 근거 자료
 
 <details markdown="1">
-<summary>근거 자료 펼쳐 보기 (5건)</summary>
+<summary>근거 자료 펼쳐 보기 (6건)</summary>
 
 - (조회) sync01 IP 구성·가입 화면: 2026-11-02 22:47~22:52 사용자 캡처 원본
+- (조회) sync01 OS 설치 화면(5-1): 사용자 캡처 원본
 - (조회) 컴퓨터 계정의 위치·암호 설정 시각: ad01 `Get-ADComputer` (2026-11-04)
 - (조회) cl10·cl11 가입 상태, cl11 NIC·보안 채널: 각 PC의 PowerShell (2026-11-04 11:30)
 - (문서) [컴퓨터를 도메인에 가입시키기(서버·클라이언트)](https://learn.microsoft.com/windows-server/identity/ad-ds/manage/join-computer-to-domain)

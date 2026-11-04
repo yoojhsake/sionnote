@@ -59,25 +59,6 @@ Hybrid joined 디바이스는 GPO와 Intune을 같이 쓸 수 있지만, 둘을 
 3. 디바이스 > 규정 준수(Compliance)에서 정책 항목을 읽고 Conditional Access와 연결되는 지점을 찾아봅니다.
 4. 테넌트 관리(Tenant administration) 화면에서 커넥터와 토큰(Connectors and tokens) 목록을 봅니다.
 
-<details markdown="1">
-<summary>화면으로 경로 따라가기: 장치 개요, 구성, 규정 준수 (그림 3장)</summary>
-
-![Intune 관리 센터의 장치 개요 화면]({{ "/assets/images/2026/11/guide-intune-overview.png" | relative_url }})
-
-*그림 1. Intune 관리 센터(intune.microsoft.com) > 장치(Devices) > 개요. 플랫폼별 디바이스 수와 구성 정책 할당 실패, 비규격 디바이스 카드가 있고, 왼쪽 안쪽 메뉴에 모든 디바이스, 구성, 규정 준수가 있습니다. 이 샌드박스는 등록된 디바이스가 없습니다.*
-
-![Intune 관리 센터의 구성 정책 목록]({{ "/assets/images/2026/11/guide-intune-config.png" | relative_url }})
-
-*그림 2. 장치 > 디바이스 관리 > 구성. 구성 프로필 목록이고, 위쪽 만들기로 새 프로필을 만듭니다. 이 샌드박스는 프로필이 없어 "데이터가 없습니다"입니다.*
-
-![Intune 관리 센터의 규정 준수 정책 목록]({{ "/assets/images/2026/11/guide-intune-compliance.png" | relative_url }})
-
-*그림 3. 장치 > 디바이스 관리 > 규정 준수. 정책 탭에서 규정 준수 정책을 보고, 알림, 비규격 장치 사용 중지, 규정 준수 설정, 스크립트, 모니터링 탭이 이어집니다. 이 샌드박스는 정책이 없습니다.*
-
-화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, IP는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
-
-</details>
-
 ### 5. 전문가처럼 말하기
 
 > "Intune의 compliance policy 결과가 Conditional Access의 'require compliant device'로 이어지기 때문에, 디바이스 상태가 접근 통제의 입력값이 됩니다."

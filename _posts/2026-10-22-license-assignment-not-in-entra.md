@@ -1,11 +1,11 @@
 ---
-title: "[Troubleshooting] 그룹 라이선스를 Entra에서 할당할 수 없다"
+title: "[Troubleshooting] 그룹 라이선스를 Entra에서 할당할 수 없음"
 date: 2026-10-22 09:27:00 +0900
 categories: [m365, troubleshooting]
 area: 라이선스·그룹
 seq: 3
 tags: [Troubleshooting, 그룹 라이선스, Entra, M365 관리 센터, 라이선스 할당]
-excerpt: "Entra 그룹 라이선스 탭에 할당 버튼이 없다. M365 관리 센터에서 대상을 그룹으로 골라 할당하니 1건이 붙었다"
+excerpt: "Entra 그룹 라이선스 탭에 할당 버튼이 없습니다. M365 관리 센터에서 대상을 그룹으로 골라 할당하니 1건이 붙었습니다"
 ---
 
 Entra 그룹의 라이선스 탭을 열었는데 할당 버튼은 없고 안내 문구만 있습니다. 그룹 라이선스 할당은 M365 관리 센터에서 하도록 되어 있어, 그곳에서 대상 유형을 그룹으로 골라 할당하자 Graph 조회로 그룹에 라이선스 1건이 확인됐습니다.
@@ -72,25 +72,6 @@ $grp = ((Invoke-AzRestMethod -Uri "$B/groups?`$filter=displayName eq 'DG-Practic
 3. 하지 말아야 할 것: 그룹 라이선스를 제거하기 전에 그룹 삭제
 
 관련 글: [Identity 구조: 동적 그룹과 그룹 라이선스]({{ "/m365/d2-identity-groups/" | relative_url }}) · [직접 라이선스와 그룹 라이선스가 겹침]({{ "/m365/troubleshooting/direct-and-group-license-overlap/" | relative_url }})
-
-<details markdown="1">
-<summary>화면으로 경로 따라가기: 그룹 라이선스 탭, 그룹 목록, M365 라이선스 화면 (그림 3장)</summary>
-
-![그룹의 라이선스 탭. M365 관리 센터에서만 할당할 수 있다는 안내]({{ "/assets/images/2026/11/guide-entra-group-license.png" | relative_url }})
-
-*그림 2. 그룹 DG-Practice-02 > 라이선스 탭. 위쪽 경고가 "라이선스 할당 추가, 제거 또는 재처리는 M365 관리 센터 내에서만 사용할 수 있습니다"라고 안내하고, 그룹에 할당된 제품(이 예는 상태 "큐에 대기됨")이 표로 나옵니다.*
-
-![Entra 관리 센터의 모든 그룹 목록]({{ "/assets/images/2026/11/guide-entra-groups.png" | relative_url }})
-
-*그림 3. Entra ID > 그룹 > 모든 그룹. 그룹 유형(Microsoft 365, 보안)과 멤버십 유형(할당됨, 동적)이 나옵니다. DG-Practice-01과 02는 동적 보안 그룹입니다. 일부 그룹 이름, 개체 ID, 메일 주소는 가렸습니다.*
-
-![라이선스 화면. 제품별 사용 가능한 라이선스와 할당된 라이선스]({{ "/assets/images/2026/11/guide-m365-licenses.png" | relative_url }})
-
-*그림 4. M365 관리 센터 > 청구 > 라이선스. 제품별로 사용 가능한 라이선스 수와 할당된 라이선스(예: 17/25)가 나옵니다. 제품 이름을 눌러 사용자나 그룹에 할당합니다.*
-
-화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, IP는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
-
-</details>
 
 ### 근거 자료
 

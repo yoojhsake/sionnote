@@ -67,7 +67,7 @@ Entra Connect는 두 가지를 합니다.
 - 다른 방식을 쓰더라도 PHS를 함께 켜 두면 온프레미스 장애 때 Entra Connect에서 PHS로 수동 전환해 복구할 수 있습니다.
 - Entra ID Protection의 유출 자격 증명(leaked credentials) 탐지와 Entra Domain Services는 어떤 인증 방식을 쓰든 PHS가 필요합니다.
     - 유출 자격 증명 탐지에 PHS가 필요한 대상은 동기화된(hybrid) 사용자입니다. 클라우드 전용 계정은 PHS 없이도 대조되고, PHS를 켠 뒤 새로 발견된 유출분부터 대조합니다.
-    - 탐지 자체는 Free·P1에서도 생기지만, Risky users 보고서의 전체 정보와 위험 기반 정책은 P2가 필요합니다. Free·P1에서는 중·고위험 사용자만 제한적으로 보입니다.
+    - 탐지 자체는 Free·P1에서도 생기지만(보고서에서는 Free는 위험 탐지 목록이 보이지 않고 P1은 제한 표시), Risky users 보고서의 전체 정보와 위험 기반 정책은 P2가 필요합니다. Free·P1에서는 중·고위험 사용자만 제한적으로 보입니다.
 - PTA는 로그인 시점에 계정 상태를 즉시 반영해야 하는 조직에서 고릅니다. 에이전트는 DC에 접근할 수 있어야 하므로 DMZ에 둘 수 없습니다.
 - Federation은 기존 AD FS 투자가 있거나, 페더레이션 IdP를 요구하는 서드파티 MFA나 인증 솔루션, 다중 사이트 온프레미스 인증 같은 요건이 있을 때 고릅니다. 운영과 장애 분석은 셋 중 가장 복잡합니다.
     - 서드파티 MFA만이 목적이라면 Federation이 필수는 아닙니다. External MFA(이전 이름 external authentication methods)로 PHS·PTA 환경에서도 외부 MFA 공급자를 쓸 수 있습니다.
@@ -77,14 +77,14 @@ Entra Connect는 두 가지를 합니다.
 #### 디바이스 관점의 하이브리드 (hybrid join)
 
 - Entra hybrid join은 온프레미스 AD 도메인에 가입된 기존 PC를 Entra ID에도 등록하는 방식입니다. 최초 로그인과 관리를 위해 DC까지의 네트워크 경로(line of sight)가 필요합니다.
-- 공식 방향은 새 디바이스와 초기화한 디바이스에 Entra join을 쓰는 것이고, hybrid join은 전환기의 중간 단계입니다. 두 방식은 같은 환경에 공존할 수 있고, 기존 hybrid join 디바이스를 Entra join으로 바꾸려면 Windows를 다시 설치해야 합니다.
+- 공식 방향은 새 디바이스와 초기화한 디바이스에 Entra join을 쓰는 것이고, hybrid join은 전환기의 중간 단계입니다. 두 방식은 같은 환경에 공존할 수 있고, 기존 hybrid join 디바이스를 Entra join으로 바꾸려면 Windows 초기화(reset, 전체 삭제)가 필요합니다. Microsoft가 지원하는 전환 경로는 초기화뿐이고, 초기화할 수 없으면 지원되는 경로가 없습니다. Autopilot Reset은 hybrid join 디바이스를 지원하지 않습니다.
 
 #### 동기화 운영 포인트
 
 - 동기화 주기를 직접 바꿨다면 최소 7일 안에는 delta sync가 한 번 돌아야 합니다. 그렇지 않으면 full sync가 필요해집니다.
 - 동기화 규칙을 바꾸기 전에는 scheduler를 끕니다. 범위(scope) 필터를 바꾸면 대상 디렉터리의 객체가 삭제될 수 있으니 staging 서버에서 먼저 확인합니다.
 - Entra Connect Sync는 sync engine을 가진 서버형이고, Entra Cloud Sync는 경량 에이전트 기반입니다. 다중 포리스트 같은 요건에서 선택을 검토합니다.
-    - Microsoft는 Connect Sync에서 Cloud Sync로의 단계적 전환을 시작했고, 2026년 7월부터 M365 메시지 센터, Entra Connect Health, 이메일로 조직별 전환 일정을 알립니다.
+    - Microsoft는 Connect Sync에서 Cloud Sync로의 단계적 전환을 시작한다고 2026년 4월에 공지했고, 2026년 7월부터 M365 메시지 센터, Entra Connect Health, 이메일로 조직별 전환 일정을 알리겠다고 했습니다(실제 통지 진행 여부는 직접 확인하지 않음).
 
 ```powershell
 # Entra Connect 서버에서 실행
@@ -107,25 +107,6 @@ PHS는 계정 정보 사본을 클라우드가 들고 직접 판단하는 방식
 3. 위 PHS, PTA, Federation 비교를 본인 말로 다시 써 봅니다.
 
 PTA 에이전트 장애로 로그인이 실패할 때의 대처는 [PTA 장애 글]({{ "/iam/troubleshooting/pta-agent-sign-in-fails/" | relative_url }})에 있습니다.
-
-<details markdown="1">
-<summary>화면으로 경로 따라가기: Entra Connect와 클라우드 동기화 (그림 3장)</summary>
-
-![Microsoft Entra Connect 시작 화면. Connect Sync 레거시 인증 중단 안내]({{ "/assets/images/2026/11/guide-entra-connect-start.png" | relative_url }})
-
-*그림 1. Entra ID > Entra Connect > 시작. 위쪽 주황 안내는 2027년 4월 7일에 Entra Connect Sync의 레거시 인증을 중단할 예정이니 버전 2.6.84.0 이상으로 올리고 애플리케이션 기반 인증을 구성하라고 알립니다. 왼쪽 안쪽 메뉴는 시작, 클라우드 동기화, 동기화 연결입니다.*
-
-![Entra 클라우드 동기화 구성 화면. 구성이 없어 새 구성을 만들라는 안내]({{ "/assets/images/2026/11/guide-entra-cloudsync.png" | relative_url }})
-
-*그림 2. Entra ID > Entra Connect > 클라우드 동기화 > 구성. 이 샌드박스는 구성이 없어 "시작하려면 새 구성을 만듭니다"가 나옵니다. 온-프레미스 AD에서 Entra ID로 동기화하는 구성을 새 구성으로 만들며, 왼쪽 모니터 메뉴에 프로비전 로그, 감사 로그, 에이전트, 인사이트가 있습니다.*
-
-![Entra 관리 센터의 개요 화면. 기본 정보와 Microsoft Entra Connect 카드]({{ "/assets/images/2026/11/guide-entra-overview.png" | relative_url }})
-
-*그림 3. Entra 관리 센터 > Entra ID > 개요(Overview). 기본 정보에 이름, 테넌트 ID, 주 도메인, 라이선스(Microsoft Entra ID P2)와 사용자, 그룹, 애플리케이션, 디바이스 수가 나옵니다. 오른쪽 아래 Microsoft Entra Connect 카드는 "사용 안 함, 동기화 실행된 적 없음"입니다. 이름, 테넌트 ID, 주 도메인, 로그인한 사용자는 가렸습니다.*
-
-화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, 구독 이름과 ID는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
-
-</details>
 
 ### 5. 전문가처럼 말하기
 
@@ -162,7 +143,7 @@ PTA 에이전트 장애로 로그인이 실패할 때의 대처는 [PTA 장애 �
 ### 8. 근거 자료
 
 <details markdown="1">
-<summary>근거 자료 펼쳐 보기 (9건)</summary>
+<summary>근거 자료 펼쳐 보기 (11건)</summary>
 
 - 문서: [Choose the right authentication method for your Microsoft Entra hybrid identity solution](https://learn.microsoft.com/entra/identity/hybrid/connect/choose-ad-authn): 비교표(비활성화 계정 최대 30분 지연, 잠금·비밀번호 만료 미동기화), PTA 에이전트 1개 이상·3개 권장, Federation이 필요한 요건, PHS·PTA에서 인증서·스마트카드 로그인 지원
 - 문서: [Implement password hash synchronization with Microsoft Entra Connect Sync](https://learn.microsoft.com/entra/identity/hybrid/connect/how-to-connect-password-hash-synchronization): 비밀번호 해시 동기화는 2분마다, 주기 변경 불가
@@ -172,6 +153,8 @@ PTA 에이전트 장애로 로그인이 실패할 때의 대처는 [PTA 장애 �
 - 문서: [Frequently asked questions around Microsoft Entra ID Protection](https://learn.microsoft.com/entra/id-protection/id-protection-faq): 유출 자격 증명 탐지는 하이브리드 사용자에게 PHS 필요, PHS 이후 발견분만 대조
 - 문서: [Secure your Microsoft Entra identity infrastructure: Step 1](https://learn.microsoft.com/azure/security/fundamentals/steps-secure-identity#step-1-strengthen-your-credentials): 유출 자격 증명 보고서는 PHS를 켰거나 클라우드 전용 ID일 때 대조
 - 문서: [What is Microsoft Entra ID Protection? (License requirements)](https://learn.microsoft.com/entra/id-protection/overview-identity-protection#license-requirements): Free·P1은 Risky users 제한 표시, P2 전체 접근
+- 문서: [What are risk detections?](https://learn.microsoft.com/entra/id-protection/concept-identity-protection-risks#user-risk-detections): Leaked credentials 라이선스 Free·P1
+- 문서: [Microsoft Entra join types](https://learn.microsoft.com/intune/solutions/cloud-native-endpoints/entra-join-types): hybrid에서 Entra join 전환은 Windows reset 필요
 - 문서: [Microsoft Entra releases and announcements: April 2026](https://learn.microsoft.com/entra/fundamentals/whats-new#april-2026): Connect Sync → Cloud Sync 전환, 2026년 7월부터 조직별 알림
 
 </details>

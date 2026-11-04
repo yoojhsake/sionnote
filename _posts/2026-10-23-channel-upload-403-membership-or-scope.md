@@ -1,6 +1,7 @@
 ---
 title: "[Troubleshooting] 비공개·공유 채널 파일이 403: 멤버십 문제인가, 토큰 범위 문제인가"
 date: 2026-10-23 10:20:00 +0900
+last_modified_at: 2026-10-27 10:00:00 +0900
 categories: [m365, troubleshooting]
 area: Teams·채널·파일
 seq: 1
@@ -22,9 +23,6 @@ excerpt: "비공개·공유 채널만 403이 났습니다. 멤버십이 아니�
 
 ## 전체 기록
 
-
-
-
 ### 1. 증상
 
 - Graph 업로드가 표준 채널은 성공, 비공개·공유 채널은 업로드·폴더 읽기 모두 403(accessDenied 계열)이었습니다.
@@ -44,7 +42,7 @@ excerpt: "비공개·공유 채널만 403이 났습니다. 멤버십이 아니�
 | 가설 | 기대값 | 실제값 |
 |---|---|---|
 | 1. 사용자에게 채널 사이트 권한이 없다 | 화면에서 막힘 | SharePoint 화면에서 두 사이트 Documents가 열림 |
-| 2. 관리자가 채널 구성원이 아니다 | 구성원 아님 | 세 채널 모두 구성원 1명(관리자, owner) |
+| 2. 관리자가 채널 구성원이 아니다 | 구성원 아님 | 네 채널(General 포함) 모두 구성원 1명(관리자, owner) |
 | 3. 토큰에 파일·사이트 범위가 없다 | scp에 Files.*·Sites.* | 없음(Group.ReadWrite.All 등만 있음) |
 | 3 증명. 범위를 더해 같은 요청 | 403 → 200 | 동의 전 accessDenied / 동의 후 두 사이트 모두 200 OK |
 
@@ -111,21 +109,21 @@ foreach ($c in $ch) {
 ```
 
 ![채널 폴더 읽기 결과]({{ "/assets/images/2026/10/m13-2-read-403.png" | relative_url }})
-*그림 2. 폴더 읽기 결과(위쪽은 실행한 명령). 표준 채널(ch-standard)은 파일 목록 D3-test-ch-standard.txt, zz-test.txt, zz-test2-ch-standard.txt, zz-x.txt가 나오고, 비공개·공유 채널은 둘 다 "READ … 403 (Forbidden)", General은 zz-test.txt, zz-x.txt가 나옵니다. zz-x.txt는 제가 채널 폴더 경로를 잘못 지정해 시험하다 팀 문서함에 생긴 파일로 정리 목록에 넣었습니다.*
+*그림 2. 폴더 읽기 결과(위쪽은 실행한 명령). 표준 채널(ch-standard)은 파일 목록 D3-test-ch-standard.txt, zz-test.txt, zz-test2-ch-standard.txt, zz-x.txt가 나오고, 비공개·공유 채널은 둘 다 "READ … 403 (Forbidden)", General은 zz-test.txt, zz-x.txt가 나옵니다. zz-x.txt는 제가 채널 폴더 경로를 잘못 지정해 시험하다 생긴 파일로, 읽기 결과에서 ch-standard와 General 폴더 목록 양쪽에 보였습니다. 생긴 정확한 위치는 이 글에서 확정하지 않았고 정리 목록에 넣었습니다.*
 
 #### 화면에서는 열린다 (조회)
 
 같은 관리자 계정으로 SharePoint 화면에서 비공개·공유 채널 사이트의 Documents 목록을 열었습니다. 앞서 올린 시험 파일(D3-test-ch-private.txt, D3-test-ch-shared.txt)이 보였습니다. 사용자의 권한이나 멤버십 문제라면 화면에서도 막혔을 것입니다.
 
 ![비공개 채널 사이트의 문서 목록(SharePoint 화면)]({{ "/assets/images/2026/10/m22-4-gui-private-channel-files.png" | relative_url }})
-*그림 3. 비공개 채널 사이트의 Documents 화면. 시험 파일 D3-test-ch-private.txt가 보입니다(5일 전 = 10/22). 수정자 이름은 가렸습니다.*
+*그림 3. 비공개 채널 사이트의 Documents 화면. 시험 파일 D3-test-ch-private.txt가 보입니다(5일 전 = 10/22, 화면의 "5일 전"은 촬영 시점 기준 상대 표기). 수정자 이름은 가렸습니다.*
 
 ![공유 채널 사이트의 문서 목록(SharePoint 화면)]({{ "/assets/images/2026/10/m22-5-gui-shared-channel-files.png" | relative_url }})
 *그림 4. 공유 채널 사이트의 Documents 화면. 시험 파일 D3-test-ch-shared.txt가 보입니다. 수정자 이름은 가렸습니다.*
 
 #### 채널 구성원 여부 (조회)
 
-관리자 계정이 세 채널의 구성원인지 Graph로 읽었습니다. 세 채널(ch-standard, ch-private, ch-shared) 모두 구성원은 1명이고, 그 한 명이 관리자 계정이며 역할은 owner였습니다.
+관리자 계정이 네 채널의 구성원인지 Graph로 읽었습니다. 네 채널(General과 ch-standard, ch-private, ch-shared) 모두 구성원은 1명이고, 그 한 명이 관리자 계정이며 역할은 owner였습니다.
 
 문서는 비공개 채널 사이트에 채널 구성원만 접근할 수 있다고 설명하지만(문서: Private channels), 이 계정은 이미 구성원이니 **멤버십 때문은 아닙니다.**
 
@@ -152,7 +150,7 @@ $c = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($p)) | ConvertF
 "SCP:   $($c.scp)"; "APPID: $($c.appid)"; "IDTYP: $($c.idtyp)"
 ```
 
-범위는 AppCatalog.Read.All, AuditLog.Read.All, Channel.Create, Channel.ReadBasic.All, ChannelMember.ReadWrite.All, Directory.ReadWrite.All, Group.ReadWrite.All, IdentityProvider.ReadWrite.All, Team.Create, Team.ReadBasic.All, TeamSettings.ReadWrite.All, User.Invite.All 등이었습니다. **Files.* 와 Sites.* 범위는 없었습니다.** Azure CLI(`az account get-access-token`)로 받은 토큰도 같은 앱·같은 범위였습니다.
+범위는 AppCatalog.Read.All, AuditLog.Read.All, Channel.Create, Channel.ReadBasic.All, ChannelMember.ReadWrite.All, Directory.ReadWrite.All, Group.ReadWrite.All, IdentityProvider.ReadWrite.All, Team.Create, Team.ReadBasic.All, TeamSettings.ReadWrite.All, User.Invite.All 등이었습니다. **Files.* 와 Sites.* 범위는 없었습니다.** Cloud Shell에서 `az account get-access-token`으로 받은 Azure CLI 토큰도 2026-11-04에 같은 방식으로 풀어 보니 appid와 scp가 이 토큰과 같았습니다([Cloud Shell Graph 토큰 글]({{ "/m365/troubleshooting/cloud-shell-graph-token-scope/" | relative_url }})의 그림 4). 내 PC의 `az login` 토큰은 비교하지 않았습니다.
 
 ![토큰 범위 확인 결과]({{ "/assets/images/2026/10/m13-3-token-scope.png" | relative_url }})
 *그림 6. 토큰 범위 출력(SCP). Files.ReadWrite나 Sites.ReadWrite.All 같은 파일·사이트 범위가 목록에 없습니다. APPID는 Cloud Shell이 쓰는 앱의 ID, IDTYP=user는 사용자 위임 토큰이라는 뜻입니다. 토큰 본문은 출력하지 않았습니다.*
@@ -221,7 +219,7 @@ Files.Read.All·Sites.Read.All 동의 후 같은 요청이 200 OK가 됐고, 업
     - 출처: [Shared channels in Microsoft Teams](https://learn.microsoft.com/microsoftteams/shared-channels)
 - **조회**: 표준 성공, 비공개·공유 403, 폴더 읽기 403, 앞서 올린 파일 존재
     - 출처: Cloud Shell(Graph), SharePoint
-- **조회**: 세 채널 모두 관리자 계정이 owner 구성원 / 토큰 scp에 Files.*·Sites.* 없음
+- **조회**: 네 채널(General 포함) 모두 관리자 계정이 owner 구성원 / 토큰 scp에 Files.*·Sites.* 없음
     - 출처: Cloud Shell(Graph)
 - **조회**: 화면에서는 두 채널 사이트 문서 목록이 열림 / 읽기 범위 동의 전 파일 목록 accessDenied, 동의 후 200(그림 3~4, 8~9)
     - 출처: SharePoint 화면, Graph 탐색기

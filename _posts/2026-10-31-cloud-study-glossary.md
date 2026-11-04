@@ -4,18 +4,16 @@ date: 2026-10-31 10:15:00 +0900
 categories: [study]
 phase: 부록
 seq: 2
-tags: [Study, 용어집, Azure, Microsoft 365, Entra ID, IAM, Intune, 학습 자료]
+tags: [Study, 용어집, Azure, Microsoft 365, Entra ID, Intune, 학습 자료]
 excerpt: "모르는 용어가 막힐 때 펼치는 곳. 클라우드 용어 200여 개를 원어와 온프레미스 비교로, 한글 우선 영상과 함께"
-redirect_from:
-  - /iam/entra-id-glossary/
 ---
 
 공부하다 15분 넘게 막히면 대개 모르는 용어 하나 때문입니다. 클라우드 용어를 영어 원어 기준으로 영역별로 모으고 온프레미스로 보면 무엇인지 함께 적어 두었으니, 막힐 때 여기서 찾고 넘어가면 됩니다.
 
 ## 요약
 
-- IAM 용어집을 합쳐 클라우드 용어 249개를 8개 영역에 정리함
-- 막히는 용어는 해당 영역만 펼쳐 찾고 Entra 오류는 트러블슈팅 목록으로 감
+- 클라우드 용어 225개를 8개 영역으로 나눠 원어와 온프레미스 비교로 정리함
+- 막히는 용어는 해당 영역만 펼쳐 찾고, 온프레미스 비교는 감을 잡는 데만 씀
 - 여러 영역의 한글 영상과 SharePoint·Teams 영문 영상은 확인 불가
 
 12주 학습 로드맵의 부록입니다. 이전: [온프레미스 ↔ 클라우드 대응표]({{ "/study/onprem-cloud-mapping/" | relative_url }}) · [전체 로드맵]({{ "/study/cloud-study-roadmap/" | relative_url }})
@@ -58,11 +56,11 @@ redirect_from:
 #### Entra ID와 신원
 
 <details markdown="1">
-<summary>Entra ID와 신원 용어 펼쳐 보기 (71개)</summary>
+<summary>Entra ID와 신원 용어 펼쳐 보기 (56개)</summary>
 
 - **Microsoft Entra ID** · Microsoft의 클라우드 ID·접근 관리 서비스(구 Azure AD) → AD DS (구조는 다름)
-- **Tenant** · 한 조직 전용 Entra ID 인스턴스. identity boundary(클라우드의 보안 경계) → AD 포리스트
-- **Directory · Object** · Tenant가 가진 객체(개체: 사용자·그룹·디바이스·앱·역할) 저장소 → AD 데이터베이스 · AD 개체
+- **Tenant** · 한 조직 전용 Entra ID 인스턴스. identity boundary → AD 포리스트
+- **Directory** · Tenant가 가진 객체 저장소 → AD 데이터베이스
 - **Initial domain** · 처음 만들어지는 `*.onmicrosoft.com` 도메인 → 내부 도메인 이름
 - **Custom domain** · DNS로 소유를 확인해 추가한 회사 도메인 → UPN suffix
 - **UPN (User Principal Name)** · `user@domain` 형태의 로그인 이름 → UPN
@@ -71,58 +69,43 @@ redirect_from:
 - **Cloud-only user · Synced user** · 클라우드에서 만든 계정 · 온프레미스에서 동기화된 계정 → 로컬 계정 · 동기화 계정
 - **Source of authority** · 객체의 원본을 어디서 관리하는가 → 마스터 디렉터리
 - **Group (Security · Microsoft 365)** · 권한용 그룹 · 협업(메일·Teams·SharePoint)용 그룹 → Security Group · 배포 그룹
-- **Assigned · Dynamic membership (Dynamic group)** · 직접 지정 · 규칙(예: `user.department -eq "Sales"`)으로 구성원이 자동으로 들어오고 나감(Entra ID P1) → 수동 편입 vs 스크립트
+- **Assigned · Dynamic membership** · 직접 지정 · 규칙 기반 자동 구성(Entra ID P1) → 수동 편입 vs 스크립트
 - **Role-assignable group** · Entra role을 할당할 수 있는 특수 그룹 → 권한 그룹
-- **Administrative unit (AU)** · 관리 권한을 일부 객체에만 위임하는 범위(P1) → 위임용 OU (정책 상속 없음)
-- **Entra role** · Entra 리소스와 M365 서비스 관리 권한. 구독·리소스 권한인 Azure RBAC와 서로 별개 → AD 관리 위임
+- **Administrative unit (AU)** · 관리 권한을 일부 객체에만 위임하는 범위 → 위임용 OU (정책 상속 없음)
+- **Entra role** · Entra 리소스와 M365 서비스 관리 권한 → AD 관리 위임
 - **Global Administrator** · 테넌트 전체 관리 권한을 가진 최상위 Entra role → Enterprise Admins
 - **Authentication (AuthN)** · 누구인지 확인 → 로그온
 - **Authorization (AuthZ)** · 무엇을 할 수 있는지 결정 → ACL
 - **SSO (Single Sign-On)** · 한 번 로그인으로 여러 앱 사용 → 도메인 로그온
-- **MFA (Multi-Factor Authentication)** · 서로 다른 종류의 요소 둘 이상으로 확인 → 스마트카드 · OTP
-- **Phishing-resistant** · 피싱 저항. 가짜 사이트에 속아도 인증 정보가 넘어가지 않는 성질 → 스마트카드 로그온
-- **AiTM (Adversary-in-the-Middle)** · 중간자 피싱. 가짜 로그인 페이지를 중간에 두고 코드·세션을 가로채는 공격 → 중간자 공격
-- **Passwordless · Passkey · FIDO2** · 비밀번호 없이 하드웨어·기기 기반 키로 인증. Passkey는 등록한 사이트에만 응답하는 공개 키 기반 로그인(기기 바인딩형·동기화형) → 스마트카드 인증
-- **CBA (Certificate-Based Authentication)** · 인증서 기반 인증. 스마트카드·인증서로 로그인 → 스마트카드 로그온
+- **MFA (Multi-Factor Authentication)** · 둘 이상의 요소로 확인 → 스마트카드 · OTP
+- **Passwordless · Passkey · FIDO2** · 비밀번호 없이 하드웨어·기기 기반 키로 인증 → 스마트카드 인증
 - **WHfB (Windows Hello for Business)** · 기기에 묶인 키와 PIN·생체로 로그인 → PIN 기반 스마트카드
-- **TAP (Temporary Access Pass)** · 관리자가 발급하는 기간 제한 임시 코드. 최초 인증 수단 등록에 사용 → 임시 비밀번호
+- **TAP (Temporary Access Pass)** · 최초 인증 수단 등록용 임시 코드 → 임시 비밀번호
 - **SSPR (Self-Service Password Reset)** · 사용자가 직접 비밀번호를 재설정 → 암호 재설정 포털
 - **Authentication methods policy** · 쓸 수 있는 인증 수단을 정하는 정책 → 인증 정책
 - **Authentication strength** · 어떤 강도의 MFA를 요구할지 지정(예: phishing-resistant) → 요구 인증 수준
-- **Token (access · ID · refresh)** · 로그인 결과로 받는 증명. 앱은 이를 보고 접근 허용. 액세스 토큰은 보통 60~90분 유효 → Kerberos 티켓
-- **PRT (Primary Refresh Token)** · 기본 새로 고침 토큰. 조인·등록된 Windows 디바이스가 받는 장기 토큰으로, 앱마다 다시 로그인하지 않게 해 줌(SSO) → TGT와 비슷한 역할
-- **CAE (Continuous Access Evaluation)** · 연속 액세스 평가. 계정 사용 안 함 등 중요 이벤트를 몇 분 안에 반영 → 세션 강제 종료
-- **Claims challenge** · 클레임 챌린지. "MFA를 더 하라"처럼 추가 조건을 요구하며 토큰 요청을 되돌리는 응답 → 추가 인증 요구
-- **Service dependency · Audience** · 서비스 종속성 · 대상 리소스 목록. 앱 하나에 로그인해도 여러 리소스를 함께 요청하는 구조와 그 목록 → 서비스 티켓 대상(SPN)
-- **Device code flow** · 디바이스 코드 흐름(이 블로그의 예전 글은 "장치 코드"). 화면의 코드를 다른 기기에 입력하는 로그인 방식 → 대응 개념 없음
-- **AADSTS · STS (Security Token Service)** · Entra 로그인 서버(STS)가 돌려주는 오류 번호. 예: AADSTS50126 → AD FS 이벤트 ID
-- **Correlation ID · Request ID** · 상관 관계 ID · 요청 ID. 오류 화면의 "추가 정보"에 나오는 값으로 로그인 로그 검색 키 → 이벤트 로그 Activity ID
+- **Token (access · ID · refresh)** · 로그인 결과로 받는 증명. 앱은 이를 보고 접근 허용 → Kerberos 티켓
+- **PRT (Primary Refresh Token)** · 등록된 디바이스에서 SSO를 가능하게 하는 토큰 → TGT와 비슷한 역할
 - **OAuth 2.0** · 접근 권한을 위임하는 표준 → 위임(delegation)
 - **OIDC (OpenID Connect)** · OAuth 2.0 위에서 로그인 확인(ID token)을 더한 표준 → 인증 프로토콜
 - **SAML** · XML 기반의 오래된 SSO 표준 → AD FS가 쓰던 방식
 - **WS-Federation** · 웹 기반 페더레이션 표준(AD FS에서 흔히 사용) → AD FS 신뢰
 - **Kerberos** · 티켓 기반 인증(온프레미스 AD) → 동일
-- **App registration** · 앱을 Entra ID에 등록한 정의(application object). 앱의 설계도로, 만든 테넌트에 하나 → 앱 등록 · SPN
-- **Enterprise application** · 테넌트 안에서 앱을 쓰게 하는 인스턴스(service principal). 앱을 쓰는 각 테넌트마다 생김 → 앱 접근 설정
+- **App registration** · 앱을 Entra ID에 등록한 정의(application object) → 앱 등록 · SPN
+- **Enterprise application** · 테넌트 안에서 앱을 쓰게 하는 인스턴스(service principal) → 앱 접근 설정
 - **Service principal** · 앱이 테넌트에서 갖는 신원 → 서비스 계정
-- **Managed identity (system · user-assigned)** · Azure 리소스에 자동으로 주어지는 자격 증명 없는 신원 → gMSA
+- **Managed identity (system · user-assigned)** · Azure 리소스가 쓰는 자동 관리 신원 → gMSA
 - **Delegated · Application permission** · 사용자 대신 접근 · 앱 단독 접근 권한 → 대리 · 서비스 권한
-- **Consent · Admin consent** · 동의. 앱이 데이터에 접근하도록 사용자·관리자가 허락하는 것. Admin consent는 관리자가 조직 전체에 승인 → 앱 승인
+- **Admin consent** · 관리자가 앱 권한을 조직 전체에 승인 → 앱 승인
 - **Microsoft Graph** · M365·Entra를 다루는 통합 REST API → LDAP + 관리 API
 - **B2B collaboration** · 외부 사용자를 Guest로 초대해 협업 → 외부 사용자 계정
-- **B2B direct connect** · B2B 직접 연결. 게스트 계정 없이 테넌트 간 신뢰로 접근(Teams 공유 채널) → 포리스트 트러스트
 - **Cross-tenant access settings** · 다른 테넌트와의 신뢰·협업 정책 → Forest trust 정책
-- **CIAM (Customer Identity and Access Management)** · 고객 ID·액세스 관리. 고객 가입·로그인 관리(External ID 외부 테넌트) → 회원 가입·로그인 시스템
-- **SSE · ZTNA · SWG** · 보안 서비스 에지 · 제로 트러스트 네트워크 액세스 · 보안 웹 게이트웨이. Global Secure Access를 이루는 네트워크 보안 개념 → VPN · 프록시 서버
-- **Conditional Access (CA)** · 조건에 따라 If-Then 규칙으로 접근을 허용·요구·차단하는 정책 엔진(P1) → 방화벽 규칙 + GPO 로그온 제한
+- **Conditional Access (CA)** · 조건에 따라 접근을 차단·허용하는 정책 엔진(P1) → 방화벽 규칙 + GPO 로그온 제한
 - **Named location** · 정책에서 쓰는 신뢰 IP·국가 범위 → 사내 IP 대역
 - **Report-only mode** · 정책을 평가만 하고 강제하지 않는 모드 → 시뮬레이션 모드
-- **What If** · 특정 사용자·조건에서 어떤 CA 정책이 걸리는지 미리 보는 도구 → RSoP(gpresult)
-- **Microsoft-managed policies** · Microsoft 관리형 정책. Microsoft가 테넌트에 만들어 주는 권장 CA 정책 → 기본 제공 GPO
-- **Protected actions** · 보호된 작업. CA 정책 변경 같은 민감한 작업에 추가 인증을 요구 → 관리 작업 재인증
-- **Security defaults** · Entra ID의 기본 보호 설정(Free에서 사용, MFA·레거시 인증 차단 등). CA와 함께 쓰지 않음 → 기본 보안 템플릿
+- **Security defaults** · Entra ID의 기본 보호 설정(무료). CA와 함께 쓰지 않음 → 기본 보안 템플릿
 - **Legacy authentication** · MFA를 지원하지 않는 옛 프로토콜(IMAP·POP·SMTP AUTH 등) → 기본 인증
-- **Emergency access (break-glass) account** · 정책 사고로 관리자 전원이 잠겼을 때 쓰는 비상용 클라우드 전용 관리자 → 비상 관리자 계정
+- **Emergency access (break-glass) account** · 정책 사고에 대비한 비상용 클라우드 전용 관리자 → 비상 관리자 계정
 - **Identity Protection** · 위험(risk) 기반 보호. sign-in risk · user risk (P2) → 이상 로그온 탐지
 - **PIM (Privileged Identity Management)** · 관리자 권한을 필요할 때만 활성화(P2 또는 Microsoft Entra ID Governance) → tiered admin 운영
 - **Eligible · Active assignment** · 자격만 있음 · 현재 활성화됨 → 상시 vs 임시 권한
@@ -134,16 +117,15 @@ redirect_from:
 
 </details>
 
-개념 설명: [Entra ID 핵심 개념 시리즈]({{ "/iam/what-is-entra-id/" | relative_url }})
+더 깊은 신원 용어: [IAM 용어집]({{ "/iam/entra-id-glossary/" | relative_url }})
 
 #### 하이브리드 ID
 
 <details markdown="1">
-<summary>하이브리드 ID 용어 펼쳐 보기 (22개)</summary>
+<summary>하이브리드 ID 용어 펼쳐 보기 (18개)</summary>
 
 - **Hybrid identity** · 온프레미스 AD와 Entra ID를 연결해 같은 계정으로 사용 → 포리스트 연계
 - **Microsoft Entra Connect Sync** · 서버에 설치하는 동기화 엔진(구 Azure AD Connect) → 디렉터리 동기화 서버
-- **Staging server** · 스테이징 서버. Connect Sync 장애에 대비한 대기 서버 → 대기 동기화 서버
 - **Microsoft Entra Cloud Sync** · 경량 에이전트 기반 동기화. 다중 포리스트에 유리 → 경량 동기화
 - **Sync cycle (Delta · Initial)** · 변경분 동기화 · 전체 동기화. 기본 주기 30분 → 복제 주기
 - **sourceAnchor · ImmutableId** · 온프레미스 객체와 클라우드 객체를 잇는 고정 키 → 객체 매칭 키
@@ -151,22 +133,19 @@ redirect_from:
 - **PHS (Password Hash Synchronization)** · 비밀번호 해시를 한 번 더 해시해 Entra ID로 동기화. 인증은 클라우드가 수행 → 해시 사본 보유
 - **PTA (Pass-through Authentication)** · 로그인 요청을 온프레미스 에이전트가 DC에 전달해 검증. 해시를 클라우드에 저장하지 않음 → 온프레미스 대리 확인
 - **PTA agent** · PTA에서 DC에 인증을 전달하는 경량 소프트웨어(3대 권장) → 인증 프록시
-- **IdP (Identity Provider)** · ID 공급자. 인증을 대신 해 주는 시스템(AD FS 등) → AD FS · DC
-- **Federation (AD FS · WAP)** · 인증을 온프레미스 IdP에 위임. AD FS(사내 페더레이션 서버)와 WAP(웹 애플리케이션 프록시, 외부 공개용) 서버 필요 → AD FS
-- **Tier 0** · 티어 0. DC처럼 뚫리면 전체가 위험한 최고 등급 자산. PTA 에이전트·Connect 서버도 이 등급으로 관리 → AD 계층 관리 모델
+- **Federation (AD FS · WAP)** · 인증을 온프레미스 IdP에 위임. AD FS와 WAP 서버 필요 → AD FS
 - **Seamless SSO** · 사내 도메인 PC에서 Kerberos로 자동 로그인(PHS·PTA와 함께) → 도메인 SSO
-- **Cloud Kerberos Trust** · 클라우드 Kerberos 트러스트. Windows Hello for Business를 하이브리드 환경에 배포하는 권장 방식 → WHfB 키·인증서 트러스트
 - **Staged rollout** · 일부 사용자만 먼저 클라우드 인증으로 전환 → 단계적 전환
 - **Password writeback** · 클라우드에서 바꾼 비밀번호를 온프레미스 AD에 반영 → 암호 재설정 연계
 - **Entra Connect Health** · 동기화·AD FS 상태를 클라우드에서 모니터링 → 모니터링 에이전트
-- **Microsoft Entra Domain Services** · Azure에서 제공하는 관리형 AD DS(도메인 가입·LDAP·Kerberos). Kerberos·LDAP가 필요한 옛 앱용 → 관리형 DC
-- **Entra registered · joined · hybrid joined** · 디바이스 등록 방식 세 가지. 개인 기기 등록 · 회사 클라우드 기기 · AD 도메인 기기를 클라우드에도 등록 → 도메인 가입 상태
+- **Microsoft Entra Domain Services** · Azure에서 제공하는 관리형 AD DS(도메인 가입·LDAP·Kerberos) → 관리형 DC
+- **Entra registered · joined · hybrid joined** · 디바이스 등록 방식 세 가지 → 도메인 가입 상태
 - **SCP (Service Connection Point)** · hybrid join 때 디바이스가 테넌트를 찾는 AD 객체 → 서비스 연결 지점
 - **Microsoft Defender for Identity** · DC에 센서를 설치해 온프레미스 AD 공격을 탐지 → AD 보안 감시
 
 </details>
 
-인증 방식 상세 비교: [하이브리드와 외부 사용자]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }})
+인증 방식 상세 비교: [하이브리드·외부 사용자·라이선스·운영]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }})
 
 #### Microsoft 365
 
@@ -216,7 +195,7 @@ redirect_from:
 - **MAM (Mobile Application Management)** · 앱 단위 데이터 보호(BYOD에서 사용) → 앱 컨테이너
 - **Enrollment** · 디바이스를 Intune에 등록 → 클라이언트 등록
 - **Windows Autopilot** · 신규 PC를 클라우드로 프로비저닝 → OSD · 이미징
-- **Compliance policy · Compliant device** · 디바이스가 만족해야 할 기준. 통과한 기기가 준수 기기(Compliant device)로 CA 조건에 쓰임 → 컴플라이언스 점검
+- **Compliance policy** · 디바이스가 만족해야 할 기준. CA와 연동 → 컴플라이언스 점검
 - **Configuration profile · Settings catalog** · 디바이스 설정 배포 · 설정 항목 검색형 구성 → GPO
 - **Administrative templates** · ADMX 기반 설정 → GPO 관리 템플릿
 - **Group Policy analytics** · GPMC에서 XML로 내보낸 기존 GPO를 가져와 Intune 지원 여부 확인 → GPO 마이그레이션 도구
@@ -235,14 +214,13 @@ redirect_from:
 #### Azure 인프라
 
 <details markdown="1">
-<summary>Azure 인프라 용어 펼쳐 보기 (49개)</summary>
+<summary>Azure 인프라 용어 펼쳐 보기 (48개)</summary>
 
 - **Subscription** · 청구·접근·한도 경계. 하나의 Tenant를 신뢰 → 예산 계약
 - **Management group** · 여러 구독을 묶는 상위 단위 → 최상위 OU
 - **Resource group** · 리소스를 담는 논리적 컨테이너 → 서버 그룹 폴더
 - **Resource** · VM·Storage·VNet 같은 개별 서비스 인스턴스 → 개별 서버 · 서비스
 - **ARM (Azure Resource Manager)** · 모든 도구가 거치는 Azure 관리 계층 → 단일 관리 API
-- **IaC (Infrastructure as Code)** · 코드형 인프라. Terraform·Bicep 등 코드로 리소스를 만드는 방식 → 배포 스크립트
 - **ARM template · Bicep** · 리소스를 코드로 선언해 배포(Bicep은 ARM의 간결한 언어) → 배포 스크립트
 - **Terraform** · 여러 클라우드에서 쓰는 IaC 도구 → 배포 자동화
 - **Resource provider** · 서비스별 관리 기능을 제공하는 단위(Microsoft.Compute 등) → 서비스 모듈
@@ -295,7 +273,7 @@ redirect_from:
 <summary>보안, 거버넌스, 모니터링 용어 펼쳐 보기 (28개)</summary>
 
 - **Azure RBAC** · Azure 리소스 접근을 역할로 부여 → 위임 권한
-- **Role definition · Role assignment · Scope** · 역할 정의 · 보안 주체에 할당 · 역할이 적용되는 위치(구독·리소스 그룹). Graph에서 scope는 앱이 받은 권한(예: User.Read.All)을 뜻함 → 권한 구조
+- **Role definition · Role assignment · Scope** · 역할 정의 · 보안 주체에 할당 · 적용 범위 → 권한 구조
 - **Owner · Contributor · Reader · User Access Administrator** · 전체+할당 · 전체 · 읽기 · 접근 권한 관리 → 기본 관리 역할
 - **Azure Policy** · 리소스 상태를 평가·강제하는 정책 → GPO + 컴플라이언스 점검
 - **Policy effect (Audit · Deny · Modify · DeployIfNotExists)** · 감사 · 차단 · 속성 수정 · 없으면 배포 → 정책 동작
@@ -328,7 +306,7 @@ redirect_from:
 #### 관리 도구
 
 <details markdown="1">
-<summary>관리 도구 용어 펼쳐 보기 (12개)</summary>
+<summary>관리 도구 용어 펼쳐 보기 (8개)</summary>
 
 - **Azure portal · Entra admin center · M365 admin center · Intune admin center** · 서비스별 웹 관리 콘솔 → 관리 콘솔
 - **Cloud Shell** · 브라우저 안에서 쓰는 PowerShell·Bash → 원격 쉘
@@ -337,17 +315,13 @@ redirect_from:
 - **Microsoft Graph PowerShell** · Entra·M365 관리용 PowerShell 모듈 → AD 모듈
 - **ExchangeOnlineManagement** · Exchange Online 관리 모듈(`Connect-ExchangeOnline`) → Exchange 관리 쉘
 - **Graph Explorer** · Microsoft Graph API를 웹에서 시험하는 도구 → API 테스트 도구
-- **HTTP status code** · HTTP 상태 코드. 서버가 요청 결과로 돌려주는 세 자리 숫자. 2xx 성공, 4xx 요청 쪽 문제, 5xx 서비스 쪽 문제 → 웹 서버 응답 코드
-- **401 Unauthorized · 403 Forbidden** · 인증 안 됨(토큰이 없거나 만료됨) · 권한 없음(토큰은 유효하지만 그 작업을 할 권한이 없음) → 로그온 실패 · 액세스 거부
-- **429 Too Many Requests · Retry-After** · 요청 과다로 잠시 막힘(스로틀링). Retry-After에 적힌 초만큼 기다렸다 재시도 → 요청 제한
-- **Authorization_RequestDenied · AuthorizationFailed** · Graph 권한 거부 · Azure 권한 거부. 403과 함께 오는 서비스별 오류 코드 → 액세스 거부 오류
 - **AzureAD · MSOnline 모듈** · 은퇴(retire)한 옛 PowerShell 모듈(MSOnline은 2025년 4~5월에 동작 중지, AzureAD는 2025년 7월 초부터 은퇴 진행). 후속은 Microsoft Graph PowerShell(신규 학습은 이것 중심)과 Microsoft Entra PowerShell(AzureAD 모듈과 98% 넘게 호환) → 옛 AD 연동 모듈
 
 </details>
 
 ### 2. 영상·자료 (한글 우선)
 
-아래 영상은 모두 직접 열어 제목, 채널, 길이, 자막(스크립트)을 확인했습니다(2026-11-01).
+아래 영상은 직접 열어 확인했고(2026-11-01), 채널과 길이는 확인한 항목에만 적었습니다.
 
 #### 한글 유튜브
 
@@ -367,9 +341,6 @@ redirect_from:
 - [Microsoft Korea Azure (All about Azure)](https://www.microsoft.com/ko-kr/azureall): 온디맨드 웨비나와 Azure Training Day(무료 등록)
 - [Azure 교육 (Microsoft Learn, 한국어)](https://learn.microsoft.com/ko-kr/training/azure/): Azure 기본 사항 학습 경로와 Virtual Training Days
 - [Microsoft Entra (Microsoft Adoption, 한국어)](https://adoption.microsoft.com/ko-kr/microsoft-security/entra/): Entra 학습 경로, 인증, 배포 문서 안내
-- [Microsoft Entra ID 소개 (Microsoft Learn 학습 모듈)](https://learn.microsoft.com/ko-kr/training/modules/introduction-to-entra-id-2026/): 강력한 인증, 위험 기반 조건부 액세스, 보안 기본값, 테넌트, 디바이스 ID
-- [Microsoft Entra ID에서 인증 방법 관리 및 구현 (Microsoft Learn 학습 모듈)](https://learn.microsoft.com/ko-kr/training/modules/manage-implement-authentication-methods/): MFA, 패스키, 하이브리드 SSPR
-- [ID 및 액세스 랩 시작하기 (Microsoft Learn 학습 모듈)](https://learn.microsoft.com/ko-kr/training/modules/get-started-identity-access-labs/): 사용자·그룹, SSPR, MFA, 조건부 액세스 실습
 
 한국어 번역 용어가 어색하면 영어 원문 페이지(URL의 `ko-kr`를 `en-us`로 바꿔서)에서 원어를 확인하세요.
 
@@ -383,14 +354,13 @@ redirect_from:
 자막은 자동 생성이라 세부 표현은 영상과 다를 수 있습니다.
 
 <details markdown="1">
-<summary>영문 영상 목록 펼쳐 보기 (31건)</summary>
+<summary>영문 영상 목록 펼쳐 보기 (28건)</summary>
 
 - **Azure 개요**
     - [AZ-900 Course introduction](https://www.youtube.com/watch?v=orwWx0_KEcA): Microsoft Learn, 3분. 과정 소개와 세 세션 구성
     - [AZ-900: Azure Fundamentals Course with 2026 Updates](https://www.youtube.com/watch?v=yhzCNQfX3RE): Cloud360 Training, 6분. 2026년 AZ-900 개정 사항과 공부 순서 안내(과정 본편은 아님)
 - **Entra ID**
     - [Understand Microsoft Entra ID (AZ-104 공식 2편)](https://www.youtube.com/watch?v=iQfhi0712bM): Microsoft Learn, 42분. 테넌트, 사용자, 그룹, 라이선스, Free·P1·P2 차이
-    - [Microsoft Entra ID Beginner's Tutorial (Microsoft Mechanics)](https://www.youtube.com/watch?v=0qZzcK1mHwA): 13분. 관리 센터 화면으로 사용자, 그룹, 역할, 조건부 액세스를 훑는 전체 개요. 2023-10 영상이라 패스키 기본값, SMS 종료, B2C 판매 중단 이전 내용입니다.
 - **하이브리드 ID**
     - [Identity Architecture: Microsoft Entra Connect](https://www.youtube.com/watch?v=F0ldcCfCWNw): Microsoft Azure, 4분, 2020년. connector space, metaverse 구조와 30분 주기 동기화
     - [Entra ID Connect installation for hybrid join](https://www.youtube.com/watch?v=RPj53B7rxYU): Dean Ellerby, 16분, 2024년. Connect 설치(빠른 설정)와 동기화 화면
@@ -399,8 +369,6 @@ redirect_from:
     - [Enforce MFA with Conditional Access (Step-by-Step Lab)](https://www.youtube.com/watch?v=MIvuAHIVTT4): CyberMax, 5분. MFA 강제 정책 생성과 테스트
     - [Entra ID Security: Identity Perimeter, Conditional Access, MFA & PIM](https://www.youtube.com/watch?v=4mTV4nb5Ex4): m365 Show, 19분. 개념 중심
     - [Entra ID Security: MFA, Conditional Access & Risk Protection](https://www.youtube.com/watch?v=q-OkGHwXAj0): KryptoMindz, 9분. 위험 기반 보호, 보고 전용 모드, P2 범위
-    - [Why phishing resistant authentication is important](https://www.youtube.com/watch?v=YcqfXvU6xhw): Microsoft Security, 13분, 2024-07. 피싱 저항 인증이 필요한 이유와 패스키, Windows Hello, Authenticator 같은 방식
-    - [Get started with phishing-resistant MFA](https://www.youtube.com/watch?v=fSIM_Zrlv70): Microsoft Security, 10분, 2024-04. FIDO 인증이 피싱을 막는 원리(채널 바인딩 등)
 - **M365 관리**
     - [Microsoft 365 Admin Centre, Intune, EntraID, Exchange 연동 개요](https://www.youtube.com/watch?v=o8bdHkxw-Es): Tech's World, 54분. 라이선스, 테넌트, Entra 등 관리 센터 메뉴 위주(Intune·Exchange는 짧게)
 - **Exchange**
@@ -422,11 +390,6 @@ redirect_from:
 </details>
 
 > 확인 불가: SharePoint·Teams 영역의 영어 영상은 내용까지 확인한 것이 없습니다(시도: 후보 영상 자막 확인, 사유: 후보였던 풀코스 영상은 힌디어 강의이고 해당 내용이 자막에 나오지 않아 제외). 영상과 공식 문서가 다르면 공식 문서를 따르세요.
-
-#### Entra ID 시리즈와 트러블슈팅
-
-- 시리즈: [기초]({{ "/iam/what-is-entra-id/" | relative_url }}) · [오류 코드]({{ "/iam/entra-id-error-codes/" | relative_url }}) · [인증]({{ "/iam/entra-id-authentication/" | relative_url }}) · [접근 제어]({{ "/iam/entra-id-access-control/" | relative_url }}) · [하이브리드·외부 사용자]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}) · [라이선스·운영]({{ "/iam/entra-id-licensing-operations/" | relative_url }})
-- 트러블슈팅: [AADSTS50126 암호 오류]({{ "/iam/troubleshooting/aadsts50126-wrong-password/" | relative_url }}) · [AADSTS50076·50079 MFA 필요]({{ "/iam/troubleshooting/aadsts50076-mfa-required/" | relative_url }}) · [AADSTS53003 조건부 액세스 차단]({{ "/iam/troubleshooting/aadsts53003-blocked-by-ca/" | relative_url }}) · [로그인 후 403]({{ "/iam/troubleshooting/signed-in-but-403/" | relative_url }}) · [관리자 잠김과 긴급 액세스 계정]({{ "/iam/troubleshooting/ca-lockout-emergency-access/" | relative_url }}) · [막은 계정의 계속 접근]({{ "/iam/troubleshooting/disabled-user-still-signed-in/" | relative_url }}) · [보안 기본값을 켤 수 없음]({{ "/iam/troubleshooting/security-defaults-cannot-enable/" | relative_url }}) · [SSPR 실패]({{ "/iam/troubleshooting/sspr-cannot-reset/" | relative_url }}) · [SMS·음성 MFA 종료]({{ "/iam/troubleshooting/sms-voice-mfa-retirement/" | relative_url }}) · [PTA 전원 로그인 실패]({{ "/iam/troubleshooting/pta-agent-sign-in-fails/" | relative_url }}) · [AADSTS50105 앱 미할당]({{ "/iam/troubleshooting/aadsts50105-app-not-assigned/" | relative_url }}) · [AADSTS65001·90094 동의 막힘]({{ "/iam/troubleshooting/aadsts65001-consent-required/" | relative_url }}) · [AADSTS50020 게스트 계정]({{ "/iam/troubleshooting/aadsts50020-guest-not-in-tenant/" | relative_url }}) · [AADSTS530035 장치 코드 차단(실제 사례)]({{ "/m365/troubleshooting/aadsts530035-device-code/" | relative_url }})
 
 ### 3. 공식 문서 출처
 

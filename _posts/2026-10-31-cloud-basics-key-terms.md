@@ -5,15 +5,15 @@ categories: [study]
 phase: 학습 로드맵
 seq: 2
 tags: [Study, Cloud, IaaS, PaaS, SaaS, Shared responsibility model]
-excerpt: "SaaS인 M365에서도 데이터, 설정, 계정은 고객 책임입니다. 먼저 외울 용어 10개와 공동 책임 모델"
+excerpt: "SaaS인 M365에서도 데이터, 설정, 계정은 고객 책임입니다. 먼저 외울 용어 10항목(IaaS·PaaS·SaaS를 따로 세면 12개 용어)과 공동 책임 모델"
 ---
 
-Microsoft 365를 쓰면 보안도 Microsoft가 다 맡아 줄까요? 어떤 서비스 유형이든 데이터, 설정, 계정과 사용자는 고객 책임이고, 이 글의 용어 10개를 익히면 이후 12주를 설명 없이 따라갈 수 있습니다.
+Microsoft 365를 쓰면 보안도 Microsoft가 다 맡아 줄까요? 어떤 서비스 유형이든 데이터, 설정, 계정과 사용자는 고객 책임이고, 이 글의 용어 10항목(IaaS·PaaS·SaaS를 따로 세면 12개 용어)을 익히면 이후 12주를 설명 없이 따라갈 수 있습니다.
 
 ## 요약
 
 - 계정이 늘 고객 책임이라 클라우드에서도 Identity가 가장 중요한 보안 경계임
-- 용어 10개를 4일 루틴으로 읽고 카드로 소리 내어 설명해 봄
+- 용어 10항목을 4일 루틴으로 읽고 카드로 소리 내어 설명해 봄
 - 이후 주차는 이 용어를 설명 없이 쓰므로 먼저 익혀 두어야 함
 
 12주 학습 로드맵의 0주차입니다. 이전 글은 [학습 로드맵과 사용법]({{ "/study/cloud-study-roadmap/" | relative_url }}), 다음 글은 [클라우드 구조: Tenant, Subscription, Resource group]({{ "/study/cloud-structure-tenant-subscription/" | relative_url }})입니다. [전체 로드맵]({{ "/study/cloud-study-roadmap/" | relative_url }})도 함께 두었습니다.
@@ -24,7 +24,7 @@ Microsoft 365를 쓰면 보안도 Microsoft가 다 맡아 줄까요? 어떤 서�
 
 전체 용어는 [용어 전집]({{ "/study/cloud-study-glossary/" | relative_url }})에 있습니다.
 
-### 1. 먼저 외울 10개
+### 1. 먼저 외울 10항목(IaaS·PaaS·SaaS를 따로 세면 12개 용어)
 
 | 용어 | 뜻 | 온프레미스로 보면 |
 |---|---|---|
@@ -58,9 +58,9 @@ Microsoft 공식 문서의 책임 매트릭스입니다.
 
 ### 3. 0주차 루틴
 
-1. 1일: 1번의 10개 용어를 읽고 용어 전집의 "클라우드 일반" 구간 훑기
+1. 1일: 1번 표의 10항목을 읽고 용어 전집의 "클라우드 일반" 구간 훑기
 2. 2일: 용어 전집의 "Entra ID와 신원" 구간 중 AuthN, AuthZ, SSO, MFA, Token, OAuth 2.0, OIDC, SAML 읽기
-3. 3일: 종이 카드에 용어 30개 적기 (앞면 영어 원어, 뒷면 온프레미스로 보면)
+3. 3일: 종이 카드에 용어 30개 적기(1번 표의 항목과 용어 전집 발췌) (앞면 영어 원어, 뒷면 온프레미스로 보면)
 4. 4일: 카드를 보고 30초씩 소리 내어 설명하기. 막히는 카드는 따로 모으기
 
 ### 4. 전문가처럼 말하기

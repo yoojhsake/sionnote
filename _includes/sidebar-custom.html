@@ -11,4 +11,10 @@
     {% include toc.html sanitize=true html=content h_min=1 h_max=3 class="toc__menu" skip_no_ids=true %}
   </details>
 </nav>
+<script>
+  (function () {
+    var d = document.querySelector('.toc--sidebar .toc-fold');
+    if (d && window.matchMedia('(max-width: 63.9375em)').matches) d.removeAttribute('open');
+  })();
+</script>
 {% endif %}

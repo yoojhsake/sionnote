@@ -14,9 +14,9 @@ excerpt: "'보안 기본값 관리' 버튼이 없다면 조건부 액세스 정�
 
 - 보고서 전용이나 Off 정책이 하나만 있어도 보안 기본값은 켤 수 없음
 - Free만 있으면 정책 설정을 기록한 뒤 모두 삭제하고 보안 기본값을 켬
-- 사용자별 MFA는 어느 쪽을 쓰든 꺼야 하며 삭제 절차는 재현하지 않았음
+- 사용자별 MFA는 어느 쪽을 쓰든 꺼야 하며 정책 삭제는 시험하지 않았음
 
-> Microsoft Learn 문서(2026-11-01 확인) 기준입니다. 오류 상황은 테넌트에서 재현하지 않았고, 설정 화면은 샌드박스 테넌트에서 직접 열어 캡처했습니다. 함께 볼 글: [Entra ID 핵심 개념: 인증 편]({{ "/iam/entra-id-authentication/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
+> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다. 함께 볼 글: [Entra ID 핵심 개념: 인증 편]({{ "/iam/entra-id-authentication/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
 
 ---
 
@@ -67,28 +67,12 @@ excerpt: "'보안 기본값 관리' 버튼이 없다면 조건부 액세스 정�
 
 </details>
 
-<details markdown="1">
-<summary>화면으로 경로 따라가기: 보안 기본값 관리와 조건부 액세스 정책 목록 (그림 2장)</summary>
-
-![Entra ID 개요의 속성 탭 아래쪽 보안 기본값 영역. 조직이 보안 기본값으로 보호됨 표시와 보안 기본값 관리 링크]({{ "/assets/images/2026/11/guide-security-defaults.png" | relative_url }})
-
-*그림 2. Entra ID > 개요(Overview) > 속성(Properties) 탭 맨 아래의 보안 기본값(Security defaults) 영역. 이 샌드박스는 "조직이 보안 기본값으로 보호됩니다"와 "보안 기본값 관리" 링크가 보이는 정상 상태입니다. 본문 사례 1처럼 조건부 액세스 정책이 켜진 테넌트에서는 이 링크 대신 정책 사용 중이라는 안내만 나옵니다.*
-
-![조건부 액세스 정책 목록 화면. 새 정책, 가상 버튼이 있는 도구 모음]({{ "/assets/images/2026/11/guide-ca-policies.png" | relative_url }})
-
-*그림 3. Entra ID > 조건부 액세스 > 정책. 보안 기본값으로 돌아가기 전에 이 목록의 정책과 대상, 상태를 기록해 둡니다. 이 샌드박스는 정책이 하나도 없어 안내 화면이 나옵니다.*
-
-화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름, 테넌트 ID, 계정, IP, 요청 ID는 가렸고, 사용 중인 라이선스와 정책에 따라 메뉴 이름과 값은 다를 수 있습니다.
-
-</details>
-
 ### 근거 자료
 
 <details markdown="1">
-<summary>근거 자료 펼쳐 보기 (6건)</summary>
+<summary>근거 자료 펼쳐 보기 (5건)</summary>
 
-- 화면 상태 3가지, 사용자별 MFA를 꺼야 함, 2019년 이후 조직: [Set up multifactor authentication for Microsoft 365](https://learn.microsoft.com/microsoft-365/admin/security-and-compliance/set-up-multi-factor-authentication)
-- 정책이 어떤 상태로든 있으면 켤 수 없어 삭제 필요: [Set up multifactor authentication for Microsoft 365: Revert to security defaults](https://learn.microsoft.com/microsoft-365/admin/security-and-compliance/set-up-multi-factor-authentication)
+- 화면 상태 3가지, 사용자별 MFA를 꺼야 함, 정책이 어떤 상태로든 있으면 켤 수 없어 삭제 필요, 2019년 이후 조직: [Set up multifactor authentication for Microsoft 365](https://learn.microsoft.com/microsoft-365/admin/security-and-compliance/set-up-multi-factor-authentication)
 - 보안 기본값 켜는 경로, 필요 역할, 24시간 유예, 세션 해지 권장: [Security defaults in Microsoft Entra ID](https://learn.microsoft.com/entra/fundamentals/security-defaults)
 - 삭제한 정책 30일 안 복원: [Recover from deletions: Conditional Access policies](https://learn.microsoft.com/entra/architecture/recover-from-deletions)
 - Microsoft-managed 정책: [Microsoft-managed Conditional Access policies](https://learn.microsoft.com/entra/identity/conditional-access/managed-policies)

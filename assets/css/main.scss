@@ -12,6 +12,31 @@ $header-font-family: $sans-serif;
 $max-width: 1920px;
 
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}";
+
+// ---- 다크 팔레트 (v5.0) ----
+// 테마의 dark 스킨 위에 블로그 도식(진한 남색 #0D1626)과 맞는 색으로 덮어쓴다.
+// 도식 이미지의 역할별 색: 청록=사용자, 파랑=로그인·핵심, 보라=앱, 주황=정책·주의, 빨강=차단, 초록=성공·대안
+$background-color: #0D1626;
+$text-color: #E3EAF5;
+$muted-text-color: #9AABC4;
+$primary-color: #6FA8FF;
+$border-color: #22344F;
+$form-background-color: #15233A;
+$footer-background-color: #0D1626;
+$code-background-color: #0A1220;
+$code-background-color-dark: #15233A;
+$link-color: #6FA8FF;
+$link-color-hover: #A9CBFF;
+$link-color-visited: #B69CFF;
+$masthead-link-color: #E3EAF5;
+$masthead-link-color-hover: #A9CBFF;
+$navicon-link-color-hover: #15233A;
+$table-border-color: #22344F;
+$table-zebra-color: #101C2F;
+$table-thead-color: #15233A;
+$sidebar-color: #9AABC4;
+$yiq-contrasted-threshold: 128;
+
 @import "minimal-mistakes";
 
 // ---- SionNote 글자 크기 조정 ----
@@ -69,11 +94,11 @@ $toc-size: 10pt;
 .page__content ul, .page__content ol { margin: 0.5em 0 1em; }
 .page__content li { margin: 0.3em 0; }
 .page__content li > ul, .page__content li > ol { margin: 0.2em 0 0.3em; }
-.page__content h2 { padding-bottom: 0.25em; border-bottom: 1px solid #e5e7eb; }
+.page__content h2 { padding-bottom: 0.25em; border-bottom: 1px solid #22344F; }
 // 너무 넓은 화면에서도 글줄이 길어지지 않게 문단·목록만 폭을 제한한다(표·그림은 제한 없음)
 .page__content > p, .page__content > ul, .page__content > ol { max-width: 75em; }
 // 맨 위 "근거 표기" 인용문은 연한 상자로
-.page__content blockquote { margin: 0 0 1.2em; padding: 0.6em 0.9em; border-left: 4px solid #94a3b8; background: #f8fafc; font-style: normal; font-size: 0.95em; color: #374151; max-width: 75em; }
+.page__content blockquote { margin: 0 0 1.2em; padding: 0.6em 0.9em; border-left: 4px solid #6FA8FF; background: #121F33; font-style: normal; font-size: 0.95em; color: #C9D5E6; max-width: 75em; }
 .page__content blockquote p { margin: 0; }
 
 // ---- 표: 여백 없이 내용 크기에 맞추기 (v2.7) ----
@@ -86,22 +111,22 @@ $toc-size: 10pt;
 }
 .page__content th, .page__content td {
   padding: 0.3em 0.6em; vertical-align: top; text-align: left;
-  border: 1px solid #e5e7eb; line-height: 1.55;
+  border: 1px solid #22344F; line-height: 1.55;
 }
-.page__content thead th { background: #f1f5f9; font-weight: 600; white-space: nowrap; }
-.page__content tbody tr:nth-child(even) td { background: #fafafa; }
+.page__content thead th { background: #15233A; color: #E3EAF5; font-weight: 600; white-space: nowrap; }
+.page__content tbody tr:nth-child(even) td { background: #101C2F; }
 // 첫 칸(구분·번호처럼 짧은 칸)은 줄바꿈하지 않는다
 .page__content td:first-child { white-space: nowrap; }
 
 // ---- 캡처 그림: 왼쪽 정렬, 설명은 그림 아래 왼쪽 (v2.7) ----
 .page__content img {
   display: block; margin: 0.8em 0 0.3em; max-width: unquote("min(100%, 960px)"); height: auto;
-  border: 1px solid #e5e7eb; border-radius: 6px; cursor: zoom-in;
+  border: 1px solid #22344F; border-radius: 6px; cursor: zoom-in;
 }
 .page__content img + em, .page__content em.figcap {
   display: block; margin: 0 0 1.5em; padding-left: 0.7em; max-width: 60em;
-  border-left: 3px solid #cbd5e1; font-style: normal; font-size: 0.85em;
-  line-height: 1.6; color: #4b5563; text-align: left;
+  border-left: 3px solid #2B4263; font-style: normal; font-size: 0.85em;
+  line-height: 1.6; color: #9AABC4; text-align: left;
 }
 .page__content a.figlink { display: block; width: fit-content; max-width: 100%; border-bottom: 0; }
 .page__content a.figlink:hover { opacity: 0.92; }
@@ -126,9 +151,9 @@ $toc-size: 10pt;
 .page__content p { margin-bottom: 1em; }
 // 3) 접기(<details>): 근거 자료·원자료·긴 스크립트를 접어 두는 상자
 .page__content details {
-  margin: 0.6em 0 1.2em; padding: 0.5em 0.9em; border: 1px solid #e5e7eb; border-radius: 6px; background: #fafafa;
+  margin: 0.6em 0 1.2em; padding: 0.5em 0.9em; border: 1px solid #22344F; border-radius: 6px; background: #101C2F;
 }
-.page__content details > summary { cursor: pointer; font-weight: 600; color: #374151; font-size: 0.95em; }
+.page__content details > summary { cursor: pointer; font-weight: 600; color: #C9D5E6; font-size: 0.95em; }
 .page__content details[open] > summary { margin-bottom: 0.6em; }
 // 4) 좁은 화면: 표가 화면 밖으로 밀어내지 않게 표 안에서만 가로로 넘긴다.
 @media (max-width: 63.9375em) {
@@ -142,29 +167,3 @@ $toc-size: 10pt;
 .sidebar .toc-fold > summary::-webkit-details-marker { display: none; }
 .sidebar .toc-fold > summary .nav__title::after { content: " ▾"; font-size: 0.85em; }
 .sidebar .toc-fold:not([open]) > summary .nav__title::after { content: " ▸"; }
-
-// ---- 가독성 개선 (v4.5) ----
-// 1) 본문 글자: 넓은 화면에서 16px는 작고 회색이 옅어 읽기 힘들다. 크기·대비·줄 간격을 올린다.
-.page__content { color: #1f2328; }
-.page__content p, .page__content li { line-height: 1.85; }
-.page__content li { margin-bottom: 0.3em; }
-@media (min-width: 64em) {
-  .page__inner-wrap { max-width: 52rem; }
-  .page__content { font-size: 17.5px; }
-}
-// 2) 요약: 글머리 3줄을 상자로 묶어 첫 화면에서 바로 눈에 띄게 한다.
-.page__content h2#요약 { margin-top: 1.2em; margin-bottom: 0.5em; border-bottom: 0; font-size: 1.05em; }
-.page__content h2#요약 + ul {
-  background: #f6f8fa; border: 1px solid #d0d7de; border-left: 4px solid #0969da; border-radius: 6px;
-  padding: 0.8em 1.2em 0.8em 2.2em; margin-bottom: 1em;
-}
-.page__content h2#요약 + ul li { margin-bottom: 0.15em; }
-// 3) 근거·시리즈 안내 상자: 본문보다 작고 옅게 해서 본문과 구분한다.
-.page__content blockquote {
-  font-size: 0.86em; color: #57606a; background: transparent; font-style: normal;
-  border-left: 3px solid #d0d7de; padding: 0.15em 0 0.15em 1em; margin: 0.6em 0 1em;
-}
-.page__content blockquote p { margin-bottom: 0.4em; }
-// 4) 절 제목: 큰 절(h2)은 밑줄로, 번호 절(h3)은 조금 크게 해서 구조가 보이게 한다.
-.page__content h2 { padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
-.page__content h3 { font-size: 1.12em; }

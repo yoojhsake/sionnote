@@ -24,35 +24,76 @@ Azure 구조를 확인한 실습이고, M365·Azure 운영 준비의 일부라 M
 
 ## 전체 기록
 
-### 1. 목표와 범위
+### 1. 목표
 
-Sandbox의 지출 한도 Off 구독에서 Azure 계층(테넌트 → 관리 그룹 → 구독 → 리소스 그룹 → 리소스)을 화면으로 확인하고, Entra 역할과 Azure 역할(RBAC)을 잇는 예외 통로인 Elevate access의 전·후·원복 값을 비교했습니다. 비용이 없는 리소스 그룹 2개를 만들고, 그 범위에서만 역할을 할당해 상속을 확인했습니다. VM 등 비용 리소스와 관리 그룹·구독 범위 할당은 하지 않았습니다. 계층 개념은 [클라우드 구조: Tenant, Subscription, Resource group]({{ "/study/cloud-structure-tenant-subscription/" | relative_url }}), 용어는 [클라우드 학습 용어 전집]({{ "/study/cloud-study-glossary/" | relative_url }})을 보세요.
+- Azure의 계층(테넌트 → 관리 그룹 → 구독 → 리소스 그룹 → 리소스)을 화면에서 직접 봅니다.
+- **Azure 역할(RBAC)과 Entra 역할은 서로 다른 체계**라는 것을 확인하고, 둘을 잇는 예외 통로인 Elevate access의 전·후를 값으로 비교합니다.
+- 비용이 없는 리소스 그룹 2개를 만들어 생성 절차를 연습합니다(VM 등 비용 리소스는 만들지 않음).
+- 범위별 역할 할당으로 "상위 범위의 역할이 하위로 상속된다"를 값으로 확인합니다.
 
-### 2. 결과
+### 2. 시작 전에 알아 둔 개념
+
+계층 개념을 처음부터 차근차근 보려면 학습 글 [클라우드 구조: Tenant, Subscription, Resource group]({{ "/study/cloud-structure-tenant-subscription/" | relative_url }})을 먼저 읽으면 좋습니다.
 
 <picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/10/d4-azure-hierarchy-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/10/d4-azure-hierarchy.png" | relative_url }}" alt="관리 그룹, 구독, 리소스 그룹으로 이어지는 Azure 구조와 실습 결과" loading="lazy"></picture>
 
 *그림 1. Azure 구조와 실습 결과*
 
-#### Elevate access 켜기 전, 켠 뒤, 끈 뒤 (1회차 기준)
+계층은 테넌트 > (루트) 관리 그룹 > 구독 > 리소스 그룹 > 리소스 순서입니다. 관리 범위(scope)로 보면 관리 그룹, 구독, 리소스 그룹, 리소스의 4단계입니다. RBAC(Role-Based Access Control, 역할 기반 접근 제어)에서는 상위 범위에 준 역할이 하위로 상속됩니다.
 
-| 항목 | 전 (09:52) | 후 (09:57 켬 + 재로그인) | 원복 후 (11:02 끔) |
-|---|---|---|---|
-| Entra 토글 "Azure 리소스에 대한 액세스 관리" | 아니요 | 예 | **아니요** |
-| Tenant Root Group 클릭 | "이 관리 그룹을 볼 수 있는 권한이 없습니다" | 접근 가능 | 전과 같은 안내로 복귀 |
-| 상단 안내 | "디렉터리 관리자로 등록되었지만 루트 관리 그룹에 액세스하는 데 필요한 권한이 없습니다" | 루트 IAM에 "조치 필요: 이 테넌트에서 1 사용자가 상승된 액세스 권한입니다" 배너 | 전과 같은 안내로 복귀 |
-| 루트 IAM 내 할당(활성) | 볼 수 없음 | 활성 1 | - |
-| 루트 IAM 역할 할당 탭 | 볼 수 없음 | 관리자 계정에 **User Access Administrator**, 범위 `/`(화면 표기 "루트 (상속됨)") | 탭이 열리지 않음 |
-| `Get-AzRoleAssignment -Scope '/'` | 권한 없음 | User Access Administrator, 범위 `/`, 형식 User 1건 (그림 4) | PowerShell로 제거 뒤 0건 |
-| 관리 그룹 설정 | HTTP 403(`settings/read` 권한 없음, 10/19 REST) | 포털 설정 화면: 기본 관리 그룹 Tenant Root Group, 계층 보호 Off | 포털 화면은 같은 값, REST는 403 |
-| 감사 로그(Entra) | - | 09:57 "상승" 기록 | 11:02 "해제" 기록 |
+전역 관리자(Entra 역할)라고 Azure 구독과 리소스를 자동으로 관리할 수 있는 건 아닙니다. 루트 관리 그룹은 기본적으로 아무도 접근 권한이 없고, 전역 관리자만 Elevate access 토글로 자신에게 루트 범위(`/`)의 User Access Administrator를 부여할 수 있습니다. 루트 관리 그룹이 안 열리는 것도, 관리 그룹 설정 읽기가 403(`settings/read` 권한 없음)인 것도 이 구조 때문입니다.
 
-원복 뒤 루트 역할 목록은 GUI로 열리지 않아 "토글 원복 확인 + 감사 로그 대조 + 제거 직후 0건 조회"로 판단했습니다. 4회차(22:08)와 5회차(00:58)는 `Remove-AzRoleAssignment` 후 `Get-AzRoleAssignment` 0건과 감사 로그 "removed" 기록, 1~3회차는 감사 로그와 "권한 없음" 안내 복귀가 근거입니다. 관리 그룹 화면은 끈 직후(09:51), 16시경, 22:11에도 같은 안내였습니다.
+User Access Administrator는 다른 사용자에게 Azure 역할을 줄 수 있는 역할이라, 켜 둔 동안 그 계정은 루트 범위에서 권한을 부여할 수 있습니다.
 
-#### 리소스 그룹과 역할 할당
+### 3. 결과: 전·후 비교와 검증
 
-- 리소스 그룹은 1(기존 Southeast Asia) → **3**개가 됐습니다. 새 그룹 rg-practice-d4-01, -02 / Korea Central / 태그 purpose=<프로그램명>-practice / 상태 Succeeded, 리소스는 없습니다(비용 없음).
-- 구독 역할은 Owner 2건(사용자 1 + 서비스 사용자 1), 모두 영구 활성, 적격(PIM) 0이고 만든 뒤에도 변화가 없었습니다. 서비스 사용자의 용도는 확인 불가입니다(5절).
+#### Elevate access 켜기 전, 켠 뒤, 끈 뒤
+
+기준은 1회차이고, PowerShell 0건 조회는 4·5회차 값입니다. 전 = 09:52, 후 = 09:57 켬 + 재로그인, 원복 후 = 11:02 끔.
+
+- **Entra 토글 "Azure 리소스에 대한 액세스 관리"**: 전 아니요 → 후 예 → 원복 후 **아니요**
+- **Tenant Root Group 클릭**
+    - 전: "이 관리 그룹을 볼 수 있는 권한이 없습니다"
+    - 후: 접근 가능
+    - 원복 후: **전과 같은 안내로 복귀**
+- **상단 안내**
+    - 전: "디렉터리 관리자로 등록되었지만 루트 관리 그룹에 액세스하는 데 필요한 권한이 없습니다"
+    - 후: 루트 IAM에 "조치 필요: 이 테넌트에서 1 사용자가 상승된 액세스 권한입니다" 배너
+    - 원복 후: 전과 같은 안내로 복귀
+- **루트 IAM 내 할당(활성)**: 전 볼 수 없음 → 후 활성 1
+- **루트 IAM 역할 할당 탭**
+    - 전: 볼 수 없음
+    - 후: 관리자 계정에 **User Access Administrator**, 범위 `/`(화면 표기 "루트 (상속됨)")
+    - 원복 후: 끈 뒤에는 이 탭이 열리지 않음
+- **PowerShell `Get-AzRoleAssignment -Scope '/'`**
+    - 전: 권한 없음
+    - 후: User Access Administrator, 범위 `/`, 형식 User 1건 (그림 4)
+    - 원복 후(4·5회차): PowerShell로 제거 뒤 같은 조회 0건. 1회차는 이 방법으로 읽지 않음
+- **관리 그룹 설정**
+    - 전: HTTP 403(`settings/read` 권한 없음, 10/19 REST)
+    - 후: 포털 설정 화면에서 기본 관리 그룹 Tenant Root Group, 계층 보호 Off
+    - 원복 후: 포털 화면은 같은 값, REST는 403
+- **감사 로그(Entra)**: 후 09:57 "상승" 기록 → 원복 후 11:02 "해제" 기록
+
+**변경 이력**
+
+- **언제**: 아래 5-4의 회차 목록(다섯 회차, 감사 로그 기준)
+- **누가**: 제가 직접(샌드박스 관리자 계정)
+- **무엇을**: 전역 관리자의 Azure 리소스 접근 관리(Elevate access) 토글
+- **전 → 후**: 아니요 → 예 → 아니요
+- **근거**: 화면과 PowerShell, 감사 로그, 문서(근거 자료의 URL)
+- **원복 방법**: 같은 토글을 아니요로 저장. GUI로 저장되지 않으면 루트 범위 User Access Administrator 할당을 PowerShell로 제거(실행 완료)
+
+#### 리소스 그룹과 구독 역할
+
+- **리소스 그룹 수**: 만들기 전 1 (기존 1개는 Southeast Asia) → 만든 후 **3**
+- **새 그룹**: rg-practice-d4-01, -02 / Korea Central / 태그 purpose=<프로그램명>-practice / 상태 Succeeded
+- **리소스**: 없음 (VM 등은 만들지 않음, 비용 없음)
+- **구독 역할**: Owner 2건(사용자 1 + 서비스 사용자 1), 모두 영구 활성, 적격(PIM) 0. 만든 후에도 변화 없음
+
+구독 Owner인 서비스 사용자의 상세는 이름 Microsoft-Developer Program-Sample Data Packs, 유형 Application, 생성 2026-08-23이고 앱 소유 조직은 외부입니다(조회). 용도는 확인 불가입니다(시도: 서비스 사용자 상세 열기 / 막힌 이유: 설명 항목이 비어 있음 / 다음 방법: 계정 소유자에게 확인).
+
+#### 역할 할당 실습
 
 | 범위 | 부여 전 | 부여 후(Reader를 rg-practice-d4-01에 직접) | 정리 후 |
 |---|---|---|---|
@@ -61,29 +102,28 @@ Sandbox의 지출 한도 Off 구독에서 Azure 계층(테넌트 → 관리 그�
 | rg-practice-d4-02(형제) | 소유자 2건 | 독자 없음 | 소유자 2건 |
 | 시험 사용자 2의 할당(전체 범위) | 0건 | 1건 | 0건 |
 
-### 3. 판단과 권고
+#### 검증
 
-1. 전역 관리자(Entra 역할)라고 Azure 구독과 리소스를 자동으로 관리하지는 못합니다. Azure 역할과 Entra 역할은 한 표에 같이 놓고 담당자를 정합니다.
-2. Elevate를 켜면 그 계정이 루트 범위에서 다른 사용자에게 Azure 역할을 줄 수 있으므로 필요한 시간만 켭니다. 끈 뒤에도 루트 범위 할당을 한 번 더 읽고, 켠 직후 값이 안 읽히면 재로그인 같은 토큰 갱신부터 해 봅니다. GUI로 꺼지지 않으면 PowerShell로 할당을 제거합니다.
-3. 구독 Owner는 영구 활성 2명, Entra PIM 활성 역할 4건도 모두 영구이고 적격은 0건입니다(조회). 문서는 구독 Owner를 최대 3명으로 권하고, P2가 있는 이 테넌트는 PIM 적격 할당을 쓸 수 있습니다.
-4. 구독에 처음 만드는 종류의 리소스는 만들기 전에 공급자 등록 상태부터 읽습니다(Azure CLI가 `Microsoft.Network`를 자동 등록한 일이 있었음, 4-5). 지출 한도 Off 구독에서는 비용 없는 객체로만 연습합니다.
-5. 리소스 그룹 2개는 삭제하지 않고 정리 항목으로 남겼습니다. 역할 할당과 Microsoft.Network 공급자 등록은 되돌렸습니다.
+위 표와 목록의 값은 모두 화면과 PowerShell로 확인했고, 감사 로그의 다섯 회차 켬·끔 시각은 5-4에 있습니다. 원복 뒤 관리 그룹 화면은 끈 직후(09:51), 16시경, 22:11에도 같은 안내였습니다.
 
-### 4. 수행 절차
+원복 뒤 루트 역할 목록은 GUI로 열리지 않아, "원복 완료" 대신 "토글 원복 확인 + 감사 로그 대조 + 제거 직후 0건 조회"로 적습니다.
+
+- 4회차(22:08)와 5회차(00:58): `Remove-AzRoleAssignment` 후 `Get-AzRoleAssignment` 0건, 감사 로그 "removed" 기록
+- 1~3회차: 이 방법으로 읽지 않았고, 감사 로그와 "권한 없음" 안내 복귀가 근거
+
+### 4. 실습하고 나서 정한 기준
+
+- Azure 역할과 Entra 역할은 한 표에 같이 놓고 담당자를 정합니다.
+- 구독 Owner는 영구 활성 2명, Entra PIM 활성 역할 4건도 모두 영구이고 적격은 0건입니다(조회). 문서는 구독 Owner를 최대 3명으로 권하고, P2가 있는 이 테넌트는 PIM 적격 할당을 쓸 수 있습니다.
+- Elevate는 끈 뒤에도 루트 범위 할당을 한 번 더 읽습니다. 켠 직후 값이 안 읽히면 재로그인 같은 토큰 갱신부터 해 봅니다.
+- 구독에 처음 만드는 종류의 리소스는 만들기 전에 공급자 등록 상태부터 읽습니다. 지출 한도 Off 구독에서는 비용 없는 객체로만 연습합니다.
+
+### 5. 절차
 
 <details markdown="1">
 <summary>절차와 캡처 펼쳐 보기 (그림 10장)</summary>
 
-#### Elevate access 변경 이력
-
-- **언제**: 아래 4-4의 회차 목록(다섯 회차, 감사 로그 기준)
-- **누가**: 제가 직접(샌드박스 관리자 계정)
-- **무엇을**: 전역 관리자의 Azure 리소스 접근 관리(Elevate access) 토글
-- **전 → 후**: 아니요 → 예 → 아니요
-- **근거**: 화면과 PowerShell, 감사 로그, 문서(근거 자료의 URL)
-- **원복 방법**: 같은 토글을 아니요로 저장. GUI로 저장되지 않으면 루트 범위 User Access Administrator 할당을 PowerShell로 제거(실행 완료)
-
-#### 4-1. 리소스 그룹 2개 만들기 (09:22)
+#### 5-1. 리소스 그룹 2개 만들기 (09:22)
 
 1. portal.azure.com > 리소스 그룹 > + 만들기
 2. 구독 선택, 이름 **rg-practice-d4-01**, 지역 **Korea Central**, 태그 `purpose=<프로그램명>-practice` > 검토 + 만들기 > 만들기
@@ -92,7 +132,7 @@ Sandbox의 지출 한도 Off 구독에서 Azure 계층(테넌트 → 관리 그�
 ![Azure 포털 리소스 그룹 목록. rg-practice-d4-01과 rg-practice-d4-02가 Korea Central에 표시됨]({{ "/assets/images/2026/10/d4-resource-groups.png" | relative_url }})
 *그림 2. 리소스 그룹 목록 (빨간 상자: 새로 만든 2개, 계정과 구독 정보는 가림)*
 
-#### 4-2. Elevate access 전 상태 기록 (09:52)
+#### 5-2. Elevate access 전 상태 기록 (09:52)
 
 1. 포털 > 관리 그룹 > **Tenant Root Group** 클릭
 2. Entra > 개요 > 속성 > "Azure 리소스에 대한 액세스 관리" 토글 확인(저장 안 함). 영문 문서 표기는 Microsoft Entra ID > Manage > Properties
@@ -100,7 +140,7 @@ Sandbox의 지출 한도 Off 구독에서 Azure 계층(테넌트 → 관리 그�
 ![Elevate 전. 관리 그룹 화면의 권한 없음 안내와 Entra 속성의 토글 아니요]({{ "/assets/images/2026/10/d4-elevate-before.png" | relative_url }})
 *그림 3. Elevate 전 상태(위: 관리 그룹 화면의 "디렉터리 관리자로 등록되어 있지만 루트 관리 그룹에 액세스하는 데 필요한 권한이 없습니다" 안내, Tenant Root Group이 링크가 아님 / 아래: Entra 속성의 토글 = "아니요"). 위 화면은 22:10, 아래 화면은 22:02에 따로 찍어 이어 붙였습니다. 계정, 구독 이름, ID는 가렸습니다.*
 
-#### 4-3. Elevate access 켜고 후 상태 기록 (09:57 켬)
+#### 5-3. Elevate access 켜고 후 상태 기록 (09:57 켬)
 
 1. Entra > 개요 > 속성 > Azure 리소스에 대한 액세스 관리 > **예** > 저장
 2. **로그아웃 후 재로그인** (문서가 요구하는 단계. 재로그인 후에야 후 상태가 보였고, 켠 직후에는 화면이 그대로였음)
@@ -119,14 +159,14 @@ Get-AzRoleAssignment -Scope '/' | Select DisplayName,RoleDefinitionName,Scope,Ob
 
 루트 IAM에는 `denyAssignments/read` 관련 경고가 함께 떴습니다. 원인은 확인 불가이며, [루트 IAM 경고와 끈 뒤 역할 목록]({{ "/m365/troubleshooting/elevate-root-iam-role-list/" | relative_url }}) 글에 정리했습니다.
 
-#### 4-4. Elevate access 끄고 원복 확인 (11:02 끔)
+#### 5-4. Elevate access 끄고 원복 확인 (11:02 끔)
 
 1. 같은 계정으로 토글을 **아니요**로 바꾸고 저장
 2. 관리 그룹 화면과 Entra 속성 토글을 다시 확인(페이지를 새로 불러온 상태)
 3. 감사 로그(Entra > 모니터링 및 상태 > 감사 로그, 서비스 "Azure RBAC (Elevated Access)")에서 켬과 끔 기록 확인
 
-![원복 후. 관리 그룹 화면은 전과 같은 권한 없음 안내로 돌아왔고 토글은 아니요]({{ "/assets/images/2026/10/d4-elevate-reverted.png" | relative_url }})
-*그림 5. 원복 후(위: Entra 속성 토글 = "아니요", 새로 불러온 화면, 22:09 / 아래: 감사 로그 조회에서 제거 기록 "The role assignment of User Access Administrator has been removed from the user"가 보임, 10/24 00:5x 조회 화면). 계정 이름은 가렸습니다.*
+![원복 후. Entra 속성 토글은 아니요이고 아래 감사 로그에 제거 기록이 보임]({{ "/assets/images/2026/10/d4-elevate-reverted.png" | relative_url }})
+*그림 5. 원복 후(위: Entra 속성 토글 = "아니요", 새로 불러온 화면, 22:09 / 아래: 감사 로그 조회에서 제거 기록 "The role assignment of User Access Administrator has been removed from the user"가 보임. 조회 시각은 화면에 없고, 마지막 줄이 4회차 제거 기록(10-23 13:08:48Z = 22:08:48 KST, Z는 UTC 표기)이므로 4회차 끔 직후~5회차 켬 전의 화면으로 보임(추정)). 계정 이름은 가렸습니다.*
 
 Elevate는 모두 다섯 번 켜고 껐습니다. 켠 시각과 끈 시각은 감사 로그 기록이고 표시 시각은 KST입니다(조회).
 
@@ -141,9 +181,9 @@ Elevate는 모두 다섯 번 켜고 껐습니다. 켠 시각과 끈 시각은 �
 - **5회차**: 켬 10/23 22:28:48 → 끔 10/24 00:58:50, PowerShell로 역할 할당 제거
     - 비고: 루트 IAM 화면 캡처용
 
-5회차는 켠 채로 약 2시간 30분이 지났습니다. 켠 뒤 캡처를 이어서 하려 했는데 작업이 중간에 멈춰 있었고, 재개하자마자 캡처를 마치고 곧바로 제거했습니다. 켜 둔 동안 이 계정으로 한 작업은 읽기 조회뿐이며 다른 변경은 없었습니다.
+5회차는 켠 채로 약 2시간 30분이 지났습니다. 켠 뒤 캡처를 이어서 하려 했는데 작업이 중간에 멈춰 있었고, 재개하자마자 캡처를 마치고 곧바로 제거했습니다. 켜 둔 동안(22:28~00:58) 이 계정으로 한 쓰기는 5-5의 정리(내가 만든 Reader 할당과 빈 배포 삭제, 22:3x)였고, 루트 범위의 다른 변경은 없었습니다. 나머지는 읽기 조회입니다.
 
-#### 4-5. 범위별 역할 할당과 상속 확인
+#### 5-5. 범위별 역할 할당과 상속 확인
 
 대상은 제가 만든 리소스 그룹 `rg-practice-d4-01`/`-02` 둘뿐이고, 구독과 관리 그룹 범위에는 부여하지 않았습니다. 시험 사용자에게 **Reader**를 `rg-practice-d4-01`에만 주고, 하위 범위와 형제 리소스 그룹에서 어떻게 보이는지 읽었습니다.
 
@@ -252,13 +292,20 @@ Elevate를 켠 상태에서 리소스 그룹 범위의 기존 할당을 조회�
 
 </details>
 
-막힌 곳:
+### 6. 작업 중 막힌 곳
 
-- [관리 그룹 설정이 403일 때]({{ "/m365/troubleshooting/mg-settings-403-elevate-access/" | relative_url }}) (켠 직후에도 값이 안 읽힘)
-- [Elevate를 GUI로 끄지 못할 때]({{ "/m365/troubleshooting/elevate-off-gui-failure/" | relative_url }}) (PowerShell로 할당 제거)
-- [루트 IAM 경고와 끈 뒤 역할 목록]({{ "/m365/troubleshooting/elevate-root-iam-role-list/" | relative_url }})
+- 관리 그룹 설정이 403이었고, 켠 직후에도 값이 안 읽혔습니다.
+    - 글: [관리 그룹 설정이 403일 때]({{ "/m365/troubleshooting/mg-settings-403-elevate-access/" | relative_url }})
+- GUI 토글로 Elevate가 꺼지지 않아 PowerShell로 할당을 제거했습니다.
+    - 글: [Elevate를 GUI로 끄지 못할 때]({{ "/m365/troubleshooting/elevate-off-gui-failure/" | relative_url }})
+- 루트 IAM에 경고가 떴고, 끈 뒤에는 역할 목록이 열리지 않았습니다.
+    - 글: [루트 IAM 경고와 끈 뒤 역할 목록]({{ "/m365/troubleshooting/elevate-root-iam-role-list/" | relative_url }})
 
-### 5. 확인 불가로 남은 것
+### 7. 남은 일
+
+리소스 그룹 2개는 삭제하지 않고 정리 항목으로 남겼습니다. 역할 할당은 리소스 그룹 범위에서만 하고 되돌렸고(5-5), Microsoft.Network 공급자도 등록 안 됨으로 되돌렸습니다.
+
+### 8. 확인 불가로 남은 것
 
 <details markdown="1">
 <summary>확인 불가 항목 펼쳐 보기 (5건)</summary>
@@ -279,14 +326,14 @@ Elevate를 켠 상태에서 리소스 그룹 범위의 기존 할당을 조회�
     - 시도 방법: 끈 뒤 화면 새로 불러오기, REST 직접 호출
     - 막힌 이유: 포털 내부 호출 경로를 볼 수 없음
     - 다음 방법: 브라우저 네트워크 로그로 설정 화면이 부르는 API 확인(자세한 내용은 [관리 그룹 설정이 403일 때]({{ "/m365/troubleshooting/mg-settings-403-elevate-access/" | relative_url }}))
-- **구독 Owner 서비스 사용자의 용도** (이름 Microsoft-Developer Program-Sample Data Packs, 유형 Application, 생성 2026-08-23, 앱 소유 조직은 외부, 조회)
+- **구독 Owner 서비스 사용자의 용도**
     - 시도 방법: 서비스 사용자 상세 열기
     - 막힌 이유: 설명 항목이 비어 있음
     - 다음 방법: 계정 소유자에게 확인
 
 </details>
 
-### 근거 자료
+### 9. 근거 자료
 
 <details markdown="1">
 <summary>근거 자료 펼쳐 보기 (12건)</summary>

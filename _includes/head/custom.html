@@ -37,11 +37,3 @@ document.addEventListener('click', function (e) {
   });
 });
 </script>
-
-<script>
-  /* 좁은 화면(휴대폰)에서는 사이드바 목차를 접힌 상태로 시작한다(sidebar-custom.html의 목차) */
-  document.addEventListener('DOMContentLoaded', function () {
-    var d = document.querySelector('.toc--sidebar .toc-fold');
-    if (d && window.matchMedia('(max-width: 63.9375em)').matches) d.removeAttribute('open');
-  });
-</script>

@@ -24,6 +24,8 @@ excerpt: "협력사 게스트가 50020으로 막힐 때. 다른 계정 로그인
 
 ### 1. 증상
 
+※ 아래 사례는 설명을 위한 가상 예시입니다.
+
 - 게스트로 초대한 협력사 담당자가 우리 Teams나 SharePoint 링크를 열면 다음 취지의 오류가 납니다.
 
 > AADSTS50020: ID 공급자 {idp}의 사용자 계정 'user@partner.com'이 테넌트 {우리 회사}에 없습니다.
@@ -34,7 +36,7 @@ excerpt: "협력사 게스트가 50020으로 막힐 때. 다른 계정 로그인
 
 <picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/11/ts-aadsts50020-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/11/ts-aadsts50020.png" | relative_url }}" alt="AADSTS50020 원인 4가지와 각 대처" loading="lazy"></picture>
 
-*그림 1. 원인과 대처 4가지*
+*그림 1. 주요 원인과 대처 4가지(전체 6가지는 아래 접힌 목록)*
 
 <details markdown="1">
 <summary>원인별 확인과 대처 자세히 보기 (6가지)</summary>
@@ -42,20 +44,20 @@ excerpt: "협력사 게스트가 50020으로 막힐 때. 다른 계정 로그인
 - **다른 계정으로 로그인됨**
     - 확인: 메시지의 계정이나 IdP가 초대한 것과 다름
     - 대처: 모두 로그아웃 후 InPrivate(시크릿) 창이나 다른 브라우저에서 초대받은 계정으로 다시 로그인
-- 초대되지 않음
+- **초대되지 않음**
     - 확인: Entra ID > Users(사용자)에 게스트가 없음. 있으면 초대 수락 상태 확인
     - 대처: 게스트로 초대(B2B). 외부 협업 설정이 초대를 막고 있지 않은지 확인
-- 앱이 단일 테넌트
+- **앱이 단일 테넌트**
     - 확인: 앱 등록의 지원 계정 유형(단일·다중 테넌트), Manifest의 `signInAudience`
     - 대처: 다른 조직 사용자를 받을 앱이면 다중 테넌트 유형으로 다시 등록하고, 로그인 URL을 `/organizations`·`/common` 등 유형에 맞게 사용
     - 단일 테넌트 앱을 쓰려면 사용자를 게스트로 추가
-- 게스트 원계정이 삭제 후 재생성됨
+- **게스트 원계정이 삭제 후 재생성됨**
     - 확인: 우리 쪽 게스트 개체가 상대 회사의 새 계정보다 먼저 만들어짐(`createdDateTime` 비교)
     - 대처: 게스트를 지우지 말고 초대 수락 상태 초기화(Reset redemption status) 후 다시 수락
-- 앱에 할당되지 않음
+- **앱에 할당되지 않음**
     - 확인: 엔터프라이즈 앱 > Properties의 Assignment required = Yes, Users and groups에 게스트 없음
     - 대처: 게스트나 게스트가 속한 그룹을 할당. 자세한 절차는 [AADSTS50105 글]({{ "/iam/troubleshooting/aadsts50105-app-not-assigned/" | relative_url }})
-- 개인 Microsoft 계정으로 관리 센터 접속
+- **개인 Microsoft 계정으로 관리 센터 접속**
     - 확인: 개인 계정으로 Entra 관리 센터에 들어가면 기본 Microsoft 서비스 테넌트로 연결됨
     - 대처: 회사(조직) 계정으로 로그인하거나, 필요하면 Azure 계정을 만들어 자기 테넌트를 생성
 
@@ -74,29 +76,6 @@ excerpt: "협력사 게스트가 50020으로 막힐 때. 다른 계정 로그인
 1. 조치: 로그아웃 후 InPrivate 창에서 초대 메일 링크를 열어 초대받은 계정으로 로그인합니다. 안 되면 위 6가지 원인별로 고칩니다.
 2. 확인: 리소스가 열리고, 우리 테넌트 로그인 로그에 그 게스트의 성공 기록이 있으면 해결입니다.
 3. 하지 말 것: 원계정이 재생성된 게스트를 지우기(초대 수락 상태 초기화로 해결)
-
-<details markdown="1">
-<summary>화면으로 경로 따라가기: 사용자, 엔터프라이즈 앱 속성, 테넌트 간 액세스 설정 (그림 4장)</summary>
-
-![Entra 관리 센터의 모든 사용자 목록]({{ "/assets/images/2026/11/guide-entra-users.png" | relative_url }})
-
-*그림 2. Entra 관리 센터 > Entra ID > 사용자 > 모든 사용자. 표시 이름, 사용자 계정 이름, 사용자 유형(구성원, 게스트) 열이 있고, 필터 추가로 사용자 유형을 걸러 게스트만 볼 수 있습니다. 이 샌드박스는 전원 구성원입니다. 사용자 계정 이름은 가렸습니다.*
-
-![엔터프라이즈 애플리케이션 모든 애플리케이션 목록]({{ "/assets/images/2026/11/guide-entra-apps.png" | relative_url }})
-
-*그림 3. Entra ID > 엔터프라이즈 앱(Enterprise apps) > 모든 애플리케이션. 앱 이름, 홈페이지 URL, 활성화 상태가 나오고, 앱 이름을 누르면 그 앱의 개요로 들어갑니다. 개체 ID와 애플리케이션 ID는 가렸습니다.*
-
-![엔터프라이즈 앱의 속성 화면. 할당이 필요합니까 항목]({{ "/assets/images/2026/11/guide-entra-app-properties.png" | relative_url }})
-
-*그림 4. 앱 > 관리 > 속성(Properties). 아래쪽 "할당이 필요합니까?"(Assignment required)로 이 앱을 할당된 사용자와 그룹만 쓰게 할지 정합니다. 이 샌드박스의 Graph Explorer는 "아니요"입니다. 애플리케이션 ID와 개체 ID는 가렸습니다.*
-
-![테넌트 간 액세스 설정의 기본 설정 탭. 인바운드 액세스 설정 표]({{ "/assets/images/2026/11/guide-entra-crosstenant.png" | relative_url }})
-
-*그림 5. Entra ID > External Identities > 테넌트 간 액세스 설정 > 기본 설정 탭. 인바운드 표에 B2B Collaboration, B2B 직접 연결, 신뢰 설정이 있습니다. 이 샌드박스는 B2B Collaboration이 "모두 허용", B2B 직접 연결이 "모두 차단됨", 신뢰 설정이 "사용 안 함"입니다. 특정 조직별 설정은 조직 설정 탭에서 합니다.*
-
-화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, IP는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
-
-</details>
 
 ### 근거 자료
 

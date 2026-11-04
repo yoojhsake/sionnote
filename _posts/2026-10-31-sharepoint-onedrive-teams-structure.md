@@ -58,25 +58,6 @@ SharePoint 사이트는 Owners, Members, Visitors 그룹으로 권한을 부여�
 3. Teams 관리 센터(admin.teams.microsoft.com) > 팀 > 팀 관리에서 Team 하나를 열어 Owners, Members, 채널 유형을 확인합니다.
 4. 같은 Team에 연결된 SharePoint 사이트를 찾아 두 곳의 구성원이 같은지 비교합니다.
 
-<details markdown="1">
-<summary>화면으로 경로 따라가기: 활성 사이트, 공유 정책, 팀 관리 (그림 3장)</summary>
-
-![SharePoint 관리 센터의 활성 사이트 목록]({{ "/assets/images/2026/11/guide-spo-sites.png" | relative_url }})
-
-*그림 1. SharePoint 관리 센터 > 사이트 > 활성 사이트. 사이트 이름, URL, Teams 연결 여부, 채널 사이트 수, 사용된 저장소, 기본 관리자 열이 있습니다. 사이트 이름과 URL은 가렸습니다.*
-
-![SharePoint 관리 센터의 공유 정책 화면. 외부 공유 수준 슬라이더]({{ "/assets/images/2026/11/guide-spo-sharing.png" | relative_url }})
-
-*그림 2. SharePoint 관리 센터 > 정책 > 공유. 외부 공유 수준을 SharePoint와 OneDrive 각각 누구나, 신규 및 기존 게스트, 기존 게스트, 조직 내 사용자만의 네 단계로 정합니다. 이번 캡처에서는 값을 바꾸지 않았습니다.*
-
-![Teams 관리 센터의 팀 관리 화면]({{ "/assets/images/2026/11/guide-teams-manage.png" | relative_url }})
-
-*그림 3. Teams 관리 센터(admin.teams.microsoft.com) > Teams > 팀 관리(Manage teams). 위쪽에 사용자 요약(전체, 내부, 게스트)이 있고, 아래 목록에 팀별 채널 수, 소유자 수, 공개 범위, 상태가 나옵니다. 팀 이름은 가렸습니다.*
-
-화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, IP는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
-
-</details>
-
 ### 5. 전문가처럼 말하기
 
 > "Team은 Microsoft 365 group을 membership backbone으로 하고 SharePoint 팀 사이트와 그룹 사서함이 붙은 구조입니다. 그래서 구성원 관리는 그룹에서, 파일 권한은 SharePoint에서 봐야 합니다."

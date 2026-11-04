@@ -14,53 +14,58 @@ excerpt: "401은 토큰이 없거나 만료, 403은 권한 없음. 상태 코드
 - AADSTS 번호면 로그인 로그부터, 호출 단계 오류면 역할과 스코프부터 확인함
 - 403에 insufficient_claims가 오면 권한이 아니라 추가 인증 요구임
 
-> 근거: Microsoft Learn 공식 문서(2026-11-01 확인). HTTP 상태 코드의 일반 의미는 웹 표준 내용이고, Entra, Graph, Azure에서의 의미는 문서로 확인했습니다. 낯선 용어는 [용어집]({{ "/study/cloud-study-glossary/" | relative_url }})을 함께 보세요.
+근거: Microsoft Learn 공식 문서(2026-11-01 확인). HTTP 상태 코드의 일반 의미는 웹 표준 내용이고, Entra, Graph, Azure에서의 의미는 문서로 확인했습니다. 낯선 용어는 [용어집]({{ "/iam/entra-id-glossary/" | relative_url }})을 함께 보세요.
 
-> Entra ID 핵심 개념 시리즈: [기초]({{ "/iam/what-is-entra-id/" | relative_url }}) · **오류 코드**(지금 글) · [인증]({{ "/iam/entra-id-authentication/" | relative_url }}) · [접근 제어]({{ "/iam/entra-id-access-control/" | relative_url }}) · [하이브리드·외부 사용자]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}) · [라이선스·운영]({{ "/iam/entra-id-licensing-operations/" | relative_url }}) · [용어집]({{ "/study/cloud-study-glossary/" | relative_url }})
+> Entra ID 핵심 개념 시리즈: [기초]({{ "/iam/what-is-entra-id/" | relative_url }}) · **오류 코드**(지금 글) · [인증]({{ "/iam/entra-id-authentication/" | relative_url }}) · [접근 제어]({{ "/iam/entra-id-access-control/" | relative_url }}) · [하이브리드·운영]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}) · [용어집]({{ "/iam/entra-id-glossary/" | relative_url }})
 
 ---
 
 ## 전체 내용
 
-### 1. HTTP 상태 코드
+### 1. HTTP 상태 코드란
 
-서버가 요청 결과와 함께 돌려주는 세 자리 숫자가 **HTTP 상태 코드(HTTP status code)**입니다. 첫 자리로 1xx 정보(처리 중), 2xx 성공, 3xx 리디렉션(다른 주소로 가라는 안내), 4xx 요청 쪽 문제(형식 오류, 인증·권한 없음, 대상 없음), 5xx 서비스 쪽 문제(내부 오류, 일시적 장애)로 나뉩니다.
+서버가 요청 결과와 함께 돌려주는 세 자리 숫자가 **HTTP 상태 코드(HTTP status code)**이고, 첫 자리로 다섯 묶음이 나뉩니다.
+
+- 1xx 정보: 처리 중.
+- 2xx 성공: 요청이 처리됐습니다.
+- 3xx 리디렉션: 다른 주소로 가라는 안내입니다.
+- 4xx 요청 쪽 문제: 요청이 잘못됐거나, 인증이나 권한이 없거나, 대상이 없습니다.
+- 5xx 서비스 쪽 문제: 서버 내부 오류나 일시적 장애입니다.
+
+### 2. 자주 보는 상태 코드
 
 <picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/11/entra-error-layers-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/11/entra-error-layers.png" | relative_url }}" alt="로그인 단계에서는 AADSTS, 호출 단계에서는 401·403·404·429·5xx가 나오는 구조" loading="lazy"></picture>
 
 *그림 1. 로그인 단계와 호출 단계에서 나오는 오류*
 
-- **401 Unauthorized**: 토큰이 없거나, 만료됐거나, 이 리소스용이 아닙니다. 실제 뜻은 "인증이 안 됨"에 가깝습니다.
-- **403 Forbidden**: 누구인지는 확인됐지만 그 작업을 할 권한이 없습니다. Graph에서는 필요한 라이선스가 없을 때도 나올 수 있습니다(문서).
-- **429 Too Many Requests**: 너무 많이 요청해 잠시 막혔습니다(스로틀링, throttling). 응답의 Retry-After 헤더에 적힌 초만큼 기다렸다가 다시 시도합니다(문서).
-
-<details markdown="1">
-<summary>그 밖에 자주 보는 상태 코드 (200, 302, 400, 404, 409, 5xx)</summary>
-
 - **200 OK, 201 Created, 204 No Content**: 성공. 201은 새로 만들어짐, 204는 성공했지만 돌려줄 내용이 없음입니다.
 - **302 Found(리디렉션)**: 앱에서 Entra 로그인 화면으로 보내는 정상 동작입니다. 같은 주소를 계속 오가며 멈추면 쿠키나 세션 문제를 의심합니다.
-- **400 Bad Request**: 요청 형식이 잘못됐습니다. 스크립트의 필터 문법, 빠진 값, 잘못된 ID 형식이 흔한 원인입니다. 로그인 토큰 요청이 실패할 때도 400과 함께 AADSTS 번호가 오는 경우가 많습니다.
+- **400 Bad Request**: 요청 형식이 잘못됐습니다. 스크립트의 필터 문법, 빠진 값, 잘못된 ID 형식이 흔한 원인입니다.
+    - 로그인 토큰 요청이 실패할 때도 400과 함께 AADSTS 번호가 오는 경우가 많습니다.
+- **401 Unauthorized**: 인증 정보(토큰)가 없거나, 만료됐거나, 이 리소스용이 아닙니다. 이름은 Unauthorized지만 실제 뜻은 "인증이 안 됨"에 가깝습니다.
+- **403 Forbidden**: 누구인지는 확인됐지만 그 작업을 할 권한이 없습니다. Graph에서는 필요한 라이선스가 없을 때도 403이 나올 수 있습니다(문서).
 - **404 Not Found**: 대상이 없습니다. ID나 이름 오타, 다른 테넌트, 이미 삭제된 개체를 확인합니다.
 - **409 Conflict**: 현재 상태와 충돌합니다. 같은 이름의 개체가 이미 있거나 동시에 고친 경우입니다.
+- **429 Too Many Requests**: 너무 많이 요청해서 잠시 막혔습니다(스로틀링, throttling). 응답의 Retry-After 헤더에 적힌 초만큼 기다렸다가 다시 시도합니다(문서).
 - **500, 503, 504**: 서비스 쪽 오류, 일시적 사용 불가, 시간 초과입니다. 잠시 뒤 다시 시도하고, 계속되면 서비스 상태(Microsoft 365 관리 센터의 Service health)를 확인합니다.
 
-</details>
+### 3. 가장 헷갈리는 401과 403
 
-### 2. 401과 403 가르기
+401은 출입증(토큰)이 없거나 기한이 지났거나 다른 건물 것인 경우라, 다시 로그인해 새 토큰을 받고 토큰이 이 리소스(예: Graph)용인지 확인합니다. 403은 출입증은 정상인데 서버실 출입 권한이 없는 경우라, 역할(Entra 역할, Azure RBAC)이나 앱 권한(스코프), 라이선스를 확인합니다.
 
-401은 출입증(토큰)이 없거나 기한이 지났거나 다른 건물 것인 경우이고, 403은 출입증은 정상인데 그 방에 들어갈 권한이 없는 경우입니다.
+#### 같은 스크립트, 다른 오류
+
+밤새 돌던 사용자 조회 스크립트가 아침에 전부 401로 실패합니다. 토큰 만료라 다시 접속(`Connect-MgGraph`)하자 정상입니다. 같은 스크립트에 사용자 사용 안 함 기능을 넣자 403과 `Authorization_RequestDenied`가 납니다. 쓰기 스코프와 역할이 모자란 것입니다.
 
 | 구분 | 401 | 403 |
 |---|---|---|
 | 한 줄 뜻 | 인증 안 됨 | 권한 없음 |
-| 먼저 볼 것 | 토큰 유무, 만료, 대상(예: Graph용인지) | 역할(Entra 역할, Azure RBAC), 스코프, 라이선스, 범위 |
+| 먼저 볼 것 | 토큰 유무, 만료, 대상 | 역할, 스코프, 라이선스, 범위 |
 | 다시 로그인하면 | 대부분 해결 | 권한이 없으면 그대로 |
-
-예를 들어 밤새 돌던 사용자 조회 스크립트가 아침에 전부 401로 실패하면 토큰 만료라 다시 접속(`Connect-MgGraph`)하면 됩니다. 같은 스크립트에 사용자 사용 안 함 기능을 넣자 403과 `Authorization_RequestDenied`가 나면 쓰기 스코프와 역할이 모자란 것입니다.
 
 조건부 액세스가 걸린 리소스에서는 Graph가 `403 Forbidden`과 함께 `error=insufficient_claims`를 돌려줄 수 있습니다. "추가 조건(예: MFA)을 채워서 다시 로그인하라"는 뜻입니다(문서).
 
-### 3. AADSTS 오류 읽기
+### 4. AADSTS 오류 읽는 법
 
 **AADSTS**는 Entra ID의 로그인 서버(STS, 보안 토큰 서비스)가 돌려주는 오류 번호로, 로그인 화면의 추가 정보(More details)나 토큰 요청의 응답에 나옵니다(문서 예시를 줄임).
 
@@ -74,69 +79,41 @@ excerpt: "401은 토큰이 없거나 만료, 403은 권한 없음. 상태 코드
 }
 ```
 
-- `error`: 큰 분류입니다(아래 펼쳐 보기).
+- `error`: 큰 분류입니다.
+    - `invalid_grant`는 인증 재료(코드, 토큰, 암호)가 유효하지 않음
+    - `interaction_required`는 사용자가 직접 추가 단계(MFA 등)를 해야 함
+    - `invalid_client`는 앱 자격 증명이 잘못됨
+    - `temporarily_unavailable`은 서버가 잠시 바쁨
 - `error_description`: AADSTS 번호와 설명입니다. 문구는 바뀔 수 있습니다.
-- `correlation_id`, `trace_id`, `timestamp`: 로그인 로그에서 같은 건을 찾는 열쇠이니 사용자에게 이 값과 시각을 받아 둡니다.
+- `correlation_id`, `trace_id`, `timestamp`: **로그인 로그에서 같은 건을 찾는 열쇠**이니 사용자에게 이 값과 시각을 받아 둡니다.
 
-<details markdown="1">
-<summary>error 값 4가지</summary>
+번호의 최신 설명은 `https://login.microsoftonline.com/error?code=50126`처럼 번호를 넣어 공식 조회 페이지에서 확인할 수 있습니다(문서). 로그인 로그에서 보는 방법은 6장에 있습니다.
 
-- `invalid_grant`: 인증 재료(코드, 토큰, 암호)가 유효하지 않음
-- `interaction_required`: 사용자가 직접 추가 단계(MFA 등)를 해야 함
-- `invalid_client`: 앱 자격 증명이 잘못됨
-- `temporarily_unavailable`: 서버가 잠시 바쁨
-
-</details>
-
-번호의 최신 설명은 `https://login.microsoftonline.com/error?code=50126`처럼 번호를 넣어 공식 조회 페이지에서 확인합니다(문서).
-
-### 4. Graph와 Azure 오류 읽기
+### 5. Graph와 Azure 오류 읽는 법
 
 호출 단계에서 실패하면 HTTP 상태 코드와 함께 서비스별 오류 코드가 옵니다.
 
-- **Microsoft Graph**: `{"error": {"code": "...", "message": "...", "innerError": {"request-id": "...", "date": "..."}}}` 형식입니다. 프로그램은 `code`로 판단하고 `message`는 참고용입니다(문서).
-    - `InvalidAuthenticationToken`(401): 토큰이 잘못됐거나 만료됨
-    - `Authorization_RequestDenied`(403): "Insufficient privileges to complete the operation." 앱 권한(스코프)이나 역할이 모자람
-- **Graph PowerShell**: `Status: 403 (Forbidden)`, `ErrorCode: Authorization_RequestDenied`처럼 두 값이 함께 나옵니다. 필요한 권한은 `Find-MgGraphCommand`로 찾습니다(문서).
-- **Azure(Resource Manager)**: `AuthorizationFailed`(403)가 대표적입니다. 메시지에 어떤 작업(action)을 어느 범위(scope)에서 하려다 막혔는지 나오므로 그 범위의 Azure 역할을 확인합니다(문서).
+- **Microsoft Graph**: `{"error": {"code": "...", "message": "...", "innerError": {"request-id": "...", "date": "..."}}}` 형식입니다.
+    - 프로그램은 `code`를 기준으로 판단하고, `message`는 사람이 읽는 참고용입니다(문서).
+    - 자주 보는 예 `InvalidAuthenticationToken`(401): 토큰이 잘못됐거나 만료됨
+    - 자주 보는 예 `Authorization_RequestDenied`(403): "Insufficient privileges to complete the operation." 앱 권한(스코프)이나 역할이 모자람
+- **Azure(Resource Manager)**: `AuthorizationFailed`(403)가 대표적입니다. 메시지에 어떤 작업(action)을 어느 범위(scope)에서 하려다 막혔는지 나오므로, 그 범위의 Azure 역할을 확인합니다(문서).
+- **Graph PowerShell**: 오류 출력에 `Status: 403 (Forbidden)`, `ErrorCode: Authorization_RequestDenied`처럼 두 값이 함께 나옵니다. 필요한 권한은 `Find-MgGraphCommand`로 찾습니다(문서).
 
-<details markdown="1">
-<summary>AuthorizationFailed 메시지에서 범위 읽기 예</summary>
+#### 메시지에서 범위 읽기
 
 `The client 'ops@contoso.com' ... does not have authorization to perform action 'Microsoft.Compute/virtualMachines/write' over scope '/subscriptions/.../resourceGroups/rg-prod'`
 
 "VM 만들기(write)를 rg-prod 범위에서 할 권한이 없다"는 뜻이니, rg-prod에 Virtual Machine Contributor 같은 역할이 있는지 확인합니다.
 
-</details>
-
-### 5. 오류를 직접 보는 곳
+### 6. 오류를 직접 보는 곳
 
 - **Entra 로그인 로그**: Entra ID > Monitoring & health > Sign-in logs. 같은 시각의 실패 항목에서 AADSTS 번호, 실패 사유, 적용된 조건부 액세스 정책을 봅니다.
-- **브라우저 개발자 도구**: F12 > Network(네트워크) 탭의 Status 열. 공유할 때는 토큰이나 개인 정보가 담긴 헤더를 지웁니다.
+- **브라우저 개발자 도구**: F12 > Network(네트워크) 탭의 Status 열에서 각 요청의 상태 코드를 봅니다. 공유할 때는 토큰이나 개인 정보가 담긴 헤더를 지웁니다.
 - **Azure 활동 로그**: Azure 포털 > 해당 리소스 그룹 > Activity log. 실패한 작업과 AuthorizationFailed 메시지가 남습니다.
-- **Graph Explorer**: 같은 요청을 직접 보내 상태 코드와 오류 본문을 보고, 권한(Modify permissions) 탭에서 필요한 동의를 확인합니다.
+- **Graph Explorer**: 같은 요청을 직접 보내 상태 코드와 오류 본문을 확인하고, 권한(Modify permissions) 탭에서 필요한 동의를 확인합니다.
 
-<details markdown="1">
-<summary>화면으로 경로 따라가기: 로그인 로그에서 오류 코드 찾기 (그림 2장)</summary>
-
-![로그인 이벤트 목록. 날짜, 앱, 상태, 조건부 액세스 열]({{ "/assets/images/2026/11/guide-signin-list.png" | relative_url }})
-
-*그림 2. Entra ID > 로그인 로그(Sign-in logs)의 사용자 로그인(대화형) 탭. 날짜, 앱, 상태, 조건부 액세스 열이 있습니다. 실패한 줄(상태 "실패")을 선택하면 세부 정보가 열립니다. 요청 ID, 계정, IP는 가렸습니다.*
-
-![로그인 활동 세부 정보의 기본 정보 탭. 상태와 로그인 오류 코드, 실패 이유]({{ "/assets/images/2026/11/guide-signin-detail.png" | relative_url }})
-
-*그림 3. 세부 정보 창의 기본 정보 탭. 위쪽 탭 줄에 위치, 디바이스 정보, 인증 세부 정보, 조건부 액세스, 보고 전용 탭이 있고, 아래에 상태와 로그인 오류 코드, 실패 이유가 나옵니다. 이 예는 암호 오류(50126) 로그인입니다.*
-
-화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, IP는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
-
-</details>
-
-### 6. 오류 코드별 대처
-
-오류 코드별 뜻과 대처 순서는 [트러블슈팅 플레이북]({{ "/m365/troubleshooting/troubleshooting-playbook/" | relative_url }})에 모아 두었습니다.
-
-<details markdown="1">
-<summary>이 시리즈에서 다룬 오류 코드 한 줄 설명 펼쳐 보기</summary>
+### 7. 이 시리즈의 오류 코드 한 줄 설명
 
 **로그인: 계정과 암호**
 
@@ -187,11 +164,15 @@ excerpt: "401은 토큰이 없거나 만료, 403은 권한 없음. 상태 코드
 - **SSPR_0011**: 사용자에게 SSPR 정책이 적용되지 않음
 - **SSPR_0012**: 라이선스가 없음
 
-</details>
+**호출: 권한** ([403 글]({{ "/iam/troubleshooting/signed-in-but-403/" | relative_url }})): Graph `Authorization_RequestDenied`, Azure `AuthorizationFailed`(5장 참고)
 
-관련 글: [로그인은 되는데 403·AuthorizationFailed가 나올 때]({{ "/iam/troubleshooting/signed-in-but-403/" | relative_url }}) · [조회 스크립트 결과가 전부 실패로 나옴: 토큰 만료와 오류 유형 구분]({{ "/m365/troubleshooting/script-all-fail-token-expired/" | relative_url }}) · [사용 현황 보고서가 '데이터 없음'이고 Graph는 404 UnknownTenantId]({{ "/m365/troubleshooting/usage-report-no-data/" | relative_url }})
+### 8. 관련 트러블슈팅
 
-### 7. 확인 문제
+- 로그인은 되는데 권한이 없을 때: [로그인은 되는데 403·AuthorizationFailed가 나올 때]({{ "/iam/troubleshooting/signed-in-but-403/" | relative_url }})
+- 스크립트가 전부 실패할 때: [조회 스크립트 결과가 전부 실패로 나옴: 토큰 만료와 오류 유형 구분]({{ "/m365/troubleshooting/script-all-fail-token-expired/" | relative_url }})
+- 403과 404를 나눠 본 사례: [사용 현황 보고서가 '데이터 없음'이고 Graph는 404 UnknownTenantId]({{ "/m365/troubleshooting/usage-report-no-data/" | relative_url }})
+
+### 9. 확인 문제
 
 <details markdown="1">
 <summary>1. Graph 호출이 401을 돌려줍니다. 역할부터 바꿔야 하나요?</summary>
@@ -214,11 +195,12 @@ excerpt: "401은 토큰이 없거나 만료, 403은 권한 없음. 상태 코드
 
 </details>
 
-### 근거 자료
+### 10. 근거 자료
 
 <details markdown="1">
-<summary>근거 자료 펼쳐 보기 (7건)</summary>
+<summary>근거 자료 펼쳐 보기 (8건)</summary>
 
+- AADSTS90072(홈 테넌트 로그): [Error AADSTS50020](https://learn.microsoft.com/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
 - AADSTS 오류 응답 형식, error 값, 오류 조회 페이지: [Microsoft Entra authentication and authorization error codes](https://learn.microsoft.com/entra/identity-platform/reference-error-codes)
 - Graph의 HTTP 상태 코드와 오류 형식, 403 insufficient_claims, 라이선스 없을 때 403: [Microsoft Graph error responses and resource types](https://learn.microsoft.com/graph/errors)
 - Graph 401, 403 해결: [Resolve Microsoft Graph authorization errors](https://learn.microsoft.com/graph/resolve-auth-errors)

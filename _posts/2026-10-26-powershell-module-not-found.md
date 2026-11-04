@@ -56,7 +56,7 @@ toc: true
 
 `하위 모듈 없음 / Cloud Shell 토큰 / 연결 누락 → 예제가 그대로 안 돎`
 
-세 원인 모두 풀어 값을 읽었습니다(테넌트 설정 변경 없음). PowerShell 7은 호환 모드가 필요하다는 문서 안내만 봤고, 동작은 확인 불가입니다(막힌 이유: 5.1로 실행 / 다음 방법: 7에서 같은 명령 실행해 대조).
+세 원인 모두 풀어 값을 읽었습니다(테넌트 설정 변경 없음). PowerShell 7은 Windows PowerShell 호환 기능(`Import-Module -UseWindowsPowerShell`)이 있다는 문서([about_Windows_PowerShell_Compatibility](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_windows_powershell_compatibility))만 봤고, 동작은 확인 불가입니다(막힌 이유: 5.1로 실행 / 다음 방법: 7에서 같은 명령 실행해 대조).
 
 ### 4. 권고방안
 
@@ -77,6 +77,7 @@ toc: true
 - 조회: 내 PC Windows PowerShell 5.1에서 각 모듈 직접 로그인 후 읽기
     - 출처: 10/26
 - 확인 불가: PowerShell 7 호환 모드 동작
+    - 출처: [about_Windows_PowerShell_Compatibility](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_windows_powershell_compatibility)
     - 시도: 문서 확인. 막힌 이유: 직접 실행하지 않음. 다음 방법: PowerShell 7에서 실행해 대조
 
 </details>

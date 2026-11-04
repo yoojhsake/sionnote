@@ -13,7 +13,7 @@ toc: true
 
 ## 요약
 
-- 요청 건수를 크게 줘도 서버의 페이지 크기 제한으로 100건씩만 옴
+- 요청 건수를 크게 줘도 이 API의 기본 페이지 크기(100)로 100건씩만 옴(`Prefer: odata.maxpagesize`로 최대 1000까지 지정 가능, 문서). `$top=999`가 무시된 이유는 이 글에서 확인하지 않음
 - 응답에 nextLink가 있으면 없어질 때까지 따라가며 합산하면 됨
 - 첫 페이지 건수를 전체 건수로 기록하지 않도록 주의해야 함
 
@@ -32,7 +32,7 @@ toc: true
 
 ### 2. 원인 및 분석
 
-서버 페이지 크기 제한으로 `$top`보다 적게 오며, nextLink는 다음 페이지가 있다는 뜻입니다([Paging Microsoft Graph data](https://learn.microsoft.com/graph/paging)). 정상 응답이며, 따라가니 100건씩 5페이지였습니다(조회).
+서버 페이지 크기 제한으로 `$top`보다 적게 오며, nextLink는 다음 페이지가 있다는 뜻입니다([Paging Microsoft Graph data](https://learn.microsoft.com/graph/paging)). 정상 응답이며, 따라가니 100건씩 5페이지였습니다(조회). 이 API의 기본 페이지 크기는 100이고 `Prefer: odata.maxpagesize` 헤더로 최대 1000까지 지정할 수 있다고 문서가 설명합니다([List serviceAnnouncement messages](https://learn.microsoft.com/graph/api/serviceannouncement-list-messages?view=graph-rest-1.0)). `$top=999`가 무시된 이유는 이 글에서 확인하지 않았고, 전체 건수(`$all.Count`)는 기록하지 않았습니다.
 
 ### 3. 결론
 
@@ -45,7 +45,7 @@ toc: true
 1. 조치: `nextLink`가 없어질 때까지 따라가며 합칩니다.
 
     ```powershell
-    # 메시지 센터 게시물 전체 읽기(읽기 전용). 필요 범위: ServiceMessage.Read.All, 역할: Message Center Reader 이상
+    # 메시지 센터 게시물 전체 읽기(읽기 전용). 필요 범위: ServiceMessage.Read.All (역할 요구는 문서 확인 필요)
     $uri = 'https://graph.microsoft.com/v1.0/admin/serviceAnnouncement/messages?$top=100'
     $all = @()
     while ($uri) {

@@ -22,9 +22,6 @@ excerpt: "채널 업로드에 Graph는 403을 줬는데 SharePoint에는 파일�
 
 ## 전체 기록
 
-
-
-
 ### 1. 증상
 
 - Cloud Shell에서 Graph로 세 채널에 시험 파일(`D3-test-<채널명>.txt`)을 올리니 표준은 201, 비공개·공유는 403이었는데 SharePoint 별도 사이트에는 파일이 있었습니다.
@@ -98,6 +95,8 @@ foreach ($c in $ch) {
 ![채널 폴더 읽기 결과]({{ "/assets/images/2026/10/m13-2-read-403.png" | relative_url }})
 *그림 4. 폴더 읽기 결과(위쪽은 실행한 명령). 표준 채널(ch-standard)은 파일 목록 D3-test-ch-standard.txt, zz-test.txt, zz-test2-ch-standard.txt, zz-x.txt가 나오고, 비공개·공유 채널은 둘 다 "READ … 403 (Forbidden)", General은 zz-test.txt, zz-x.txt가 나옵니다. zz-x.txt는 제가 채널 폴더 경로를 잘못 지정해 시험하다 팀 문서함에 생긴 파일로 정리 목록에 넣었습니다.*
 
+zz-x.txt는 제가 채널 폴더 경로를 잘못 지정해 시험하다 생긴 파일로, 읽기 결과에서 ch-standard와 General 폴더 목록 양쪽에 보였습니다. 생긴 정확한 위치는 이 글에서 확정하지 않았습니다.
+
 폴더 읽기에 실행한 스크립트입니다.
 
 ```powershell
@@ -127,7 +126,7 @@ foreach ($c in $ch) {
 1. 조치: 재현할 때는 요청·응답 전체를 파일로 남깁니다.
 2. 확인: 응답 코드와 SharePoint 화면의 실제 파일이 둘 다 맞아야 성공입니다.
 3. 하지 말 것: 403을 "아무 일도 안 일어남"으로 보지 않습니다.
-4. 정리: 시험 파일(표준 채널과 General의 zz-test*.txt, 팀 문서함에 잘못 생긴 zz-x.txt)은 정리 목록에 넣었습니다(팀 삭제 때 함께 지워짐).
+4. 정리: 시험 파일(표준 채널과 General의 zz-test*.txt, 경로를 잘못 지정해 생긴 zz-x.txt)은 정리 목록에 넣었습니다(팀 삭제 때 함께 지워짐).
 
 관련 글: [Teams 저장 구조: 채널 유형별 파일·일정 위치]({{ "/m365/d3-teams-storage/" | relative_url }}) · [비공개·공유 채널 파일 403]({{ "/m365/troubleshooting/channel-upload-403-membership-or-scope/" | relative_url }}) · [채널 경로 업로드 400]({{ "/m365/troubleshooting/channel-upload-400-filesfolder/" | relative_url }})
 

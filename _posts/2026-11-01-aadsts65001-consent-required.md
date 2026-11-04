@@ -16,7 +16,7 @@ excerpt: "'관리자 승인 필요'·AADSTS65001이 뜨면 동의부터 누르�
 - 요청이 잦으면 관리자 동의 워크플로를 켜서 검토자가 처리하게 함
 - 확인 없이 동의하면 앱에 메일과 파일 권한을 넘겨 동의 피싱에 당함
 
-> Microsoft Learn 문서(2026-11-01 확인) 기준입니다. 오류 상황은 테넌트에서 재현하지 않았고, 설정 화면은 샌드박스 테넌트에서 직접 열어 캡처했습니다. 함께 볼 글: [Entra ID 핵심 개념: 기초와 구조 편]({{ "/iam/what-is-entra-id/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
+> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다. 함께 볼 글: [Entra ID 핵심 개념: 기초와 구조 편]({{ "/iam/what-is-entra-id/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
 
 ---
 
@@ -24,8 +24,8 @@ excerpt: "'관리자 승인 필요'·AADSTS65001이 뜨면 동의부터 누르�
 
 ### 1. 증상
 
-- 사례 1: 메일 정리 앱에 회사 계정으로 로그인하면 "관리자 승인 필요 — 이 앱은 조직의 리소스에 접근하려면 관리자만 줄 수 있는 권한이 필요합니다"
-- 사례 2: 사내 개발 앱이 `AADSTS65001: The user or administrator has not consented to use the application…` 오류
+- 예시 1(가상): 메일 정리 앱에 회사 계정으로 로그인하면 "관리자 승인 필요 — 이 앱은 조직의 리소스에 접근하려면 관리자만 줄 수 있는 권한이 필요합니다"
+- 예시 2(가상): 사내 개발 앱이 `AADSTS65001: The user or administrator has not consented to use the application…` 오류
 
 ### 2. 원인 및 분석
 
@@ -36,7 +36,7 @@ excerpt: "'관리자 승인 필요'·AADSTS65001이 뜨면 동의부터 누르�
 *그림 1. 동의가 막힐 때 판단 순서*
 
 <details markdown="1">
-<summary>원인별 대처와 실제 사례 자세히 보기 (5가지)</summary>
+<summary>원인별 대처와 가상 예시 자세히 보기 (5가지)</summary>
 
 - 회사가 사용자 동의를 막아 둔 경우(의도된 설정): 앱을 검토해 업무상 필요하고 믿을 만하면 관리자가 테넌트 전체 관리자 동의(Grant admin consent)
 - 앱이 관리자 전용 권한(예: 조직 전체 메일 읽기)을 요청하는 경우: 그 권한이 정말 필요한지 개발사나 개발자에게 확인. 최소 권한으로 줄일 수 있으면 줄인 뒤 동의
@@ -46,7 +46,7 @@ excerpt: "'관리자 승인 필요'·AADSTS65001이 뜨면 동의부터 누르�
 - 할당 필요 앱인데 동의가 없는 경우: 관리자가 먼저 테넌트 전체 동의를 준 뒤 사용자나 그룹 할당([AADSTS50105 글]({{ "/iam/troubleshooting/aadsts50105-app-not-assigned/" | relative_url }}))
 - 요청이 자주 들어와 관리가 어려운 경우: 관리자 동의 워크플로 켜기(권고방안 1)
 
-오류가 보안 장치로 동작한 사례도 있습니다. "Office 문서 보안 검사"라는 앱이 링크로 돌며 "메일 읽기·보내기, 모든 파일 읽기" 동의를 요청했지만, 사용자 동의가 "확인된 게시자의 낮은 위험 권한만"으로 제한되어 직원들은 "관리자 승인 필요"를 받았고, 관리자는 게시자가 확인되지 않은(unverified publisher) 앱임을 보고 요청을 거부했습니다.
+오류가 보안 장치로 동작하는 가상 예시입니다. "Office 문서 보안 검사"라는 앱이 링크로 돌며 "메일 읽기·보내기, 모든 파일 읽기" 동의를 요청했지만, 사용자 동의가 "확인된 게시자의 낮은 위험 권한만"으로 제한되어 직원들은 "관리자 승인 필요"를 받았고, 관리자는 게시자가 확인되지 않은(unverified publisher) 앱임을 보고 요청을 거부했습니다.
 
 </details>
 
@@ -93,28 +93,13 @@ excerpt: "'관리자 승인 필요'·AADSTS65001이 뜨면 동의부터 누르�
 
 </details>
 
-<details markdown="1">
-<summary>화면으로 경로 따라가기: 사용자 동의 설정과 관리자 동의 요청 (그림 2장)</summary>
-
-![동의 및 권한의 사용자 동의 설정 화면. 사용자 동의 허용 범위를 고르는 세 가지 선택지]({{ "/assets/images/2026/11/guide-consent-user.png" | relative_url }})
-
-*그림 2. Entra ID > 엔터프라이즈 앱(Enterprise apps) > 동의 및 권한(Consent and permissions) > 사용자 동의 설정. 사용자가 어떤 앱에 스스로 동의할 수 있는지 고릅니다. 이 샌드박스는 "Microsoft에서 동의 설정을 관리하도록 허용(권장)"입니다.*
-
-![동의 및 권한의 관리자 동의 설정 화면. 사용자가 관리자 동의를 요청할 수 있는지 예, 아니요]({{ "/assets/images/2026/11/guide-consent-admin.png" | relative_url }})
-
-*그림 3. 같은 메뉴의 관리자 동의 설정. "사용자는 동의할 수 없는 앱의 관리자 동의를 요청할 수 있습니다"를 "예"로 켠 뒤, 같은 화면 아래에서 요청을 검토할 사용자, 그룹, 역할을 지정합니다. 이 샌드박스는 "아니요"입니다.*
-
-화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름, 테넌트 ID, 계정, IP, 요청 ID는 가렸고, 사용 중인 라이선스와 정책에 따라 메뉴 이름과 값은 다를 수 있습니다.
-
-</details>
-
 ### 근거 자료
 
 <details markdown="1">
 <summary>근거 자료 펼쳐 보기 (4건)</summary>
 
-- 65001, 90093, 90094, 900941, 900981, 위험 앱 감사 로그: [Unexpected error when performing consent to an application](https://learn.microsoft.com/entra/identity/enterprise-apps/application-sign-in-unexpected-user-consent-error)
-- 동의 오류의 대표 원인: [Troubleshoot consent issues in Microsoft Entra ID](https://learn.microsoft.com/troubleshoot/entra/entra-id/app-integration/troubleshoot-consent-issues)
+- 90093, 90094, 900941, 900981, 위험 앱 감사 로그: [Unexpected error when performing consent to an application](https://learn.microsoft.com/entra/identity/enterprise-apps/application-sign-in-unexpected-user-consent-error)
+- 동의 오류의 대표 원인과 AADSTS65001 메시지: [Troubleshoot consent issues in Microsoft Entra ID](https://learn.microsoft.com/troubleshoot/entra/entra-id/app-integration/troubleshoot-consent-issues)
 - 관리자 동의 워크플로 설정 경로와 검토자 권한: [Configure the admin consent workflow](https://learn.microsoft.com/entra/identity/enterprise-apps/configure-admin-consent-workflow)
 - 사용자 동의 설정: [Configure how users consent to applications](https://learn.microsoft.com/entra/identity/enterprise-apps/configure-user-consent)
 

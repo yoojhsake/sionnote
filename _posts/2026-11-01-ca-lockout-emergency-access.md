@@ -16,13 +16,15 @@ excerpt: "CA 정책 실수로 관리자까지 53003에 막혔다. 긴급 액세�
 - 클라우드 전용 긴급 계정 2개 이상을 모든 차단 정책에서 제외해 둬야 함
 - 긴급 계정도 필수 MFA 대상이므로 패스키 같은 인증을 등록해야 함
 
-> Microsoft Learn 문서(2026-11-01 확인) 기준입니다. 오류 상황은 테넌트에서 재현하지 않았고, 설정 화면은 샌드박스 테넌트에서 직접 열어 캡처했습니다. 함께 볼 글: [Entra ID 핵심 개념: 접근 제어 편]({{ "/iam/entra-id-access-control/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
+> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다. 함께 볼 글: [Entra ID 핵심 개념: 접근 제어 편]({{ "/iam/entra-id-access-control/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
 
 ---
 
 ## 전체 내용
 
 ### 1. 증상
+
+※ 아래 증상은 문서 내용을 바탕으로 가정한 예시이며 실제 테넌트에서 재현한 것이 아닙니다.
 
 - "모든 사용자 + 모든 리소스 + 허용 국가 외 차단" 정책을 바로 **켜기**로 저장했습니다.
 - 저장 직후 본인을 포함한 관리자 전원이 53003으로 막혀 관리 센터에 들어갈 수 없습니다.
@@ -31,16 +33,16 @@ excerpt: "CA 정책 실수로 관리자까지 53003에 막혔다. 긴급 액세�
 
 차단 정책은 제외 대상이 아닌 모든 계정에 바로 적용되므로, 정책 실수에 대비해 차단 정책에서 제외한 긴급 액세스 계정을 두라고 문서는 권합니다([Manage emergency access accounts](https://learn.microsoft.com/entra/identity/role-based-access-control/security-emergency-access)).
 
-- 정책의 허용 국가 / 실제 로그인 위치: 회사 VPN의 인터넷 출구가 **해외 데이터센터(허용 국가 외)**
+- 정책의 허용 국가 / 실제 로그인 위치(가정): 회사 VPN의 인터넷 출구가 **해외 데이터센터(허용 국가 외)**
 - 그 IP가 명명된 위치(신뢰 위치)로 예외 처리되지 않은 채 정책이 켜짐
 
-<picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/11/ts-ca-lockout-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/11/ts-ca-lockout.png" | relative_url }}" alt="긴급 액세스 계정으로 잠금을 복구하는 5단계" loading="lazy"></picture>
+<picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/11/ts-ca-lockout-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/11/ts-ca-lockout.png" | relative_url }}" alt="긴급 액세스 계정으로 정책을 끄고(복구) 확인하고, 예방·배포 습관까지 이어지는 5단계" loading="lazy"></picture>
 
-*그림 1. 복구 순서 5단계*
+*그림 1. 복구(1~3)와 재발 방지(4~5) 5단계*
 
 ### 3. 결론
 
-`VPN 출구 IP가 허용 국가 외 → 예외 없이 차단 정책 켜기 → 관리자 전원 53003`
+`(가정) VPN 출구 IP가 허용 국가 외 → 예외 없이 차단 정책 켜기 → 관리자 전원 53003`
 
 긴급 계정이 있으면 그 계정으로 정책을 끄고, 없거나 그 계정마저 정책에 걸려 있으면 테넌트 안에서 풀 방법이 없어 소유권 확인 절차 때문에 오래 걸리는 Microsoft 지원을 거쳐야 합니다.
 
@@ -49,7 +51,7 @@ excerpt: "CA 정책 실수로 관리자까지 53003에 막혔다. 긴급 액세�
 1. 조치: **긴급 액세스 계정**으로 Entra 관리 센터에 로그인해 Entra ID > Conditional Access > Policies에서 방금 바꾼 정책을 Off(사용 안 함) 또는 Report-only(보고서 전용)로 바꿉니다. 정책을 고친 뒤(예: VPN 출구 IP를 명명된 위치에 추가) 보고서 전용으로 며칠 운영하며 로그인 로그로 영향을 봅니다.
 2. 조치 후 확인: 일반 관리자 계정으로 다시 로그인되는지 봅니다. 긴급 계정 사용은 보안 사고처럼 기록하고, 사용 후 자격 증명을 점검합니다.
 3. 예방: 클라우드 전용 긴급 계정 2개 이상을 모든 차단 정책에서 제외하고 패스키(FIDO2)를 등록합니다. 필수 MFA는 긴급 계정에도 예외 없이 적용됩니다. 전체 권장 구성은 아래 표에 있습니다.
-4. 배포 습관: 새 정책은 **보고서 전용 → 로그 확인 → 켜기** 순서로만 배포하고, 보고서 전용으로 저장한 뒤 What If로(What If는 켜기, 보고서 전용 정책만 평가) 긴급 계정과 내 관리자 계정의 평가 결과를 봅니다. 정책 변경에 추가 인증을 요구하는 보호된 작업(Protected actions)도 걸어 둡니다.
+4. 배포 습관: 새 정책은 **보고서 전용 → 로그 확인 → 켜기** 순서로만 배포하고, 보고서 전용으로 저장한 뒤 What If로 긴급 계정과 내 관리자 계정의 평가 결과를 봅니다(What If는 켜기·보고서 전용 정책만 평가합니다). 정책 변경에 추가 인증을 요구하는 보호된 작업(Protected actions)도 걸어 둡니다.
 5. 하지 말아야 할 것: 긴급 계정을 "MFA 없는 계정"이나 PIM 적격으로 두지 않습니다.
 
 <details markdown="1">
@@ -73,21 +75,6 @@ excerpt: "CA 정책 실수로 관리자까지 53003에 막혔다. 긴급 액세�
 </details>
 
 관련 글: [AADSTS53003: 조건부 액세스 정책 때문에 접근이 차단될 때]({{ "/iam/troubleshooting/aadsts53003-blocked-by-ca/" | relative_url }}) · [Entra ID 핵심 개념: 접근 제어 편]({{ "/iam/entra-id-access-control/" | relative_url }})
-
-<details markdown="1">
-<summary>화면으로 경로 따라가기: 조건부 액세스 정책 만들기 화면 (그림 2장)</summary>
-
-![조건부 액세스 정책 목록 화면. 새 정책, 가상 버튼이 있는 도구 모음]({{ "/assets/images/2026/11/guide-ca-policies.png" | relative_url }})
-
-*그림 2. Entra ID > 조건부 액세스 > 정책. 이 샌드박스는 정책이 하나도 없어 안내 화면이 나옵니다.*
-
-![조건부 액세스 새 정책 화면. 사용자 제외 탭과 정책 사용 보고서 전용]({{ "/assets/images/2026/11/guide-ca-new-policy.png" | relative_url }})
-
-*그림 3. Entra ID > 조건부 액세스 > 정책 > 새 정책. 왼쪽에서 할당(사용자, 대상 리소스, 네트워크, 조건)과 액세스 제어를 정하고, 사용자 > 제외 탭에서 게스트 또는 외부 사용자, 디렉터리 역할, 사용자 및 그룹을 제외합니다. 아래 "정책 사용"의 기본값은 "보고서 전용"입니다. 이 샌드박스는 보안 기본값이 켜져 있어 정책을 켜려면 먼저 보안 기본값을 꺼야 한다는 경고가 같이 나옵니다. 이번에는 만들기를 누르지 않았습니다.*
-
-화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, 구독 이름과 ID는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
-
-</details>
 
 ### 근거 자료
 

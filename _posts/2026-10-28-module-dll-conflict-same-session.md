@@ -9,13 +9,13 @@ excerpt: "Graph 다음 Exchange 모듈을 같은 창에서 불러오면 DLL 충�
 toc: true
 ---
 
-Graph 스크립트를 돌린 창에서 이어서 Exchange 스크립트를 실행하자 `Could not load file or assembly … 0x80131040` 오류가 났습니다. 한 세션에는 같은 라이브러리의 한 버전만 올라가기 때문이라, 서비스 묶음마다 새 `pwsh` 세션을 열자 DLL 충돌이 0건이 되었습니다.
+PC에서 Graph 스크립트를 돌린 창에서 이어서 Exchange 스크립트를 실행하자 `Could not load file or assembly … 0x80131040` 오류가 났습니다. 한 세션에는 같은 라이브러리의 한 버전만 올라가기 때문이라, 서비스 묶음마다 새 `pwsh` 세션을 열자 DLL 충돌이 0건이 되었습니다.
 
 ## 요약
 
 - 서비스 모듈들이 같은 라이브러리의 다른 버전을 써서 한 세션에서 충돌함
 - 두 번째 서비스부터 어셈블리 오류가 나면 서비스마다 새 세션을 열면 됨
-- 충돌한 DLL과 모듈 버전 조합은 비교하지 않아 확인 불가
+- 충돌한 DLL과 모듈 버전 조합은 비교하지 않음(분리로 해결되어 시도하지 않음)
 
 > 근거: 조회는 이 테넌트에서 직접 읽은 값, 문서는 Microsoft Learn입니다. 비공개 정보는 가렸습니다.
 
@@ -29,12 +29,12 @@ Graph 스크립트를 돌린 창에서 이어서 Exchange 스크립트를 실행
 
 ### 2. 원인 및 분석
 
-모듈마다 Microsoft.IdentityModel.Abstractions 등 같은 라이브러리의 다른 버전을 쓰나, 한 세션에는 한 버전만 올라갑니다([어셈블리 로드 충돌 일반 설명](https://learn.microsoft.com/powershell/scripting/dev-cross-plat/resolving-dependency-conflicts)). 분리 후 5개 묶음 모두 경고 0건입니다.
+문서에 따르면 PowerShell은 모든 어셈블리를 같은 Assembly Load Context에 올리므로, 서로 다른 모듈이 같은 어셈블리의 다른 버전을 요구하면 한 세션에서 충돌할 수 있습니다([Resolving PowerShell module assembly dependency conflicts](https://learn.microsoft.com/powershell/scripting/dev-cross-plat/resolving-dependency-conflicts)). 이번 오류가 어떤 DLL 때문인지는 비교하지 않았습니다(분리로 해결되어 시도하지 않음). 분리 후 5개 묶음 모두 경고 0건입니다.
 
 <details markdown="1">
 <summary>확인 과정 자세히 보기</summary>
 
-Cloud Shell에서 같은 묶음을 시험했을 때도 같은 오류가 먼저 확인되어, PC 실행은 처음부터 분리하도록 설계했습니다.
+증상은 PC의 한 창에서 나온 것(작성자 관찰, 캡처 없음)이며, Cloud Shell 재현 여부는 이 글에서 기록하지 않았습니다. PC 실행은 처음부터 묶음을 분리하도록 설계했습니다.
 
 #### 관찰로 나누기
 
@@ -42,14 +42,14 @@ Cloud Shell에서 같은 묶음을 시험했을 때도 같은 오류가 먼저 �
 |---|---|
 | 첫 서비스는 되고, 두 번째 서비스에서 어셈블리 오류 | 세션에 먼저 올라온 라이브러리와 충돌 |
 | 모든 항목이 처음부터 오류 | 충돌이 아니라 모듈 미설치나 접속 문제 |
-| 새 창에서 같은 서비스만 실행하면 정상 | 충돌 확정 |
+| 새 창에서 같은 서비스만 실행하면 정상 | 충돌일 가능성이 높음 |
 
 #### 해 본 것과 결과
 
 1. 서비스 묶음 실행기를 만들어, 묶음마다 `pwsh -NoProfile -File <묶음 실행 파일>`로 별도 프로세스를 열었습니다. `-NoProfile`은 프로필에서 자동으로 불러오는 모듈이 섞이지 않게 하려는 것입니다. 설정 변경은 없어 원복할 것이 없습니다.
 2. 각 묶음은 시작할 때 대상 테넌트로 새로 접속하고, 접속한 테넌트가 맞는지 확인한 뒤 실행합니다. 묶음마다 실행 기록과 상태 파일을 남깁니다.
 3. 같은 PC에서 Graph, Azure, Teams, Exchange·Purview 묶음을 차례로 실행했습니다(조회). 실행 기록의 경고 칸은 모두 비어 있었고 DLL 충돌 문구는 없었습니다.
-    - SharePoint 묶음은 서비스 특성상 Windows PowerShell 5.1 창에서 따로 실행했습니다.
+    - SharePoint 묶음은 Windows PowerShell 5.1 창에서 따로 실행했습니다(이 PC에서의 실행 방식이며, PowerShell 7에서 `-UseWindowsPowerShell`로 쓰는 방법도 문서에 있음).
 
 ```text
 Graph          완료 · 결과 11행
@@ -65,7 +65,7 @@ SharePoint(5.1) 완료 · 결과 10행
 
 `라이브러리 버전 불일치 → Exchange 모듈 로드 실패 → 0x80131040`
 
-충돌 DLL·모듈 버전 조합은 확인 불가입니다(분리로 해결되어 비교 안 함. 재현 시 비교).
+충돌 DLL·모듈 버전 조합은 비교하지 않았습니다(분리로 해결되어 시도하지 않음. 재현 시 비교).
 
 ### 4. 권고방안
 
@@ -81,10 +81,10 @@ SharePoint(5.1) 완료 · 결과 10행
 <summary>근거 자료 펼쳐 보기 (3건)</summary>
 
 - **문서**: 어셈블리 로드 충돌 일반 설명
-    - 출처: [about_Assemblies 관련 안내](https://learn.microsoft.com/powershell/scripting/dev-cross-plat/resolving-dependency-conflicts)
+    - 출처: [Resolving PowerShell module assembly dependency conflicts](https://learn.microsoft.com/powershell/scripting/dev-cross-plat/resolving-dependency-conflicts). 문서는 해결책으로 `pwsh`를 하위 프로세스로 띄우는 방식도 제시함
 - **조회**: 5개 묶음 실행 결과, 충돌 오류 0건
     - 출처: 10/28 실행 기록
-- **확인 불가**: 충돌 DLL 버전 비교
-    - 시도: 분리 실행으로 회피. 막힌 이유: 회피로 해결됨. 다음 방법: 충돌 재현 시 버전 조합 비교
+- **시도하지 않은 항목**: 충돌 DLL 버전 비교
+    - 시도: 분리 실행으로 회피. 시도하지 않은 이유: 회피로 해결됨. 다음 방법: 충돌 재현 시 버전 조합 비교
 
 </details>

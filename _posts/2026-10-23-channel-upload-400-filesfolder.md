@@ -22,9 +22,6 @@ excerpt: "채널 경로로 올리면 세 채널 모두 400. driveId·itemId를 �
 
 ## 전체 기록
 
-
-
-
 ### 1. 증상
 
 - 채널 주소 아래 `filesFolder/content`로 바로 `PUT` 하니 세 채널 모두 같은 400이었습니다.
@@ -94,7 +91,7 @@ foreach ($c in $ch) {
 
 1. 조치: 채널마다 `filesFolder`로 driveId·itemId를 구해 드라이브 경로로 올립니다.
 2. 확인: 400이 사라지고 파일이 저장 위치에 있으면 됩니다. 400은 형식·경로, 403은 권한·범위부터 봅니다.
-3. 정리: General에 잘못 생긴 `zz-x.txt`는 정리 목록에 넣었고, 표준 채널과 General의 `zz-test*.txt`는 팀 삭제 때 지웁니다(같은 이름으로 올리면 덮어씀).
+3. 정리: 경로를 잘못 지정해 생긴 `zz-x.txt`(생긴 정확한 위치는 이 글에서 확정하지 않음)는 정리 목록에 넣었고, 표준 채널과 General의 `zz-test*.txt`는 팀 삭제 때 지웁니다(같은 이름으로 올리면 덮어씀).
 
 관련 글: [비공개·공유 채널 파일 403: 멤버십인가 토큰 범위인가]({{ "/m365/troubleshooting/channel-upload-403-membership-or-scope/" | relative_url }}) · [Cloud Shell 토큰으로 되는 Graph 호출과 안 되는 호출]({{ "/m365/troubleshooting/cloud-shell-graph-token-scope/" | relative_url }}) · [응답은 403인데 파일이 생김]({{ "/m365/troubleshooting/upload-403-but-file-created/" | relative_url }})
 

@@ -14,9 +14,9 @@ SMS·음성으로만 MFA를 하는 사용자는 지금은 로그인되지만, 20
 
 - 종료 뒤 SMS·음성만 가진 사용자는 패스키를 등록해야만 로그인이 이어짐
 - 분석 스크립트로 대상자를 찾아 등록 캠페인으로 미리 패스키로 옮기면 됨
-- 전화 사업자로 SMS를 계속 쓰려면 별도 비용이 들고 SSPR도 같은 기준임
+- 전화 사업자로 SMS를 계속 쓰려면 별도 비용이 들고(FAQ 기준, 요금은 사업자·지역별) 현재 프라이빗 프리뷰이며 SSPR도 같은 기준임
 
-> Microsoft Learn 문서(2026-11-01 확인) 기준입니다. 오류 상황은 테넌트에서 재현하지 않았고, 설정 화면은 샌드박스 테넌트에서 직접 열어 캡처했습니다. 일정은 공용 클라우드 기준이고 바뀔 수 있으니 실행 전에 문서를 다시 확인하세요. 함께 볼 글: [Entra ID 핵심 개념: 인증 편]({{ "/iam/entra-id-authentication/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
+> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다. 일정은 공용 클라우드 기준이고 바뀔 수 있으니 실행 전에 문서를 다시 확인하세요. 함께 볼 글: [Entra ID 핵심 개념: 인증 편]({{ "/iam/entra-id-authentication/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
 
 ---
 
@@ -54,7 +54,7 @@ Microsoft 제공 SMS·음성이 단계적으로 끝납니다([Passkeys by defaul
 2. 패스키 사용 설정과 등록 캠페인: Passkey (FIDO2)를 켜고 Registration campaign을 Microsoft Managed로 해 1번 그룹을 지정합니다. 다음 MFA 완료 때 등록 안내가 나옵니다.
 3. 공지 3단계(문서 권장): 알림(종료 이유, 날짜, 바뀌는 것) → 행동(기기별 Windows Hello, iOS, Android 등록 방법) → 재알림(미등록자).
 4. 조치 후 확인: 분석 스크립트 재실행 결과 SMS·음성 전용 사용자 0명, Activity > Usage 탭에서 SMS 사용량 감소와 패스키 사용량 증가.
-5. 하지 말아야 할 것: 전화 사업자로 전원을 SMS에 남기지 않습니다. 규제나 업무상 꼭 필요한 집단만 근거(규정 이름 등)를 남기고 Microsoft Security Store의 전화 사업자를 계약합니다(**별도 비용**).
+5. 하지 말아야 할 것: 전화 사업자로 전원을 SMS에 남기지 않습니다. 규제나 업무상 꼭 필요한 집단만 근거(규정 이름 등)를 남기고 Microsoft Security Store의 전화 사업자를 계약합니다(**별도 비용**, FAQ 기준 요금은 사업자·지역별이며 현재 프라이빗 프리뷰).
 
 <details markdown="1">
 <summary>GUI 경로, 패스키 종류, 현장 근무자 예시 보기</summary>
@@ -65,29 +65,6 @@ Microsoft 제공 SMS·음성이 단계적으로 끝납니다([Passkeys by defaul
 - 등록 캠페인: Entra ID > Authentication methods > Registration campaign에서 상태를 Microsoft Managed로, 대상 그룹 지정
 
 현장 근무자 300명이 공유 PC를 쓰며 SMS로만 MFA를 한다면, 개인 휴대폰에 앱 설치를 원하지 않는 사람이 많으니 공유 PC에서는 **FIDO2 보안 키**를 지급하고 개인 휴대폰을 쓰는 사람은 Authenticator 패스키를 등록하게 합니다. 2027년 1월 말까지 Registration 탭으로 진행률을 매주 확인합니다.
-
-</details>
-
-<details markdown="1">
-<summary>화면으로 경로 따라가기: 인증 방법 정책, 패스키, 등록 캠페인, 활동 (그림 4장)</summary>
-
-![Entra ID 인증 방법 정책 목록. 메서드별 대상과 활성화 여부가 보임]({{ "/assets/images/2026/11/guide-authmethods-policies.png" | relative_url }})
-
-*그림 1. Entra 관리 센터 > Entra ID > 인증 방법(Authentication methods) > 정책(Policies). 메서드별로 대상과 활성화 여부가 나옵니다. 이 샌드박스는 SMS와 음성 통화가 "아니요", 암호 키(FIDO2)와 Authenticator가 모든 사용자 "예"입니다. 왼쪽 안쪽 메뉴에서 등록 캠페인, 설정, 활동으로 이동합니다.*
-
-![암호 키(FIDO2) 설정 화면. 사용 켬, 포함 대상 모든 사용자, 암호 키 프로필 선택]({{ "/assets/images/2026/11/guide-passkey-fido2.png" | relative_url }})
-
-*그림 2. 정책 목록에서 암호 키(Passkey, FIDO2)를 열면 나오는 화면입니다. "사용"을 켜고 대상 추가로 그룹을 지정하며, 대상마다 암호 키 프로필을 고릅니다. 설정을 바꾸려면 아래 저장을 눌러야 적용되는데, 이번 캡처에서는 누르지 않았습니다.*
-
-![인증 방법 등록 캠페인 화면. 상태, 인증 방법, 다시 알림 허용 일수, 포함 대상]({{ "/assets/images/2026/11/guide-authmethods-campaign.png" | relative_url }})
-
-*그림 3. 인증 방법 > 등록 캠페인(Registration campaign). 상태, 안내할 인증 방법, 다시 알림 허용 일수, 포함 대상과 제외 대상을 지정합니다. 이 화면의 인증 방법 목록은 Microsoft Authenticator 또는 암호 키(FIDO2)로 제한된다고 안내합니다.*
-
-![인증 방법 활동 화면의 등록 탭. 인증 방법을 사용할 수 있는 사용자 수 카드]({{ "/assets/images/2026/11/guide-authmethods-activity.png" | relative_url }})
-
-*그림 4. 인증 방법 > 활동(Activity) > 등록 탭. 전체 17명 중 Azure 다단계 인증을 쓸 수 있는 사용자가 2명, 암호 없는 인증이 1명, 셀프 서비스 암호 재설정이 0명으로 나옵니다. 같은 화면의 사용량(Usage) 탭에서 사용 현황을 봅니다.*
-
-화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름, 테넌트 ID, 계정, IP, 요청 ID는 가렸고, 사용 중인 라이선스와 정책에 따라 메뉴 이름과 값은 다를 수 있습니다.
 
 </details>
 

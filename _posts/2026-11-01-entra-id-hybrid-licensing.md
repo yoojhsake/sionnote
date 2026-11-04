@@ -1,72 +1,63 @@
 ---
-title: "[IAM] Microsoft Entra ID 핵심 개념: 하이브리드와 외부 사용자"
+title: "[IAM] Microsoft Entra ID 핵심 개념: 하이브리드, 외부 사용자, 라이선스, 운영"
 date: 2026-11-01 08:57:00 +0900
 categories: [iam]
-tags: [IAM, Entra ID, 하이브리드 ID, PHS, PTA, Federation, Connect Sync, Cloud Sync, External ID, B2B]
-excerpt: "Cloud Sync 전환 통지가 시작됐다. PHS, PTA, Federation과 동기화 도구, B2B와 External ID 외부 테넌트를 고르는 기준"
+tags: [IAM, Entra ID, 하이브리드 ID, PHS, PTA, Federation, Cloud Sync, External ID, 라이선스, 로그, Graph PowerShell]
+excerpt: "Cloud Sync 전환 통지가 시작됐다. PHS, PTA, Federation과 B2B, External ID, 라이선스 단계를 고르는 기준"
 ---
 
-하이브리드 ID는 어떤 인증 방식을 쓰든 PHS를 함께 켜 두는 것이 문서 권장이고, 2026년 7월부터 Connect Sync에서 Cloud Sync로의 전환 통지가 시작됐습니다. 외부 사용자는 협력사면 B2B, 고객이면 External ID 외부 테넌트로 나눠 관리합니다.
+AD 계정을 클라우드와 이어 쓰는 회사라면, 2026년 7월부터 Connect Sync에서 Cloud Sync로의 전환 통지가 시작됐다는 점부터 챙겨야 합니다. 다 읽으면 하이브리드 인증 방식과 동기화 도구, 외부 사용자 관리 방식, 필요한 라이선스 단계를 상황에 맞게 고를 수 있습니다.
+
+읽는 데 30분 정도 걸리고, 다루는 내용은 이렇습니다.
+
+- PHS, PTA, Federation과 Connect Sync, Cloud Sync를 상황에 맞게 고르는 기준
+- B2B와 External ID 외부 테넌트의 차이
+- 라이선스 단계와 제품군, 로그와 Graph PowerShell 같은 운영 기본기
 
 ## 요약
 
-- PHS는 사내 장애 때 백업과 유출 자격 증명 탐지용으로 켜 둠
-- 전환 통지 전에 비교표로 Cloud Sync 요구 사항을 점검하면 됨
-- B2C는 신규 판매가 끝나 새 고객용 서비스는 외부 테넌트로 시작함
+- 어떤 인증 방식을 쓰든 PHS를 백업으로 함께 켜 두는 것이 권장됨
+- Cloud Sync 전환 통지 전에 비교표로 요구 사항을 미리 점검하면 됨
+- 라이선스는 테넌트 하나가 아니라 기능을 쓰는 사용자 수만큼 필요함
 
-> Entra ID 핵심 개념 시리즈: [기초]({{ "/iam/what-is-entra-id/" | relative_url }}) · [오류 코드]({{ "/iam/entra-id-error-codes/" | relative_url }}) · [인증]({{ "/iam/entra-id-authentication/" | relative_url }}) · [접근 제어]({{ "/iam/entra-id-access-control/" | relative_url }}) · **하이브리드·외부 사용자**(지금 글) · [라이선스·운영]({{ "/iam/entra-id-licensing-operations/" | relative_url }}) · [용어집]({{ "/study/cloud-study-glossary/" | relative_url }})
+> Entra ID 핵심 개념 시리즈: [기초]({{ "/iam/what-is-entra-id/" | relative_url }}) · [오류 코드]({{ "/iam/entra-id-error-codes/" | relative_url }}) · [인증]({{ "/iam/entra-id-authentication/" | relative_url }}) · [접근 제어]({{ "/iam/entra-id-access-control/" | relative_url }}) · **하이브리드·운영**(지금 글) · [용어집]({{ "/iam/entra-id-glossary/" | relative_url }})
 
-> 근거: Microsoft Learn 공식 문서(2026-11-01 확인). 날짜나 라이선스처럼 바뀔 수 있는 내용은 문서로 다시 확인했습니다. 낯선 용어는 [용어집]({{ "/study/cloud-study-glossary/" | relative_url }})을 함께 보세요.
+근거: Microsoft Learn 공식 문서(2026-11-01 확인). 날짜나 라이선스처럼 바뀔 수 있는 내용은 문서로 다시 확인했습니다. 낯선 용어는 [용어집]({{ "/iam/entra-id-glossary/" | relative_url }})을 함께 보세요.
 
 ---
 
 ## 전체 내용
 
-### 1. 하이브리드 인증 방식: PHS, PTA, Federation
+### 1. 하이브리드 ID
 
-하이브리드 ID는 온-프레미스 AD 계정을 Entra ID로 동기화해 한 계정으로 사내와 클라우드를 쓰는 구성이고, 로그인 검증 위치에 따라 세 방식으로 나뉩니다.
+온-프레미스 AD 계정을 Entra ID로 동기화해 한 계정으로 사내와 클라우드를 쓰는 구성입니다.
+
+#### 인증 방식 3가지
 
 <picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/11/entra-hybrid-auth-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/11/entra-hybrid-auth.png" | relative_url }}" alt="PHS, PTA, Federation 비교" loading="lazy"></picture>
 
 *그림 1. 하이브리드 인증 방식 비교*
 
-- **PHS(Password Hash Synchronization, 암호 해시 동기화)**: 암호 해시를 약 2분 주기로 Entra ID에 동기화합니다. 가장 단순하고 장애에 강합니다.
-- **PTA(Pass-through Authentication, 통과 인증)**: 로그인할 때마다 사내 에이전트가 DC에 확인하므로 계정 상태가 즉시 반영됩니다. 에이전트는 3대 이상을 권장합니다.
-- **Federation(페더레이션, 인증 위임. AD FS 등)**: 인증을 외부 IdP(Identity Provider, ID 공급자)에 맡기며 운영 복잡도가 가장 높습니다.
-
-<details markdown="1">
-<summary>방식별 세부 동작과 Federation이 필요한 경우</summary>
-
-- PHS
+- **PHS(Password Hash Synchronization, 암호 해시 동기화)**는 가장 단순하고 장애에 강합니다.
     - 암호는 평문이나 되돌릴 수 있는 형태로 저장되지 않습니다.
-    - 계정 사용 안 함 같은 상태는 일반 동기화 주기(Connect Sync 기본 30분)를 따르고, 암호 만료나 잠금 상태는 동기화되지 않습니다.
-- PTA: 계정 사용 안 함, 잠금, 만료, 로그온 시간이 즉시 반영됩니다.
-- Federation
+    - 암호 해시는 약 2분 주기로 동기화되지만, 계정 사용 안 함 같은 상태는 일반 동기화 주기(Connect Sync 기본 30분)를 따르고 암호 만료나 잠금 상태는 동기화되지 않습니다.
+- **PTA(Pass-through Authentication, 통과 인증)**는 로그인할 때마다 사내 에이전트가 DC에 확인합니다.
+    - 계정 사용 안 함, 잠금, 만료, 로그온 시간이 즉시 반영됩니다.
+    - 고가용성을 위해 에이전트 3대 이상을 권장합니다.
+- **Federation(페더레이션, 인증 위임. AD FS 등)**은 인증을 외부 IdP(Identity Provider, ID 공급자)에 맡깁니다.
     - 문서가 드는 필요 사례는 페더레이션 IdP가 꼭 있어야 하는 타사 MFA·인증 솔루션, DOMAIN\user(sAMAccountName) 로그인, 여러 사이트에 걸친 저지연 인증입니다.
     - 스마트카드나 인증서 로그인은 이제 PHS, PTA에서도 Entra 인증서 기반 인증(CBA)으로 되고, 타사 MFA도 외부 인증 방법(External MFA)으로 페더레이션 없이 붙일 수 있습니다.
+    - 운영 복잡도가 가장 높습니다.
 
-</details>
+#### 왜 PHS를 같이 켜 두라고 하나
 
-실무 기준: PTA나 Federation을 쓰더라도 PHS를 함께 켜 둡니다.
+Microsoft 문서에 따르면, 랜섬웨어로 사내 서버가 멈췄을 때 PHS를 미리 켜 둔 조직은 PHS로 전환해 **몇 시간 안에** 메일과 클라우드를 다시 썼고, 그렇지 않은 조직은 복구에 **몇 주**가 걸렸습니다. PHS는 유출 자격 증명 탐지에도 쓰입니다. 단, 전환은 자동이 아니라 관리자가 직접 바꿔야 합니다.
 
-- Microsoft 문서에 따르면 랜섬웨어로 사내 서버가 멈췄을 때 PHS를 미리 켜 둔 조직은 PHS로 전환해 **몇 시간 안에** 메일과 클라우드를 다시 썼고, 그렇지 않은 조직은 복구에 **몇 주**가 걸렸습니다.
-- PHS는 유출 자격 증명 탐지에도 쓰입니다.
-- 장애 때 PHS 전환은 자동이 아니라 관리자가 직접 바꿔야 합니다.
-
-관련 오류: [통과 인증(PTA) 환경에서 전원이 로그인하지 못할 때]({{ "/iam/troubleshooting/pta-agent-sign-in-fails/" | relative_url }})
-
-### 2. 동기화 도구: Connect Sync와 Cloud Sync
-
-Entra Connect Sync는 동기화 엔진을 사내 서버에 두고, Entra Cloud Sync는 엔진을 클라우드에 두고 사내에는 경량 에이전트만 둡니다.
+#### 동기화 도구 2가지
 
 <picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/11/entra-sync-tools-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/11/entra-sync-tools.png" | relative_url }}" alt="Entra Connect Sync와 Cloud Sync 구조 비교" loading="lazy"></picture>
 
 *그림 2. 동기화 도구 비교*
-
-Cloud Sync는 단절된 포리스트(인수합병)를 지원하지만, 고급 동기화 규칙과 대규모 구성은 Connect Sync 쪽이 넓습니다.
-
-<details markdown="1">
-<summary>Connect Sync와 Cloud Sync 비교표 펼쳐 보기</summary>
 
 | 항목 | Entra Connect Sync | Entra Cloud Sync |
 |---|---|---|
@@ -77,67 +68,133 @@ Cloud Sync는 단절된 포리스트(인수합병)를 지원하지만, 고급 �
 | 고급 동기화 규칙 | ✓ | ✗(식 작성기만) |
 | 교차 포리스트 참조, 여러 도메인 속성 병합, 재조정 | ✓ | ✗ |
 | 속성 기반 필터링 | ✓ | 제한적 |
-| 디바이스 쓰기 저장 | ✓ | ✗(Cloud Kerberos Trust로 대체) |
+| 디바이스 동기화(Entra 하이브리드 조인용) | ✓ | ✓(Cloud Sync에서 별도로 사용 설정) |
 | PTA·AD FS 구성 마법사 | ✓ | ✗(별도 구성, 전환 후에도 PTA·Seamless SSO는 계속 동작) |
 | 그룹을 AD로 프로비저닝 | ✗ | ✓ |
 
-</details>
+Microsoft는 **2026년 7월부터** 메시지 센터, Connect Health, 이메일로 테넌트별 Connect Sync → Cloud Sync 전환 일정을 단계적으로 통지하겠다고 공지했습니다(실제 통지 진행 여부는 직접 확인하지 않았습니다). Cloud Sync로 이미 요구 사항을 충족하는 단순한 구성부터 대상이고, 고급 기능을 쓰거나 대규모인 조직은 나중 단계입니다.
 
-**2026년 7월부터** 메시지 센터, Connect Health, 이메일로 테넌트별 Connect Sync → Cloud Sync 전환 일정을 단계적으로 통지하고 있습니다.
+통지를 받으면 Connect Sync의 가이드 마이그레이션 도구를 쓰거나 문서의 수동 절차를 따르고(다만 가이드 마이그레이션 도구는 포리스트 1개, 범위 내 개체 2,000개 이하, 도메인당 OU 30개 이하일 때만 쓸 수 있고, 사용자 지정 동기화 규칙·그룹 필터링·사용자 지정 UPN·디렉터리 확장·디바이스 동기화가 있으면 도구가 막습니다. 이런 환경은 문서의 수동 절차를 따릅니다), 기한을 맞출 수 없는 확인된 사유가 있을 때만 지원 요청으로 예외를 신청합니다(보장되지 않음).
 
-<details markdown="1">
-<summary>전환 대상 순서와 통지를 받았을 때 할 일</summary>
-
-- Cloud Sync로 이미 요구 사항을 충족하는 단순한 구성부터 대상이고, 고급 기능을 쓰거나 대규모인 조직은 나중 단계입니다.
-- 통지를 받으면 Connect Sync의 가이드 마이그레이션 도구를 쓰거나 문서의 수동 절차를 따릅니다.
-- 기한을 맞출 수 없는 확인된 사유가 있을 때만 지원 요청으로 예외를 신청합니다(보장되지 않음).
-
-</details>
-
-실무 기준: 통지 전에 위 비교표에서 지금 쓰는 기능(고급 규칙, 디바이스 쓰기 저장, 규모)이 Cloud Sync에 있는지 점검해 둡니다.
-
-### 3. 외부 사용자: External ID
-
-External ID는 회사 밖 사람(협력사, 고객)의 계정과 로그인을 다루는 Entra 기능입니다.
+### 2. 외부 사용자: External ID
 
 <picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/11/entra-external-id-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/11/entra-external-id.png" | relative_url }}" alt="워크포스 테넌트의 B2B와 외부 테넌트의 고객 CIAM" loading="lazy"></picture>
 
 *그림 3. External ID의 두 가지 구성*
 
-- **B2B 협업**: 협력사 직원을 회사(워크포스) 테넌트에 게스트로 초대합니다. 예: 프로젝트 Teams에 참여
-- **B2B direct connect**: 다른 회사 사용자가 회사 테넌트에서 게스트 계정 없이 씁니다. 예: Teams 공유 채널
-- **고객용(CIAM, Customer Identity and Access Management)**: 일반 고객의 가입·로그인을 별도의 외부(External) 테넌트에서 다룹니다. 예: 쇼핑몰 회원가입, Google·Facebook 로그인, 브랜딩된 로그인 화면
+- **B2B 협업**
+    - 대상: 협력사 직원
+    - 어디서: 회사(워크포스) 테넌트
+    - 예시: 협력사 직원을 게스트로 초대해 프로젝트 Teams에 참여
+- **B2B direct connect**
+    - 대상: 다른 회사 사용자
+    - 어디서: 회사 테넌트
+    - 예시: 게스트 계정 없이 Teams 공유 채널 사용
+- **고객용(CIAM)**
+    - 대상: 일반 고객
+    - 어디서: 별도의 외부(External) 테넌트
+    - 예시: 쇼핑몰 회원가입, Google·Facebook 로그인, 브랜딩된 로그인 화면
 
-실무 기준: 새 고객용 프로젝트는 External ID 외부 테넌트로 시작합니다. **2025-05-01부터** Azure AD B2C는 신규 고객에게 판매되지 않습니다.
+CIAM(Customer Identity and Access Management)은 고객의 가입·로그인을 다루는 ID 관리입니다. **2025-05-01부터** Azure AD B2C는 신규 고객에게 판매되지 않습니다. 기존 고객은 계속 쓸 수 있고 최소 2030년 5월까지 지원되며, B2C P2는 2026-03-15에 단종되어 B2C 테넌트의 ID Protection 기능이 빠졌습니다.
 
-<details markdown="1">
-<summary>기존 Azure AD B2C 고객의 지원 일정</summary>
+새 고객용 프로젝트는 External ID 외부 테넌트로 시작합니다.
 
-- 기존 고객은 계속 쓸 수 있고 최소 2030년 5월까지 지원됩니다.
-- B2C P2는 2026-03-15에 단종되어 B2C 테넌트의 ID Protection 기능이 빠졌습니다.
+### 3. 라이선스
 
-</details>
+<picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/11/entra-license-tiers-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/11/entra-license-tiers.png" | relative_url }}" alt="Free, P1, P2, ID Governance 단계별 기능" loading="lazy"></picture>
 
-관련 오류: [AADSTS50020: 게스트가 이 테넌트에 없는 계정으로 막힐 때]({{ "/iam/troubleshooting/aadsts50020-guest-not-in-tenant/" | relative_url }})
+*그림 4. 라이선스 단계. P2는 P1을 포함하고, Governance는 추가 구매*
 
-라이선스 단계, 로그, Graph PowerShell, 처음 테넌트를 맡았을 때 확인 순서는 [라이선스와 운영]({{ "/iam/entra-id-licensing-operations/" | relative_url }}) 글에 있습니다.
+- **사용자·그룹 관리, SSO, Connect 동기화**: Free·P1·P2
+- **보안 기본값으로 MFA**: Free·P1·P2
+- **로그인·감사 로그 보존**: Free 7일, P1 30일, P2 30일
+- **조건부 액세스, 동적 그룹, 관리 단위, 애플리케이션 프록시**: P1·P2
+- **SSPR 재설정 + 온-프레미스 쓰기 저장**: P1·P2
+- **ID Protection(위험 기반 정책·전체 보고서)**: P2
+- **PIM**: P2·ID Governance(추가)
+- **액세스 검토(기본)**: P2·ID Governance(추가)
+- **권한 패키지(Entitlement management) 기본**: P2·ID Governance(추가)
+- **액세스 검토(비활성 사용자만·ML 추천·카탈로그), Lifecycle Workflows**: ID Governance(추가)
 
-<details markdown="1">
-<summary>화면으로 경로 따라가기: Entra Connect, 외부 협업 설정 (그림 2장)</summary>
+ID Governance(추가)는 P1 또는 P2에 더해서 사는 것이라, Governance만으로는 조건부 액세스나 ID Protection이 생기지 않습니다. 제품 포함 관계(문서 기준):
 
-![Microsoft Entra Connect 시작 화면. Connect Sync 레거시 인증 중단 안내]({{ "/assets/images/2026/11/guide-entra-connect-start.png" | relative_url }})
+- P1: Microsoft 365 E3, E5, E7, F1, F3, EMS E3, Business Premium에 포함
+- P2: Microsoft 365 E5, E7, EMS E5, Microsoft Defender Suite(구 M365 E5 Security)에 포함
+- Entra Suite: Private Access + Internet Access + ID Governance + ID Protection + Verified ID. P1이 선행 조건이고 Microsoft 365 E7에 포함(E7에는 Agent 365도 포함)
 
-*그림 4. Entra ID > Entra Connect > 시작. 위쪽 주황 안내는 2027년 4월 7일에 Entra Connect Sync의 레거시 인증을 중단할 예정이니 버전 2.6.84.0 이상으로 올리고 애플리케이션 기반 인증을 구성하라고 알립니다. 왼쪽 안쪽 메뉴는 시작, 클라우드 동기화, 동기화 연결입니다.*
+> **바로잡을 점**: 액세스 검토를 "P2 기능"으로만 소개한 자료가 많지만, 현재 문서는 액세스 검토를 ID Governance(또는 Entra Suite) 기능으로 보고 **P2로는 일부 기능만** 동작한다고 설명합니다.
+>
+> 사용자 수 기준의 예: PIM은 적격 역할을 받은 사용자, 승인자, 검토자에게 P2 또는 Governance가 있어야 합니다.
 
-![외부 협업 설정 화면. 게스트 액세스 제한, 게스트 초대 제한, 협업 제한 사항]({{ "/assets/images/2026/11/guide-entra-external-collab.png" | relative_url }})
+### 4. Microsoft Entra 제품군
 
-*그림 5. Entra ID > External Identities > 외부 협업 설정. 게스트 사용자 액세스 제한 3단계, 게스트 초대 제한 4단계, 외부 사용자 나가기 설정, 협업 제한 사항(도메인 허용 또는 거부)이 있습니다. 이 샌드박스는 게스트 액세스가 가운데 단계, 초대는 모든 사용자 가능, 도메인 제한 없음입니다. 이번 캡처에서는 값을 바꾸지 않았습니다.*
+<picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/11/entra-family-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/11/entra-family.png" | relative_url }}" alt="Entra 제품군 지도" loading="lazy"></picture>
 
-화면은 설정을 바꾸지 않고 샌드박스 테넌트에서 열어 캡처했습니다. 테넌트 이름과 ID, 계정, 구독 이름과 ID는 가렸고, 라이선스와 지역에 따라 메뉴 이름과 값은 다를 수 있습니다.
+*그림 5. Microsoft Entra 제품군(2026-11 기준). 3개 영역과 묶음 상품, 종료 제품*
 
-</details>
+- Entra ID: 모든 제품의 기반. 로그인, MFA, 조건부 액세스
+- ID Governance: 입사·이동·퇴사 자동화, 액세스 검토, 권한 패키지, PIM
+- ID Protection: 위험 탐지, 위험 기반 정책(Entra ID P2 기능이자 Suite 구성 요소)
+- External ID: 외부 협력사(B2B)와 고객(CIAM)
+- Verified ID: 검증 가능한 자격 증명(재직·신원 증명)
+- Workload ID: 앱, 서비스 주체, 관리 ID 같은 사람이 아닌 ID
+- Agent ID: AI 에이전트용 ID
+    - **2026-04 정식 출시(GA)**, 모든 Entra 고객이 사용 가능
+    - 에이전트에 조건부 액세스와 ID Protection을 적용하려면 Microsoft Agent 365 라이선스 필요
+- Private Access / Internet Access: Global Secure Access(Microsoft의 SSE, Security Service Edge). VPN 없는 사내 앱 접근(ZTNA), 웹 필터링(SWG)
+- ~~Permissions Management~~: 2025-10-01 서비스 종료(신규 판매 중단: EA·직접 고객 2025-04-01, CSP 2025-05-01)
 
-### 4. 확인 문제
+### 5. 장애 분석은 로그에서 시작한다
+
+- 로그인 로그(Sign-in logs)
+    - 무엇이 남나: 누가, 언제, 어디서, 어떤 앱에 로그인했고 성공·실패·오류 코드, 적용된 조건부 액세스 정책
+    - GUI 경로: Entra ID > Monitoring & health(모니터링 및 상태) > Sign-in logs
+- 감사 로그(Audit logs)
+    - 무엇이 남나: 사용자, 그룹, 역할, 정책을 누가 언제 바꿨는지
+    - GUI 경로: Entra ID > Monitoring & health > Audit logs
+
+로그인 로그는 대화형 사용자, 비대화형 사용자, 서비스 주체, 관리 ID 로그인을 탭으로 나눠 보여 줍니다.
+
+보존 기간(3장)은 무료에서 유료로 바꿔도 이미 지난 기록이 되살아나지 않습니다. 더 오래 보관하려면 진단 설정(Diagnostic settings)으로 Log Analytics, 스토리지, SIEM에 보냅니다. 이 내보내기는 P1 이상과 Azure 구독이 필요하고 Log Analytics 비용이 따로 듭니다.
+
+문의를 받으면 화면의 "추가 정보(More details)"에 나오는 **상관 관계 ID(Correlation ID)**와 시각을 받아 둡니다.
+
+### 6. 스크립트는 Microsoft Graph PowerShell로
+
+화면(GUI)으로 하기 어려운 대량 작업은 Microsoft Graph PowerShell SDK(`Connect-MgGraph`)로 합니다. 예전 AzureAD, AzureAD Preview, MSOnline 모듈은 지원이 끝났으므로(deprecated), 옛 예제(`Get-MsolUser`, `Get-AzureADUser`)는 Graph 명령(`Get-MgUser` 등)으로 바꿉니다. Microsoft Learn에 cmdlet 매핑 표가 있습니다.
+
+```powershell
+# 예: 이름이 a로 시작하는 사용자 수 세기(읽기 전용)
+Connect-MgGraph -Scopes "User.Read.All"
+Get-MgUser -ConsistencyLevel eventual -Count userCount -Filter "startsWith(DisplayName, 'a')" -Top 1
+$userCount
+```
+
+처음 쓸 때 필요한 권한(스코프)에 동의해야 하고, 최소 스코프는 `Find-MgGraphCommand`로 찾을 수 있습니다.
+
+### 7. 처음 테넌트를 맡았을 때 확인 순서
+
+1. 보안 기본값 또는 조건부 액세스 중 무엇으로 MFA를 강제하고 있는지 확인
+2. 인증 방법 정책으로 이전이 끝났는지 확인, SMS·음성만 쓰는 사용자를 찾아 패스키로 이전 계획 세우기
+3. **긴급 액세스 계정** 2개 이상이 차단·제한 정책에서 제외되어 있고 패스키로 보호되는지 확인
+4. 상시 전역 관리자 수를 줄이고, 작은 역할과 PIM으로 전환
+5. 옛 ID Protection 위험 정책을 쓰던 테넌트라면 조건부 액세스 위험 기반 정책으로 옮겼는지 확인(P2)
+6. 하이브리드라면 PHS가 켜져 있는지(백업 + 유출 탐지), 동기화 도구 버전과 Cloud Sync 전환 통지 여부 확인
+7. 로그인 로그에서 레거시 인증과 반복 실패 로그인 확인, 필요하면 로그를 장기 보관 위치로 내보내기
+8. 라이선스가 기능을 쓰는 사용자 수만큼 있는지 확인
+
+---
+
+### 8. 관련 트러블슈팅
+
+- PTA 환경 전원 로그인 실패 → [통과 인증(PTA) 환경에서 전원이 로그인하지 못할 때]({{ "/iam/troubleshooting/pta-agent-sign-in-fails/" | relative_url }})
+- 게스트·외부 계정 로그인 실패 → [AADSTS50020: 게스트가 이 테넌트에 없는 계정으로 막힐 때]({{ "/iam/troubleshooting/aadsts50020-guest-not-in-tenant/" | relative_url }})
+- Connect Health 에이전트 설치 실패·롤백 → [Connect Health 에이전트 설치가 마지막 단계에서 실패하고 되돌려질 때]({{ "/iam/troubleshooting/health-agent-install-rollback/" | relative_url }})
+- 하이브리드 조인 0x801c03f3 → [하이브리드 조인이 0x801c03f3(error_missing_device)로 실패할 때]({{ "/iam/troubleshooting/hybrid-join-0x801c03f3/" | relative_url }})
+- 하이브리드 조인 후 PRT NO → [하이브리드 조인 후 AzureAdPrt가 NO로 나올 때]({{ "/iam/troubleshooting/hybrid-join-prt-no/" | relative_url }})
+- Cloud Sync 에이전트 연결 종료 로그 → [Cloud Sync 에이전트 로그에 연결 종료 오류가 반복되는데 동기화는 정상일 때]({{ "/iam/troubleshooting/cloud-sync-agent-connection-closed/" | relative_url }})
+
+### 9. 확인 문제
 
 <details markdown="1">
 <summary>1. PTA를 쓰는 회사에 PHS도 켜 두라고 하는 이유 두 가지는?</summary>
@@ -146,16 +203,21 @@ External ID는 회사 밖 사람(협력사, 고객)의 계정과 로그인을 �
 
 </details>
 
-### 근거 자료
+### 10. 근거 자료
 
 <details markdown="1">
-<summary>근거 자료 펼쳐 보기 (6건)</summary>
+<summary>근거 자료 펼쳐 보기 (11건)</summary>
 
 - PHS·PTA·Federation 선택, PHS 권장 이유, 상태 반영 지연: [Choose the right authentication method](https://learn.microsoft.com/entra/identity/hybrid/connect/choose-ad-authn)
 - Connect Sync와 Cloud Sync 비교: [Connect Sync → Cloud Sync decision guide](https://learn.microsoft.com/entra/identity/hybrid/cloud-sync/connect-to-cloud-sync-decision-guide)
 - Cloud Sync 전환 통지, 기한, 예외: [Migrate to Cloud Sync with the migration tool](https://learn.microsoft.com/entra/identity/hybrid/cloud-sync/migrate-connect-sync-cloud-sync-tool)
-- Entra 새 소식(Cloud Sync 전환 공지): [Microsoft Entra releases and announcements](https://learn.microsoft.com/entra/fundamentals/whats-new)
+- Entra 새 소식(2026-04 Agent ID GA, Cloud Sync 전환 공지): [Microsoft Entra releases and announcements](https://learn.microsoft.com/entra/fundamentals/whats-new)
 - B2C 판매 중단, External ID: [External ID FAQ](https://learn.microsoft.com/entra/external-id/customers/faq-customers)
 - B2C P2 단종: [Azure AD B2C FAQ](https://learn.microsoft.com/azure/active-directory-b2c/faq)
+- 라이선스 포함 관계: [Microsoft Entra licensing](https://learn.microsoft.com/entra/fundamentals/licensing)
+- Permissions Management 종료: [Entra releases archive: March 2025](https://learn.microsoft.com/entra/fundamentals/whats-new-archive#march-2025)
+- Agent ID: [What is Microsoft Entra Agent ID?](https://learn.microsoft.com/entra/agent-id/what-is-microsoft-entra-agent-id)
+- 로그 보존 기간: [Microsoft Entra data retention](https://learn.microsoft.com/entra/identity/monitoring-health/reference-reports-data-retention)
+- Graph PowerShell 전환: [Upgrade from Azure AD PowerShell to Microsoft Graph PowerShell](https://learn.microsoft.com/powershell/microsoftgraph/migration-steps)
 
 </details>

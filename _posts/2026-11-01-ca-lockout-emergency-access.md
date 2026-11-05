@@ -16,7 +16,7 @@ excerpt: "CA 정책 실수로 관리자까지 53003에 막혔다. 긴급 액세�
 - 클라우드 전용 긴급 계정 2개 이상을 모든 차단 정책에서 제외해 둬야 함
 - 긴급 계정도 필수 MFA 대상이므로 패스키 같은 인증을 등록해야 함
 
-> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다. 함께 볼 글: [Entra ID 핵심 개념: 접근 제어 편]({{ "/iam/entra-id-access-control/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
+> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다.
 
 ---
 
@@ -74,7 +74,7 @@ excerpt: "CA 정책 실수로 관리자까지 53003에 막혔다. 긴급 액세�
 
 </details>
 
-관련 글: [AADSTS53003: 조건부 액세스 정책 때문에 접근이 차단될 때]({{ "/iam/troubleshooting/aadsts53003-blocked-by-ca/" | relative_url }}) · [Entra ID 핵심 개념: 접근 제어 편]({{ "/iam/entra-id-access-control/" | relative_url }})
+관련 글: [AADSTS53003: 조건부 액세스 정책 때문에 접근이 차단될 때]({{ "/iam/troubleshooting/aadsts53003-blocked-by-ca/" | relative_url }})
 
 ### 근거 자료
 

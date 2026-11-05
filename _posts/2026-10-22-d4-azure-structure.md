@@ -33,8 +33,6 @@ Azure 구조를 확인한 실습이고, M365·Azure 운영 준비의 일부라 M
 
 ### 2. 시작 전에 알아 둔 개념
 
-계층 개념을 처음부터 차근차근 보려면 학습 글 [클라우드 구조: Tenant, Subscription, Resource group]({{ "/study/cloud-structure-tenant-subscription/" | relative_url }})을 먼저 읽으면 좋습니다.
-
 <picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/10/d4-azure-hierarchy-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/10/d4-azure-hierarchy.png" | relative_url }}" alt="관리 그룹, 구독, 리소스 그룹으로 이어지는 Azure 구조와 실습 결과" loading="lazy"></picture>
 
 *그림 1. Azure 구조와 실습 결과*

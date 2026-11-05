@@ -16,7 +16,7 @@ excerpt: "SSPR_00xx 코드 번호로 정책, 라이선스, 쓰기 저장 문제�
 - 하이브리드가 마지막 단계에서 실패하면 Connect 서버 이벤트 로그를 봄
 - SSPR_0009와 SSPR_0011이 갈리는 조건은 이 글에서 시험하지 않았고 문서 표만 인용함
 
-> Microsoft Learn 문서(2026-11-01 확인) 기준입니다. 샌드박스 테넌트에서 SSPR이 꺼진 상태로 사용자 화면을 확인한 결과(2장)를 '2. 원인 및 분석'에 접어 두었습니다. 함께 볼 글: [Entra ID 핵심 개념: 인증 편]({{ "/iam/entra-id-authentication/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
+> Microsoft Learn 문서(2026-11-01 확인) 기준입니다. 샌드박스 테넌트에서 SSPR이 꺼진 상태로 사용자 화면을 확인한 결과(2장)를 '2. 원인 및 분석'에 접어 두었습니다.
 
 ---
 

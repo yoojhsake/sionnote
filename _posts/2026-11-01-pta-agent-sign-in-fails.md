@@ -16,7 +16,7 @@ PTA를 쓰는 조직에서 동기화된 사용자 전원이 M365에 로그인하
 - 클라우드 전용 관리자로 에이전트 상태와 로그인 로그 오류 코드부터 확인함
 - PHS 전환은 자동이 아니며 PHS를 미리 켜 둔 경우에만 가능함
 
-> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다. 함께 볼 글: [Entra ID 핵심 개념: 하이브리드 편]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
+> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다.
 
 ---
 

@@ -6,7 +6,7 @@ author_profile: true
 ---
 작업 글은 **작업을 진행한 순서**대로, 트러블슈팅 글은 **작업 영역별**로 묶었습니다. 글 제목에는 번호를 붙이지 않고, 이 페이지의 위에서 아래 순서가 작업 순서입니다.
 
-{% assign tops = "m365,iam,azure,study,blog" | split: "," %}
+{% assign tops = "m365,iam,azure,blog" | split: "," %}
 {% for top in tops %}
 {% assign top_posts = site.posts | where_exp: "p", "p.categories[0] == top" %}
 {% if top_posts.size > 0 %}

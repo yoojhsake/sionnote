@@ -84,6 +84,8 @@ Groups OU에는 전역 보안 그룹 `CloudSync-Group01`이 있고 구성원은 
 
 [![도메인·DC·OU 구조(PowerShell)]({{ "/assets/images/2026/11/ad-hires-01-domain-dc-ou.png" | relative_url }})]({{ "/assets/images/2026/11/ad-hires-01-domain-dc-ou.png" | relative_url }}){:target="_blank"}
 
+위 캡처에서 DC의 IPv4 값은 `DC_IP` 상자로 가렸습니다(표기용 가림, 나머지는 원본).
+
 [![컴퓨터 계정, OU별 사용자 수, DNS 영역(PowerShell)]({{ "/assets/images/2026/11/ad-hires-02-computers-users-dns.png" | relative_url }})]({{ "/assets/images/2026/11/ad-hires-02-computers-users-dns.png" | relative_url }}){:target="_blank"}
 
 #### 3-3. DNS
@@ -160,7 +162,7 @@ Get-WinEvent -FilterHashtable @{LogName='Security';Id=4725,4722,4742} | Sort-Obj
 
 ### 부록. 사용한 명령과 출력
 
-ad01의 PowerShell에서 실행한 명령과 결과입니다(2026-11-04). 화면 캡처는 위 그림에 있고, 같은 내용을 복사할 수 있는 텍스트로 옮겼습니다.
+ad01의 PowerShell에서 실행한 명령과 결과입니다(2026-11-04). 화면 캡처는 위 그림에 있고, 같은 내용을 복사할 수 있는 텍스트로 옮겼습니다. 출력의 IPv4 값은 [Hyper-V 실습 환경 글]({{ "/iam/hyperv-lab-environment/" | relative_url }})의 주소 계획 변수 이름(`DC_IP`)으로 바꿔 적었습니다(표기용 치환, 나머지는 원본).
 
 **도메인·DC·OU**
 
@@ -176,7 +178,7 @@ Domain: sionnote.local / NetBIOS: SIONNOTE / DomainMode: Windows2016Domain / For
 
 Name          IPv4Address OperatingSystem                           IsGlobalCatalog
 ----          ----------- ---------------                           ---------------
-SIONNOTE-AD01 10.10.10.10 Windows Server 2022 Standard Evaluation              True
+SIONNOTE-AD01 <DC_IP>      Windows Server 2022 Standard Evaluation              True
 
 Name               DistinguishedName
 ----               -----------------

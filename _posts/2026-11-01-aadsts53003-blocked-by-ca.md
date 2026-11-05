@@ -16,7 +16,7 @@ excerpt: "53003 차단 화면을 받았다면 로그인 로그의 조건부 액�
 - 의도한 차단이 아니면 정책 범위를 고친 뒤 보고서 전용으로 먼저 검증함
 - What If는 서비스 종속성을 계산하지 않아 Teams 차단 원인을 놓칠 수 있음
 
-> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다. 함께 볼 글: [Entra ID 핵심 개념: 접근 제어 편]({{ "/iam/entra-id-access-control/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
+> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다.
 
 ---
 

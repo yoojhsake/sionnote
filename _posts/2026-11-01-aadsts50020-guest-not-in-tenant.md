@@ -16,7 +16,7 @@ excerpt: "협력사 게스트가 50020으로 막힐 때. 다른 계정 로그인
 - InPrivate 창에서 초대받은 계정으로 다시 로그인하고 안 되면 초대와 앱 설정을 봄
 - 게스트 원계정이 재생성된 경우 게스트를 지우지 말고 초대 수락 상태를 초기화함
 
-> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다. 함께 볼 글: [Entra ID 핵심 개념: 하이브리드 편]({{ "/iam/entra-id-hybrid-licensing/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
+> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다.
 
 ---
 

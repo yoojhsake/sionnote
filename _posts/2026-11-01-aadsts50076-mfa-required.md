@@ -16,7 +16,7 @@ excerpt: "50076은 MFA를 해야 함, 50079는 먼저 등록해야 함. 사람 �
 - 사람은 등록을 안내하고 자동화는 관리 ID나 서비스 주체로 옮김
 - Azure 필수 MFA는 사용자 계정 단위 예외가 없음
 
-> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다. 함께 볼 글: [Entra ID 핵심 개념: 인증 편]({{ "/iam/entra-id-authentication/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
+> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다.
 
 ---
 

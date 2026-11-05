@@ -16,7 +16,7 @@ excerpt: "'관리자 승인 필요'·AADSTS65001이 뜨면 동의부터 누르�
 - 요청이 잦으면 관리자 동의 워크플로를 켜서 검토자가 처리하게 함
 - 확인 없이 동의하면 앱에 메일과 파일 권한을 넘겨 동의 피싱에 당함
 
-> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다. 함께 볼 글: [Entra ID 핵심 개념: 기초와 구조 편]({{ "/iam/what-is-entra-id/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
+> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다.
 
 ---
 

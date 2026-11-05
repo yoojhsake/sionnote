@@ -77,7 +77,7 @@ Configure Service Account·Connect Active Directory·Confirm 세 페이지와 �
 
 #### 3-3. 이름 풀이(DNS) 구성
 
-sync01은 NIC가 둘입니다. lab-internal 쪽 DNS는 DC이고, NAT 쪽 DNS는 NAT 게이트웨이(192.168.208.1)입니다. DC에는 포워더가 없어서([AD 구성 글]({{ "/iam/ad-domain-build/" | relative_url }})) Microsoft 이름은 DC로는 풀기 어렵습니다(추정: 포워더 부재와 DC의 인터넷 경로 부재). 그래서 Microsoft 클라우드 이름 접미사별로 "이 이름은 NAT DNS에 물어라"는 규칙(NRPT)을 두었습니다.
+sync01은 NIC가 둘입니다. lab-internal 쪽 DNS는 DC이고, NAT 쪽 DNS는 NAT 게이트웨이(`NAT_GW`)입니다. DC에는 포워더가 없어서([AD 구성 글]({{ "/iam/ad-domain-build/" | relative_url }})) Microsoft 이름은 DC로는 풀기 어렵습니다(추정: 포워더 부재와 DC의 인터넷 경로 부재). 그래서 Microsoft 클라우드 이름 접미사별로 "이 이름은 NAT DNS에 물어라"는 규칙(NRPT)을 두었습니다.
 
 <details markdown="1">
 <summary>원본 캡처 보기 (터미널 화면, 해상도 낮음)</summary>
@@ -88,9 +88,16 @@ sync01은 NIC가 둘입니다. lab-internal 쪽 DNS는 DC이고, NAT 쪽 DNS는 
 
 </details>
 
-위 원본 캡처는 1단계 직후 화면입니다. `login.microsoftonline.com`·`login.windows.net`·`aadcdn.msauth.net`이 공인 주소로, `sionnote-ad01.sionnote.local`이 10.10.10.10으로 풀리는 결과가 함께 있습니다. 이 접미사 목록은 Cloud Sync 필수 요건의 URL 목록(`*.msappproxy.net`, `*.microsoftonline.com`, `login.windows.net`, `aadcdn.msftauth.net` 등)과 겹칩니다(문서).
+위 원본 캡처는 1단계 직후 화면입니다. 캡처의 IP 값은 변수 이름 상자(`NAT_GW`·`DC_IP`)로 가렸고, 나머지는 원본 그대로입니다. `login.microsoftonline.com`·`login.windows.net`·`aadcdn.msauth.net`이 공인 주소로, `sionnote-ad01.sionnote.local`이 `DC_IP`로 풀리는 결과가 함께 있습니다. 이 접미사 목록은 Cloud Sync 필수 요건의 URL 목록(`*.msappproxy.net`, `*.microsoftonline.com`, `login.windows.net`, `aadcdn.msftauth.net` 등)과 겹칩니다(문서).
 
 **사용한 명령 (조회: sync01 PowerShell 입력 이력, 관리자 권한)**
+
+입력 이력에는 IP 값을 직접 적었습니다. 게시용으로는 두 값을 변수로 바꿨습니다(표기용 치환). `NAT_GW`는 sync01의 기본 경로 조회 결과이고, `DC_IP`는 [Hyper-V 실습 환경 글]({{ "/iam/hyperv-lab-environment/" | relative_url }})의 주소 계획에서 정한 DC의 IP입니다. 나머지는 입력 그대로입니다.
+
+```powershell
+$NatGw = (Get-NetRoute -DestinationPrefix 0.0.0.0/0 | Select-Object -First 1).NextHop
+$DcIp  = '<DC_IP>'   # 자기 환경의 DC IP로 바꿔 넣습니다
+```
 
 1단계 — Microsoft 클라우드 접미사 11개를 NAT DNS로 보냅니다.
 
@@ -99,7 +106,7 @@ $ns = '.microsoftonline.com','.microsoft.com','.windows.net','.msauth.net','.msf
       '.msappproxy.net','.msappproxy.com','.windowsazure.com','.live.com',
       '.msftconnecttest.com','.msocsp.com'
 foreach ($n in $ns) {
-  Add-DnsClientNrptRule -Namespace $n -NameServers 192.168.208.1 `
+  Add-DnsClientNrptRule -Namespace $n -NameServers $NatGw `
     -Comment 'LAB split DNS: Entra endpoints via egress DNS' | Out-Null
 }
 Clear-DnsClientCache
@@ -109,9 +116,9 @@ Get-DnsClientNrptRule | ft Namespace,NameServers -auto
 2단계 — 나머지 이름은 모두 NAT DNS로, 내부 AD 영역만 DC로 보냅니다.
 
 ```powershell
-Add-DnsClientNrptRule -Namespace '.' -NameServers 192.168.208.1 `
+Add-DnsClientNrptRule -Namespace '.' -NameServers $NatGw `
   -Comment 'LAB split DNS: default (all names) via egress DNS' | Out-Null
-Add-DnsClientNrptRule -Namespace '.sionnote.local' -NameServers 10.10.10.10 `
+Add-DnsClientNrptRule -Namespace '.sionnote.local' -NameServers $DcIp `
   -Comment 'LAB split DNS: internal AD zone via DC' | Out-Null
 Get-DnsClientNrptRule | ? { $_.Namespace -in '.','.sionnote.local' } | ft Namespace,NameServers -auto
 ```
@@ -122,10 +129,10 @@ Get-DnsClientNrptRule | ? { $_.Namespace -in '.','.sionnote.local' } | ft Namesp
 
 | 구분 | 접미사 | 질의할 DNS |
 |---|---|---|
-| 1단계 명령(11개) | `.microsoftonline.com` `.microsoft.com` `.windows.net` `.msauth.net` `.msftauth.net` `.msappproxy.net` `.msappproxy.com` `.windowsazure.com` `.live.com` `.msftconnecttest.com` `.msocsp.com` | 192.168.208.1 (NAT) |
-| 이후 추가(10개) | `.microsoftonline-p.com` `.servicebus.windows.net` `.msftauthimages.net` `.digicert.com` `.windowsupdate.com` `.azure.com` `.phonefactor.net` `.msecnd.net` `.msft.net` `.msauthimages.net` | 192.168.208.1 (NAT) |
-| 기본(2단계) | `.` (그 밖의 모든 이름) | 192.168.208.1 (NAT) |
-| 내부(2단계) | `.sionnote.local` | 10.10.10.10 (DC) |
+| 1단계 명령(11개) | `.microsoftonline.com` `.microsoft.com` `.windows.net` `.msauth.net` `.msftauth.net` `.msappproxy.net` `.msappproxy.com` `.windowsazure.com` `.live.com` `.msftconnecttest.com` `.msocsp.com` | `NAT_GW` (NAT) |
+| 이후 추가(10개) | `.microsoftonline-p.com` `.servicebus.windows.net` `.msftauthimages.net` `.digicert.com` `.windowsupdate.com` `.azure.com` `.phonefactor.net` `.msecnd.net` `.msft.net` `.msauthimages.net` | `NAT_GW` (NAT) |
+| 기본(2단계) | `.` (그 밖의 모든 이름) | `NAT_GW` (NAT) |
+| 내부(2단계) | `.sionnote.local` | `DC_IP` (DC) |
 
 현재 규칙 목록을 글꼴을 키워 다시 캡처했습니다(2026-11-04, 23개).
 
@@ -135,6 +142,8 @@ Get-DnsClientNrptRule | Sort-Object { $_.Namespace -join ',' } |
 ```
 
 [![현재 NRPT 규칙 23개(글꼴 확대)]({{ "/assets/images/2026/11/cs-nrpt-rules-hires.png" | relative_url }})]({{ "/assets/images/2026/11/cs-nrpt-rules-hires.png" | relative_url }}){:target="_blank"}
+
+이 캡처도 IP 값만 변수 이름 상자로 가렸습니다.
 
 "이후 추가" 10개의 규칙과 값은 위 표대로 조회했습니다.
 

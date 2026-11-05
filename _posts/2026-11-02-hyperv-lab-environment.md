@@ -74,15 +74,27 @@ last_modified_at: 2026-11-04 22:00:00 +0900
 
 - 구성 버전은 6대 모두 12.0입니다(조회).
 
-#### 3-3. IP 구성(두 서버에서 조회)
+#### 3-3. 주소 계획과 IP 구성(두 서버에서 조회)
+
+이 시리즈의 글과 명령에서는 IP 값을 싣지 않고 아래 변수 이름으로 적습니다. 따라 해 볼 때는 자기 환경과 겹치지 않는 사설 /24 대역을 하나 정해 `LAB_NET`으로 쓰고, 아래 호스트 번호(마지막 자리)를 그 대역 안에서 고정 IP로 부여하면 됩니다.
+
+| 변수 | 대상 | 정하는 방법 | 비고 |
+|---|---|---|---|
+| `LAB_NET` | lab-internal 대역 | 직접 정한 사설 /24(서브넷 마스크 255.255.255.0) | 호스트·외부 망과 연결되지 않는 내부 스위치용 |
+| `DC_IP` | ad01 | `LAB_NET`의 호스트 번호 10 | DC 조회 결과의 IPv4 |
+| `SYNC_IP` | sync01 | `LAB_NET`의 호스트 번호 40 | 고정 IP |
+| `CL10_IP` · `CL11_IP` | cl10 · cl11 | `LAB_NET`의 호스트 번호 51 · 52 | 고정 IP |
+| `NAT_IP` · `NAT_GW` | Default Switch 쪽 주소·게이트웨이 | 정하지 않음 | 호스트의 Hyper-V NAT가 정해 주는 값이라 `Get-NetIPConfiguration`으로 조회합니다 |
 
 | 서버 | lab-internal 쪽 | Default Switch 쪽 |
 |---|---|---|
-| ad01 | 10.10.10.10 (DC 조회 결과의 IPv4) | 없음(NIC가 lab-internal 한 개뿐) |
-| sync01 | 10.10.10.40/24, DNS 10.10.10.10 | 192.168.213.170/20, 게이트웨이 192.168.208.1 |
+| ad01 | `DC_IP` | 없음(NIC가 lab-internal 한 개뿐) |
+| sync01 | `SYNC_IP`/24, DNS는 `DC_IP` | `NAT_IP`/20, 게이트웨이 `NAT_GW` |
+
+- Default Switch 쪽 주소는 호스트가 VM마다 나눠 주기 때문에 VM마다 다릅니다. sync01과 cl11의 NAT 쪽 주소를 각각 조회했을 때 두 주소와 게이트웨이가 모두 같은 /20 대역 안에 있었습니다(조회). 호스트가 다시 시작하면 값이 바뀔 수 있어(추정: 호스트가 자동 부여하는 값이라서) 글에 값을 고정해 적지 않았습니다.
 
 - ad01은 외부로 나가는 NIC가 없어 인터넷 접근이 원천적으로 막힙니다. Microsoft 클라우드와 통신하는 쪽은 NAT 쪽 NIC가 있는 sync01(과 클라이언트 2대)이고, 그중 서버 쪽 통신은 sync01이 맡습니다.
-- 클라이언트(cl10·cl11)는 NIC가 두 개이지만, 도메인 통신은 lab-internal(10.10.10.51·.52)로 합니다.
+- 클라이언트(cl10·cl11)는 NIC가 두 개이지만, 도메인 통신은 lab-internal(`CL10_IP`·`CL11_IP`)로 합니다.
 
 ### 4. 운영 판단
 
@@ -153,7 +165,7 @@ ad01은 DC 한 대라 vCPU를 **프로세서** 화면에서 2개로 줄였습니
 
 ### 부록. 사용한 명령과 출력
 
-이 글의 VM·스위치 값은 모두 Hyper-V 관리자 GUI에서 읽었고 스크립트는 쓰지 않았습니다. 서버 안의 IP 구성만 아래 명령으로 읽었습니다(sync01에서 실행한 결과).
+이 글의 VM·스위치 값은 모두 Hyper-V 관리자 GUI에서 읽었고 스크립트는 쓰지 않았습니다. 서버 안의 IP 구성만 아래 명령으로 읽었습니다(sync01에서 실행한 결과). 출력의 IP 값은 위 주소 계획의 변수 이름으로 바꿔 적었습니다(표기용 치환). 열 이름·인터페이스 이름·접두 길이는 원본 그대로입니다.
 
 ```powershell
 Get-NetIPAddress -AddressFamily IPv4 | ? IPAddress -notmatch '^127|^169' | Select InterfaceAlias,IPAddress,PrefixLength | ft -AutoSize
@@ -164,17 +176,17 @@ Get-NetRoute -DestinationPrefix 0.0.0.0/0 | Select InterfaceAlias,NextHop,RouteM
 ```text
 InterfaceAlias IPAddress       PrefixLength
 -------------- ---------       ------------
-Ethernet 2     10.10.10.40               24
-Ethernet       192.168.213.170           20
+Ethernet 2     <SYNC_IP>                 24
+Ethernet       <NAT_IP>                  20
 
 InterfaceAlias ServerAddresses
 -------------- ---------------
-Ethernet       {192.168.208.1}
-Ethernet 2     {10.10.10.10}
+Ethernet       {<NAT_GW>}
+Ethernet 2     {<DC_IP>}
 
 InterfaceAlias NextHop       RouteMetric
 -------------- -------       -----------
-Ethernet       192.168.208.1           0
+Ethernet       <NAT_GW>                0
 ```
 
 ## 근거 자료

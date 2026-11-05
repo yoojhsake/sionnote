@@ -14,7 +14,7 @@ toc: true
 
 ## 요약
 
-- 가입 전 NIC의 DNS를 DC(10.10.10.10)로 지정해야 하고, 게이트웨이는 비워도 됨(내부 스위치)
+- 가입 전 NIC의 DNS를 DC(`DC_IP`)로 지정해야 하고, 게이트웨이는 비워도 됨(내부 스위치)
 - sync01은 컴퓨터 이름을 바꾸면서 가입했고, 계정은 기본 `Computers` 컨테이너에 생김
 - cl10·cl11은 동기화 방식별 OU(`ConnectSync`, `CloudSync`)에 계정이 놓여 있고, 2026-11-04 오전 조회 시점에 cl11은 보안 채널이 정상(NERR_Success)이었고, cl10은 가입 상태(PartOfDomain True)만 조회함(nltest 미실행)
 
@@ -43,9 +43,9 @@ toc: true
 
 #### 3-1. sync01 가입
 
-가입 전에 NIC(lab-internal 쪽 "Ethernet 2")를 고정 IP로 구성했습니다. 서브넷 마스크는 255.255.255.0, **기본 게이트웨이는 비움**, 기본 설정 DNS는 DC입니다(조회: 캡처 화면).
+가입 전에 NIC(lab-internal 쪽 "Ethernet 2")를 고정 IP로 구성했습니다. 서브넷 마스크는 255.255.255.0, **기본 게이트웨이는 비움**, 기본 설정 DNS는 DC입니다(조회: 캡처 화면). 캡처의 IP 값은 가렸습니다. 변수 이름의 뜻은 [Hyper-V 실습 환경 글]({{ "/iam/hyperv-lab-environment/" | relative_url }})의 주소 계획에 있습니다.
 
-[![sync01 IPv4 속성: 10.10.10.40, DNS는 DC]({{ "/assets/images/2026/11/adj-01-sync01-ipv4.png" | relative_url }})]({{ "/assets/images/2026/11/adj-01-sync01-ipv4.png" | relative_url }}){:target="_blank"}
+[![sync01 IPv4 속성: 고정 IP(SYNC_IP), DNS는 DC(DC_IP)]({{ "/assets/images/2026/11/adj-01-sync01-ipv4.png" | relative_url }})]({{ "/assets/images/2026/11/adj-01-sync01-ipv4.png" | relative_url }}){:target="_blank"}
 
 그다음 서버 관리자 → 로컬 서버에서 컴퓨터 이름을 `sionnote-sync01`로 바꾸고 멤버를 **도메인 `sionnote.local`** 로 선택했습니다. 이름을 바꾸기 전 이름은 설치 직후의 임의 이름(`WIN-…`)이었습니다.
 
@@ -158,6 +158,8 @@ Computer=SIONNOTE-CL10 Domain=sionnote.local PartOfDomain=True
 
 **NIC 구성(cl11)**
 
+출력의 IP 값은 주소 계획의 변수 이름으로 바꿔 적었습니다(표기용 치환, 나머지는 원본).
+
 ```powershell
 (Get-CimInstance Win32_OperatingSystem | % { "$($_.Caption) $($_.Version)" })
 Get-NetIPConfiguration | % { "{0}: IPv4={1} GW={2} DNS={3}" -f $_.InterfaceAlias,($_.IPv4Address.IPAddress -join ','),($_.IPv4DefaultGateway.NextHop -join ','),($_.DNSServer.ServerAddresses -join ',') }
@@ -165,8 +167,8 @@ Get-NetIPConfiguration | % { "{0}: IPv4={1} GW={2} DNS={3}" -f $_.InterfaceAlias
 
 ```text
 Microsoft Windows 11 Enterprise 10.0.22631
-이더넷: IPv4=192.168.214.163 GW=192.168.208.1 DNS=192.168.208.1
-이더넷 2: IPv4=10.10.10.52 GW= DNS=10.10.10.10
+이더넷: IPv4=<NAT_IP> GW=<NAT_GW> DNS=<NAT_GW>
+이더넷 2: IPv4=<CL11_IP> GW= DNS=<DC_IP>
 ```
 
 **컴퓨터 계정 위치와 암호 설정 시각(ad01)**

@@ -27,4 +27,4 @@ M365와 Azure 운영 실습, 그리고 검증 과정을 **같은 틀**로 남기
 
 ## 말머리
 
-`[M365·Azure]` `[IAM 개념 정리]` `[실무 검증]` `[Troubleshooting]` `[IAM]` `[Study]` `[자격증·학습]`
+`[M365·Azure]` `[실무 검증]` `[Troubleshooting]` `[IAM]`

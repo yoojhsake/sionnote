@@ -16,7 +16,7 @@ excerpt: "'보안 기본값 관리' 버튼이 없다면 조건부 액세스 정�
 - Free만 있으면 정책 설정을 기록한 뒤 모두 삭제하고 보안 기본값을 켬
 - 사용자별 MFA는 어느 쪽을 쓰든 꺼야 하며 정책 삭제는 시험하지 않았음
 
-> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다. 함께 볼 글: [Entra ID 핵심 개념: 인증 편]({{ "/iam/entra-id-authentication/" | relative_url }}), [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }}).
+> Microsoft Learn 문서(2026-11-01 확인) 기준이며, 테넌트에서 재현하지는 않았습니다.
 
 ---
 

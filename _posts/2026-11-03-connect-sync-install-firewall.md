@@ -94,7 +94,7 @@ sync01의 방화벽은 세 프로필(도메인·개인·공용) 모두 **켜짐,
 
 | 규칙 이름 | 대상 프로그램 | 포트 | 열게 된 계기 |
 |---|---|---|---|
-| LAB-Allow-Internal-Out | 모든 프로그램 | 모든 포트 → 10.10.10.0/24 | 도메인 통신(DNS·LDAP·Kerberos 등)을 위해 내부망 전체 허용 |
+| LAB-Allow-Internal-Out | 모든 프로그램 | 모든 포트 → `LAB_NET` | 도메인 통신(DNS·LDAP·Kerberos 등)을 위해 내부망 전체 허용 |
 | LAB-AADConnect-Wizard-TCP80-443 | `AzureADConnect.exe` | TCP 80, 443 | 마법사가 Entra ID 연결 단계에서 HttpRequestException으로 멈춤 |
 | LAB-ADSync-Engine-TCP80-443 | `miiserver.exe` | TCP 80, 443 | Configure 단계에서 "Azure Service Connectivity Failed" |
 
@@ -117,11 +117,11 @@ Get-NetFirewallRule -DisplayName 'LAB-*' | ForEach-Object {
 } | Format-Table -AutoSize
 ```
 
-위 명령의 결과(대상 주소·포트 포함)는 다음과 같습니다(조회, 2026-11-04).
+위 명령의 결과(대상 주소·포트 포함)는 다음과 같습니다(조회, 2026-11-04). 첫 줄의 대상 주소는 주소 계획의 변수 이름(`LAB_NET`)으로 바꿔 적었습니다(표기용 치환, 나머지는 원본).
 
 ```text
 Name                              Dir      Act   On   Port      Prog                       Remote
-LAB-Allow-Internal-Out            Outbound Allow True Any       Any                        10.10.10.0/255.255.255.0
+LAB-Allow-Internal-Out            Outbound Allow True Any       Any                        <LAB_NET>/255.255.255.0
 LAB-AADConnect-Wizard-TCP80-443   Outbound Allow True {80,443}  AzureADConnect.exe         Any
 LAB-ADSync-Engine-TCP80-443       Outbound Allow True {80,443}  miiserver.exe              Any
 LAB-CloudSync-* 3개, LAB-ConnectHealth-* 1개 (뒤 글에서 만든 규칙)  — 모두 Outbound / Allow / True / {80,443} / Any

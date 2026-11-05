@@ -37,7 +37,7 @@ excerpt: "막혔을 때 다섯 가지 질문으로 원인 방향을 먼저 나�
 
 ### 로그인·권한: Entra ID(IAM) 대처 가이드
 
-Microsoft Learn 문서 기준입니다. 오류 번호와 HTTP 상태 코드가 낯설면 [오류 코드 읽는 법]({{ "/iam/entra-id-error-codes/" | relative_url }})부터 봅니다.
+Microsoft Learn 문서 기준입니다.
 
 - [로그인은 되는데 403·AuthorizationFailed가 나올 때]({{ "/iam/troubleshooting/signed-in-but-403/" | relative_url }})
 - [AADSTS50126: 사용자 이름 또는 암호가 잘못됨]({{ "/iam/troubleshooting/aadsts50126-wrong-password/" | relative_url }})

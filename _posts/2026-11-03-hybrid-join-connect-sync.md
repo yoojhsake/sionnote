@@ -189,6 +189,8 @@ TaskPath                            TaskName              State
 
 [![cl10 nltest: DC 탐색과 보안 채널 쿼리 성공]({{ "/assets/images/2026/11/hj-cl10-nltest.png" | relative_url }})]({{ "/assets/images/2026/11/hj-cl10-nltest.png" | relative_url }}){:target="_blank"}
 
+위 캡처에서 DC의 IP 주소는 `DC_IP` 상자로 가렸고, 나머지는 원본 그대로입니다.
+
 [![cl10 dsregcmd: AzureAdJoined NO, DomainJoined YES, 0x801c005b, error_computer_signature_check_failure]({{ "/assets/images/2026/11/hj-fail-801c005b-cl10.png" | relative_url }})]({{ "/assets/images/2026/11/hj-fail-801c005b-cl10.png" | relative_url }}){:target="_blank"}
 
 Previous Registration 항목에는 Registration Type이 sync, Server Operation이 DeviceRenew로 남아 있었고, 메시지는 "도메인 <테넌트>의 장치 <ID>에 대한 서명 검증에 실패했다"는 내용이었습니다(조회, 장치 ID·테넌트 ID는 가림). 이 값만으로는 신규 등록(Join)과 갱신(Renew)을 구분하지 못합니다. 첫 조인 실패 때의 이벤트도 같은 DeviceRenew로 기록되기 때문입니다([0x801c03f3 글]({{ "/iam/troubleshooting/hybrid-join-0x801c03f3/" | relative_url }}) 참고, 조회).

@@ -158,7 +158,7 @@ Remove-AzRoleAssignment -SignInName $upn -RoleDefinitionName 'User Access Admini
 3. 켠 시간은 짧게, 켬·끔 시각은 변경 이력에 적고, 오류 알림은 사라지기 전에 캡처합니다.
 4. PIM 사용 시 역할 비활성화만으로는 토글이 안 돌아가니 토글을 먼저 끕니다(문서).
 
-관련 글: [관리 그룹 설정이 403: Elevate access와 토큰]({{ "/m365/troubleshooting/mg-settings-403-elevate-access/" | relative_url }}) · [Azure 구조: 계층, 리소스 그룹, Elevate access 전·후]({{ "/m365/d4-azure-structure/" | relative_url }})
+관련 글: [끄고 저장했는데 루트 권한이 남아 있을 때]({{ "/azure/troubleshooting/elevate-off-not-saved-root-uaa-left/" | relative_url }}) · [관리 그룹 설정이 403: Elevate access와 토큰]({{ "/m365/troubleshooting/mg-settings-403-elevate-access/" | relative_url }}) · [Azure 구조: 계층, 리소스 그룹, Elevate access 전·후]({{ "/m365/d4-azure-structure/" | relative_url }})
 
 ### 근거 자료
 

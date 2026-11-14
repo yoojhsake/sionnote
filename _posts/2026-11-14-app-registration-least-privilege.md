@@ -46,22 +46,25 @@ toc: true
 <picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/11/app-reg-dg-02-least-privilege-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/11/app-reg-dg-02-least-privilege.png" | relative_url }}" alt="하려는 일별 최소 권한: Azure는 Reader, Graph는 User.Read.All·Organization.Read.All·LicenseAssignment.Read.All, 청구 계정 전체는 이 테넌트에서 불가" loading="lazy"></picture>
 
 <details markdown="1">
-<summary>같은 내용을 표로 보기 (API·피할 권한 포함)</summary>
+<summary>같은 내용을 표로 보기</summary>
 
-| 하려는 일 | 부르는 API | 최소 권한 | 피할 넓은 권한 | 검증 |
-|---|---|---|---|---|
-| 구독 목록·태그·리소스 수 | Resource Graph, ARM | Reader | Contributor, Owner | 조회 |
-| 여러 구독·관리 그룹 하위 구독 | Management Groups | 루트 관리 그룹 Reader | 구독마다 Owner | 조회 |
-| 역할 할당 읽기 | roleAssignments | Reader | User Access Administrator | 조회 |
-| 비용 읽기 | Cost Management Query | Reader | Cost Management 판독기·참가자 | 조회(판독기 없이) |
-| 활동 로그 | Activity Log | Reader | Monitoring Contributor | 조회 |
-| 구독이 붙은 청구 계정 | billingProperty | Reader | 청구 계정 역할 | 조회 |
-| 청구 계정 전체(MCA) | 청구 계정 | 청구 테넌트의 청구 계정 역할 | 청구 계정 소유자 | 불가능(별도 글) |
-| 사용자 이름·부서·계정 상태 | Graph `users` | User.Read.All | Directory.Read.All | 조회 |
-| M365 구독 목록 | Graph `directory/subscriptions` | Organization.Read.All | Directory.Read.All | 조회 |
-| 라이선스(SKU)만 | Graph `subscribedSkus` | LicenseAssignment.Read.All | Organization.Read.All | 문서(단독 시험 안 함) |
+| 하려는 일 | 최소 권한 | 검증 |
+|---|---|---|
+| 구독·리소스 목록 | Reader | 조회 |
+| 여러 구독 한 번에 | 루트 관리 그룹 Reader | 조회 |
+| 역할 할당 읽기 | Reader | 조회 |
+| 비용 읽기 | Reader | 조회 |
+| 활동 로그 | Reader | 조회 |
+| 구독의 청구 연결 | Reader | 조회 |
+| 청구 계정 전체 | 청구 테넌트의 역할 | 불가능 |
+| 사용자 정보 | User.Read.All | 조회 |
+| M365 구독 목록 | Organization.Read.All | 조회 |
+| 라이선스만 | LicenseAssignment.Read.All | 문서 |
 
-User.Read(위임됨)는 앱 등록 때 기본으로 들어오는 권한이고 앱 단독 실행과는 관계없어 지워도 됩니다(문서). 이 글에서는 남겨 뒀습니다.
+- 부르는 API: Resource Graph·ARM, Management Groups, roleAssignments, Cost Management Query, Activity Log, 구독 billingProperty, Graph `users`·`directory/subscriptions`·`subscribedSkus`
+- 피할 넓은 권한: Directory.Read.All, Contributor, Owner, Cost Management 판독기·참가자
+- 라이선스만 읽는 경우는 문서 기준이고, 이 글에서는 Organization.Read.All로 함께 검증했습니다(단독 시험 안 함).
+- User.Read(위임됨)는 앱 등록 때 기본으로 들어오는 권한이고 앱 단독 실행과는 관계없어 지워도 됩니다(문서). 이 글에서는 남겨 뒀습니다.
 
 </details>
 
@@ -219,19 +222,19 @@ API 사용 권한 > 권한 추가 > Microsoft Graph > **애플리케이션 사�
 <details markdown="1">
 <summary>호출별 결과 표</summary>
 
-| 호출 | 필요한 권한 | 정리 전(22:04) | 정리 후(23:33) |
-|---|---|---|---|
-| Resource Graph·ARM 구독 목록 | Reader | 성공 | 성공 |
-| 관리 그룹 하위 구독 | 관리 그룹 Reader | 성공 | 성공 |
-| 역할 할당 | Reader | 성공 | 성공 |
-| 비용(Cost Management Query) | Reader | 성공(구독 범위) | 성공(구독 범위) |
-| 활동 로그 | Reader | 성공 | 성공 |
-| 구독 billingProperty | Reader | 성공 | 성공 |
-| Graph `users` | User.Read.All | 성공 | 성공 |
-| Graph `directory/subscriptions` | Organization.Read.All | 호출 안 함 | 성공 |
-| Graph `subscribedSkus` | Organization.Read.All | 호출 안 함 | 성공 |
+| 호출 | 필요한 권한 | 정리 전 → 후 |
+|---|---|---|
+| 구독 목록 | Reader | 성공 → 성공 |
+| 관리 그룹 하위 구독 | 관리 그룹 Reader | 성공 → 성공 |
+| 역할 할당 | Reader | 성공 → 성공 |
+| 비용 | Reader | 성공 → 성공 |
+| 활동 로그 | Reader | 성공 → 성공 |
+| 청구 연결 | Reader | 성공 → 성공 |
+| Graph 사용자 | User.Read.All | 성공 → 성공 |
+| Graph M365 구독 | Organization.Read.All | 호출 안 함 → 성공 |
+| Graph 라이선스 | Organization.Read.All | 호출 안 함 → 성공 |
 
-정리 후 검증의 활동 로그 마지막 작업이 23:18 "Delete role assignment"(그림 21)로 잡혀, 정리 뒤 권한으로 돈 것도 확인됩니다(조회).
+정리 전은 22:04, 정리 후는 23:33 검증입니다. 비용은 두 번 모두 구독 범위로 읽혔습니다. 정리 후 검증의 활동 로그 마지막 작업이 23:18 "Delete role assignment"(그림 21)로 잡혀, 정리 뒤 권한으로 돈 것도 확인됩니다(조회).
 
 </details>
 

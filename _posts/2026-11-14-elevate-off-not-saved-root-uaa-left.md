@@ -28,7 +28,7 @@ Elevate access 토글을 "아니요"로 바꾸고 저장을 눌렀는데, 3시�
 ### 1. 증상
 
 - 18:58에 Elevate access를 켜고 루트 관리 그룹에 앱 역할을 준 뒤, 19:02에 토글을 "아니요"로 바꾸고 저장을 눌렀습니다(그림 1). 알림은 확인하지 못했습니다.
-- 22:04에 앱(서비스 주체)으로 구독의 역할 할당을 읽자 결과에 **역할 User Access Administrator, 할당 범위 `/`, 대상 관리자 본인** 행이 있었습니다(조회: 원천 데이터).
+- 22:04에 앱(서비스 주체)으로 구독의 역할 할당을 읽자 결과에 **역할 User Access Administrator, 할당 범위 `/`, 대상 관리자 본인** 행이 있었습니다(조회).
 - 23:22에 같은 조작(토글 "아니요" → 저장)을 다시 해 보니 "테넌트 속성을 업데이트할 수 없음 — 권한이 부족하여 작업을 완료할 수 없습니다" 알림이 떴습니다(그림 2, 3). 새로 불러오면 토글은 "예"로 돌아와 있었습니다(그림 4). 저장 재시도 3회 모두 같았습니다(조회).
 
 [![토글을 아니요로 바꾸고 저장 버튼을 누르는 화면]({{ "/assets/images/2026/11/ts-elevate-01-off-click.png" | relative_url }})]({{ "/assets/images/2026/11/ts-elevate-01-off-click.png" | relative_url }}){:target="_blank"}
@@ -131,6 +131,9 @@ Remove-AzRoleAssignment -ObjectId $a.ObjectId -RoleDefinitionName 'User Access A
 'after: ' + @(Get-AzRoleAssignment -Scope '/' -RoleDefinitionName 'User Access Administrator').Count
 ```
 
+<details markdown="1">
+<summary>실행 결과 (텍스트)</summary>
+
 ```text
 DisplayName        : <관리자 이름>
 SignInName         : <관리자 UPN>
@@ -143,7 +146,9 @@ Successfully removed role assignment for AD object '<개체 ID>' on scope '/' wi
 after: 0
 ```
 
-처음에는 `Remove-AzRoleAssignment -SignInName (Get-AzContext).Account.Id ...`로 지우려 했는데 `Cannot find principal using the specified options`로 실패했고 건수는 1 그대로였습니다(조회). Cloud Shell에서 `Account.Id`를 찍어 보니 로그인한 UPN이 아니라 `MSI@50342`였습니다(조회). Cloud Shell이 관리 ID 방식으로 토큰을 받기 때문으로 보입니다(추정: 이 값의 형식을 설명하는 문서는 찾지 못함). 그래서 조회 결과의 개체 ID로 지웠습니다.
+</details>
+
+처음에 `-SignInName (Get-AzContext).Account.Id`로 지우려다 `Cannot find principal using the specified options`로 실패했습니다(조회). Cloud Shell의 `Account.Id`가 UPN이 아니라 `MSI@50342`였기 때문입니다(조회). 관리 ID 방식으로 토큰을 받아서로 보입니다(추정: 설명하는 문서는 찾지 못함).
 
 [![Cloud Shell: context account MSI@50342, before 1, Successfully removed, after 0]({{ "/assets/images/2026/11/ts-elevate-06-cloudshell-removed.png" | relative_url }})]({{ "/assets/images/2026/11/ts-elevate-06-cloudshell-removed.png" | relative_url }}){:target="_blank"}
 

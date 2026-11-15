@@ -1,5 +1,5 @@
 ---
-title: "[Troubleshooting] 청구 범위와 청구 역할이 보이지 않음: 청구 범위 목록이 0건"
+title: "[Troubleshooting] 청구 범위와 청구 역할이 보이지 않음: 청구 범위 목록이 비어 있음"
 date: 2026-10-22 14:00:00 +0900
 categories: [m365, troubleshooting]
 area: 보고서·감사·청구
@@ -69,7 +69,7 @@ Azure 구독의 청구 계정 유형과 청구 역할을 확인하려고 비용 
 
 `청구 계정이 다른 테넌트(MCA) → 이 디렉터리 범위 0건 → 내 청구 역할·결제 수단 확인 불가`
 
-청구 계정 유형과 범위가 0건인 이유는 구독의 청구 속성과 billingProperty로 확인했습니다(조회, [청구 범위가 0건이라 앱에 청구 역할을 줄 수 없을 때]({{ "/azure/troubleshooting/billing-role-scope-zero-other-tenant/" | relative_url }})).
+청구 계정 유형과 범위가 0건인 이유는 구독의 청구 속성과 billingProperty로 확인했습니다(조회, [청구 범위가 비어 있어 앱에 청구 역할을 줄 수 없을 때]({{ "/azure/troubleshooting/billing-role-scope-zero-other-tenant/" | relative_url }})).
 
 추가 구독 생성 가능 여부는 확인 사항입니다.
 
@@ -111,7 +111,7 @@ Azure 구독의 청구 계정 유형과 청구 역할을 확인하려고 비용 
 - **문서**: 종량제 구독에는 지출 한도 기능이 없음
     - 출처: [Spending limit](https://learn.microsoft.com/azure/cost-management-billing/manage/spending-limit)
 - **조회**: 청구 계정 유형 MCA, 청구 테넌트가 이 디렉터리와 다름
-    - 출처: [청구 범위가 0건이라 앱에 청구 역할을 줄 수 없을 때]({{ "/azure/troubleshooting/billing-role-scope-zero-other-tenant/" | relative_url }})
+    - 출처: [청구 범위가 비어 있어 앱에 청구 역할을 줄 수 없을 때]({{ "/azure/troubleshooting/billing-role-scope-zero-other-tenant/" | relative_url }})
 - **확인 불가**: 청구 역할, 결제 수단 필요 여부
     - 출처: 위 3절
 

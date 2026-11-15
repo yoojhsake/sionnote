@@ -1,5 +1,5 @@
 ---
-title: "[Troubleshooting] $top=999를 줬는데 Graph가 100건만 돌려줌: @odata.nextLink 페이징"
+title: "[Troubleshooting] $top=999를 줬는데 Graph가 첫 페이지만 돌려줌: @odata.nextLink 페이징"
 date: 2026-10-26 14:40:00 +0900
 categories: [m365, troubleshooting]
 area: Graph·Cloud Shell·스크립트

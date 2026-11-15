@@ -63,7 +63,7 @@ Microsoft Learn 문서 기준입니다.
     - 공통 원인(토큰)부터 보고, 남은 실패 메시지는 유형별로 나눠 처리합니다.
 - [문서의 예제 명령이 '모듈 없음'이거나 환경에 따라 접속되지 않음]({{ "/m365/troubleshooting/powershell-module-not-found/" | relative_url }})
     - Graph 하위 모듈 누락, Cloud Shell 토큰으로 접속되지 않는 서비스 모듈, 서비스별 연결 누락을 모듈, 연결, 권한 순으로 풀었습니다.
-- [$top=999를 줬는데 Graph가 100건만 돌려줌: @odata.nextLink 페이징]({{ "/m365/troubleshooting/graph-paging-100-limit/" | relative_url }})
+- [$top=999를 줬는데 Graph가 첫 페이지만 돌려줌: @odata.nextLink 페이징]({{ "/m365/troubleshooting/graph-paging-100-limit/" | relative_url }})
     - 메시지 센터 게시물을 nextLink로 끝까지 따라가 전체(5페이지)를 읽었습니다.
 - [Cloud Shell이 다시 시작되어 변수가 사라지거나, 붙여 넣은 명령이 구문 오류가 남]({{ "/m365/troubleshooting/cloud-shell-reset-and-syntax-error/" | relative_url }})
     - 다른 주소로 이동하면 세션이 초기화되고, 셸 준비 전에 붙여 넣으면 두 번 실행되거나 ParserError가 나는 현상과 대처
@@ -118,7 +118,7 @@ Microsoft Learn 문서 기준입니다.
 
 - [사용 현황 보고서가 '데이터 없음'이고 Graph는 404 UnknownTenantId]({{ "/m365/troubleshooting/usage-report-no-data/" | relative_url }})
     - 권한 오류(403)와 데이터 부재(404)를 나누고 시각을 달리해 반복 확인했습니다.
-- [청구 범위와 청구 역할이 보이지 않음: 청구 범위 목록이 0건]({{ "/m365/troubleshooting/billing-scope-not-visible/" | relative_url }})
+- [청구 범위와 청구 역할이 보이지 않음: 청구 범위 목록이 비어 있음]({{ "/m365/troubleshooting/billing-scope-not-visible/" | relative_url }})
     - Azure 비용 관리 + 청구에서 청구 계정 유형과 역할을 읽지 못한 범위와, 하지 않은 것
 - [관리 센터 화면이 로딩에서 멈추거나 "프로비전 중" 안내만 나옴]({{ "/m365/troubleshooting/admin-center-loading-stuck/" | relative_url }})
     - M365 Apps 관리 센터가 두 번 멈추고 앱 인벤토리에 프로비전 안내만 나와 값 문제와 도구 문제를 나눠 봤습니다.

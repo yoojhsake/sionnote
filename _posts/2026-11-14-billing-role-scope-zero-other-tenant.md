@@ -1,5 +1,5 @@
 ---
-title: "[Troubleshooting] 청구 범위가 0건이라 앱에 청구 역할을 줄 수 없을 때"
+title: "[Troubleshooting] 청구 범위가 비어 있어 앱에 청구 역할을 줄 수 없을 때"
 date: 2026-11-14 23:45:00 +0900
 categories: [azure, troubleshooting]
 area: 보고서·감사·청구

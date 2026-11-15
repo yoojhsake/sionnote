@@ -68,7 +68,7 @@ toc: true
 
 </details>
 
-청구 계정 쪽은 [청구 범위가 0건이라 앱에 청구 역할을 줄 수 없을 때]({{ "/azure/troubleshooting/billing-role-scope-zero-other-tenant/" | relative_url }}) 글에 따로 적었습니다.
+청구 계정 쪽은 [청구 범위가 비어 있어 앱에 청구 역할을 줄 수 없을 때]({{ "/azure/troubleshooting/billing-role-scope-zero-other-tenant/" | relative_url }}) 글에 따로 적었습니다.
 
 ### 3. 앱 등록
 

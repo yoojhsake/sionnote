@@ -10,6 +10,8 @@ excerpt: "막혔을 때 다섯 가지 질문으로 원인 방향을 먼저 나�
 
 ## 막혔을 때 나눠 보는 순서
 
+<picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/10/pb-dg-01-five-questions-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/10/pb-dg-01-five-questions.png" | relative_url }}" alt="막혔을 때 먼저 나눠 볼 다섯 가지 질문" loading="lazy"></picture>
+
 1. 화면(GUI)에서는 되는데 Graph나 REST에서만 안 되는가. 그렇다면 사람의 권한이 아니라 **토큰의 범위** 문제일 가능성이 큽니다.
 2. 화면에서도 안 되는가. 역할 부족(예: Azure 루트 범위)이거나 반영 시간을 더 기다려야 하는 경우입니다.
 3. 로그인 단계에서 막히는가. 오류 코드부터 읽고, 보안 설정을 바꾸기 전에 바꾸지 않는 선택지를 먼저 비교합니다.
@@ -105,7 +107,7 @@ Microsoft Learn 문서 기준입니다.
     - 직접 E5 사용자가 같은 E5 동적 그룹에 들어가면 2건 모두 Active, 원복 후 그룹 할당만 회수, 사용 수 20/25 유지
 - [동적 그룹 규칙이 얼마 만에 반응하는지 알 수 없다]({{ "/m365/troubleshooting/dynamic-group-reaction-time/" | relative_url }})
     - 부서 값 변경 후 반영 시간을 20초 간격 폴링과 감사 로그로 쟀습니다. 들어올 때 9초, 나갈 때 5분 35초
-- [라이선스 사용 수가 기록(18/25)과 조회(20/25)로 다르다]({{ "/m365/troubleshooting/license-seat-count-mismatch/" | relative_url }})
+- [라이선스 사용 수가 이전 기록과 지금 조회 값이 다르다]({{ "/m365/troubleshooting/license-seat-count-mismatch/" | relative_url }})
     - 날짜별 사용자 수(17+1+2)로 차이를 맞춰 봤습니다.
 - [가이드가 안내한 메뉴가 화면에 없다]({{ "/m365/troubleshooting/guide-menu-differs-from-portal/" | relative_url }})
     - '제품 상세 > 앱 탭' 대신 사용자 선택 후 '앱 및 서비스 관리'가 실제 경로였습니다.
@@ -123,7 +125,7 @@ Microsoft Learn 문서 기준입니다.
 
 ### 측정값 해석
 
-- [운영 설정 실측 방법: 읽기 전용 측정과 4단계 판독]({{ "/m365/measurement-method/" | relative_url }})
+- [운영 설정 실측 방법: 읽기 전용 측정과 등급 판독]({{ "/m365/measurement-method/" | relative_url }})
     - 화면에서 읽은 값을 정상, 주의, 위험, 측정 불가로 나누는 기준과 측정 불가로 남는 사유의 유형
 
 작업 순서대로 읽으려면 상단 메뉴의 Category에서 "준비 → 구조 이해 실습 → 운영 설정 실측" 순서로 봅니다.

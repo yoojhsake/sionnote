@@ -101,6 +101,9 @@ $DcIp  = '<DC_IP>'   # 자기 환경의 DC IP로 바꿔 넣습니다
 
 1단계 — Microsoft 클라우드 접미사 11개를 NAT DNS로 보냅니다.
 
+<details markdown="1">
+<summary>명령 펼쳐 보기 (9줄)</summary>
+
 ```powershell
 $ns = '.microsoftonline.com','.microsoft.com','.windows.net','.msauth.net','.msftauth.net',
       '.msappproxy.net','.msappproxy.com','.windowsazure.com','.live.com',
@@ -113,7 +116,12 @@ Clear-DnsClientCache
 Get-DnsClientNrptRule | ft Namespace,NameServers -auto
 ```
 
+</details>
+
 2단계 — 나머지 이름은 모두 NAT DNS로, 내부 AD 영역만 DC로 보냅니다.
+
+<details markdown="1">
+<summary>명령 펼쳐 보기 (5줄)</summary>
 
 ```powershell
 Add-DnsClientNrptRule -Namespace '.' -NameServers $NatGw `
@@ -122,6 +130,8 @@ Add-DnsClientNrptRule -Namespace '.sionnote.local' -NameServers $DcIp `
   -Comment 'LAB split DNS: internal AD zone via DC' | Out-Null
 Get-DnsClientNrptRule | ? { $_.Namespace -in '.','.sionnote.local' } | ft Namespace,NameServers -auto
 ```
+
+</details>
 
 이름이 풀리는지는 `[Net.Dns]::GetHostAddresses('login.microsoftonline.com')`로 확인했습니다.
 
@@ -155,12 +165,17 @@ Get-DnsClientNrptRule | Sort-Object { $_.Namespace -join ',' } |
 
 ### 5. 절차
 
+<details markdown="1">
+<summary>절차 펼쳐 보기</summary>
+
 1. 에이전트 설치 파일(`AADConnectProvisioningAgentSetup.exe`)을 실행해 약관에 동의하고 설치합니다. 설치되면 구성 마법사가 이어서 열립니다(문서).
 2. **Connect Microsoft Entra ID**: 하이브리드 ID 관리자 이상 권한의 계정으로 로그인합니다(문서). 로그인 창이 막히면 6절을 봅니다.
 3. **Configure Service Account**: Create gMSA를 선택하고 도메인 관리자 자격을 입력합니다.
 4. **Connect Active Directory**: 도메인을 추가합니다.
 5. **Confirm**: 내용을 확인하고 Confirm을 눌러 적용합니다. 완료 메시지가 나오면 Exit합니다.
 6. 포털(Entra ID → Entra Connect → Cloud sync)에서 에이전트가 활성으로 표시되는지 확인합니다(문서). 포털 확인은 뒤 글에서 합니다.
+
+</details>
 
 ### 6. 막힌 곳
 
@@ -177,6 +192,10 @@ Connect Microsoft Entra ID에서 Authenticate를 누르자 "Unhandled exception 
 로그인 창이 열리자 "Internet Explorer Enhanced Security Configuration이 `https://aadcdn.msftauth.net`의 콘텐츠를 차단했다"는 창이 떴습니다. 서버의 IE 보안 강화 구성이 켜져 있으면 Entra 로그인 페이지의 리소스가 막힙니다. Microsoft는 IE 보안 강화 구성이 켜져 있으면 `login.microsoftonline.com`, `secure.aadcdn.microsoftonline-p.com`, `login.windows.net`, `aadcdn.msftauth.net` 같은 사이트를 허용하라고 안내합니다(문서: Connect Health 설치 요건).
 
 [![IE 보안 강화 구성이 로그인 리소스를 차단]({{ "/assets/images/2026/11/ca-03-esc-block.png" | relative_url }})]({{ "/assets/images/2026/11/ca-03-esc-block.png" | relative_url }}){:target="_blank"}
+
+<details markdown="1">
+<summary>분석 자세히 보기</summary>
+
 
 어떻게 넘어갔는지는 레지스트리에 남아 있었습니다(조회, sync01 PowerShell). 보안 강화 구성 자체는 켜져 있고(Active Setup `A509B1A7-37EF-4b3f-8CFC-4F3A74704073`, `A509B1A8-37EF-4b3f-8CFC-4F3A74704073`의 `IsInstalled`가 모두 1), 현재 사용자 쪽 `ZoneMap\EscDomains`에 아래 항목이 "신뢰할 수 있는 사이트(2)"로 들어 있습니다. 컴퓨터 전체(HKLM) 쪽에는 같은 항목이 없습니다.
 
@@ -203,6 +222,9 @@ GUI로는 인터넷 옵션(`inetcpl.cpl`) → 보안 → **신뢰할 수 있는 
 
 항목을 확인한 명령입니다.
 
+<details markdown="1">
+<summary>명령 펼쳐 보기 (8줄)</summary>
+
 ```powershell
 foreach ($r in 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\EscDomains',
                'HKLM:\Software\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\EscDomains') {
@@ -213,6 +235,10 @@ foreach ($r in 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Setting
   }
 }
 ```
+
+</details>
+
+</details>
 
 #### 6-3. gMSA 자격 확인 오류
 
@@ -225,6 +251,10 @@ Configure Service Account에서 "Error while validating domain admin creds for u
 Confirm에서 "We encountered an unexpected error when configuring the provisioning agent. Please try again."가 한 번 나왔고, 같은 화면에서 Confirm을 다시 누르자 완료되었습니다.
 
 [![Confirm 단계의 unexpected error]({{ "/assets/images/2026/11/ca-05-confirm-error.png" | relative_url }})]({{ "/assets/images/2026/11/ca-05-confirm-error.png" | relative_url }}){:target="_blank"}
+
+<details markdown="1">
+<summary>분석 자세히 보기</summary>
+
 
 마법사 로그(조회, 위와 같은 파일)로 순서를 확인했습니다.
 
@@ -264,12 +294,17 @@ Error: 'The remote name could not be resolved: 'cwap-registration-asia1.msapppro
 
 로그를 찾은 명령입니다.
 
+<details markdown="1">
+<summary>명령 펼쳐 보기 (4줄)</summary>
+
 ```powershell
 $d = 'C:\ProgramData\Microsoft\Azure AD Connect Provisioning Agent\Trace'
 Get-Content "$d\trace-wizard-20261103-083407.log" |
   ? { $_ -match '\[(ERRO|WARN|FATL)|xception' } |
   % { if ($_.Length -gt 250) { $_.Substring(0,250) } else { $_ } }
 ```
+
+</details>
 
 이벤트 로그는 PowerShell로도 읽을 수 있습니다.
 
@@ -278,6 +313,8 @@ Get-WinEvent -FilterHashtable @{LogName='Application';ProviderName='Azure AD Con
   StartTime='2026-11-03 08:39:30';EndTime='2026-11-03 08:41:30'} |
   ForEach-Object { $_.TimeCreated.ToString('HH:mm:ss') + ' ' + $_.LevelDisplayName; $_.Message }
 ```
+
+</details>
 
 ### 7. 정리·남은 일
 

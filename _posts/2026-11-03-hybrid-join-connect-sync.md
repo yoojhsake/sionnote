@@ -74,6 +74,9 @@ dsregcmd /status | Select-String 'AzureAdJoined|EnterpriseJoined|DomainJoined|Do
 dsregcmd /status
 ```
 
+<details markdown="1">
+<summary>출력 펼쳐 보기 (10줄)</summary>
+
 ```text
       AzureAdJoined : YES
    EnterpriseJoined : NO
@@ -86,6 +89,8 @@ dsregcmd /status
         WamDefaultSet : NO
          AzureAdPrt : NO
 ```
+
+</details>
 
 <details markdown="1">
 <summary>원본 캡처 보기 (PowerShell 화면, 해상도 낮음)</summary>
@@ -101,6 +106,9 @@ dsregcmd /status
 - 기본 Delta 동기화 주기는 문서 기준 30분입니다. 테스트는 수동으로 Delta를 실행해 기다리지 않았습니다.
 
 ### 5. 절차
+
+<details markdown="1">
+<summary>절차 펼쳐 보기</summary>
 
 사전 상태는 PC가 도메인에 가입되어 있고 OU=ConnectSync에 있는 것입니다. AD에는 SCP가 아직 없었습니다(조회: 존재 확인이 False).
 
@@ -173,6 +181,8 @@ TaskPath                            TaskName              State
 <summary>캡처 보기 (같은 확인을 2026-11-05 00:13에 cl10에서 다시 실행한 PowerShell 화면. 시각·호스트는 작업 기록 기준이며 캡처에는 표시되지 않음)</summary>
 
 [![SCP 재확인(2026-11-05): SCP exists True, 테넌트 키워드 값은 가림, Automatic-Device-Join Ready]({{ "/assets/images/2026/11/hj-connect-03-scp-check.png" | relative_url }})]({{ "/assets/images/2026/11/hj-connect-03-scp-check.png" | relative_url }}){:target="_blank"}
+
+</details>
 
 </details>
 

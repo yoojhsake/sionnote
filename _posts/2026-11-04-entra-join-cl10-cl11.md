@@ -50,6 +50,9 @@ toc: true
 
 **사용한 명령과 출력** — 각 PC의 PowerShell(조인 직후, 2026-11-04)에서 `dsregcmd /status`의 장치 상태 항목을 읽었습니다. 아래는 화면에서 옮겨 적은 것이고, 장치 ID·테넌트 이름은 적지 않았습니다.
 
+<details markdown="1">
+<summary>출력 펼쳐 보기 (21줄)</summary>
+
 ```text
 cl10> dsregcmd /status
       AzureAdJoined : YES
@@ -74,6 +77,8 @@ cl11> dsregcmd /status
           AzureAdPrt : NO
 ```
 
+</details>
+
 조인 직후 읽은 값과 같은 항목을 같은 PC에서 11-04 20:42에 다시 읽었습니다(조회, 장치 항목만 발췌, 사용자 `cloudtest01` 로그인 상태). 위 표의 cl10 값(KeyProvider·TpmProtected 포함)과 일치합니다.
 
 [![cl10(Windows 10): Entra 조인 상태의 dsregcmd 장치 항목, 소프트웨어 키 저장소·TPM 보호 NO(PowerShell, 글꼴 확대)]({{ "/assets/images/2026/11/en-join-cl10-dsreg-device-hires.png" | relative_url }})]({{ "/assets/images/2026/11/en-join-cl10-dsreg-device-hires.png" | relative_url }}){:target="_blank"}
@@ -93,6 +98,9 @@ cl10에서 동기화된 사용자(`cloudtest01`)로 로그인한 뒤 확인한 �
 | AzureAdPrtUpdateTime | 2026-11-04 01:02:53 UTC |
 | AzureAdPrtExpiryTime | 2026-11-18 01:03:14 UTC (약 14일 뒤) |
 
+<details markdown="1">
+<summary>출력 펼쳐 보기 (6줄)</summary>
+
 ```text
 C:\Users\cloudtest01> dsregcmd /status
       AzureAdJoined : YES
@@ -101,6 +109,8 @@ C:\Users\cloudtest01> dsregcmd /status
 AzureAdPrtUpdateTime : 2026-11-04 01:02:53.000 UTC
 AzureAdPrtExpiryTime : 2026-11-18 01:03:14.000 UTC
 ```
+
+</details>
 
 같은 PC(cl10)에서 11-04 20:41에 다시 읽었습니다(조회). 새로 로그인한 세션이라 `AzureAdPrtUpdateTime`이 20:40(11:40 UTC)로 갱신됐고, 만료 시각은 갱신 시각의 14일 뒤로 표시되어 위 값과 같은 형태입니다. 테넌트 ID는 가렸습니다.
 
@@ -128,6 +138,9 @@ cl11도 같은 방식으로 확인했습니다. 재조인하기 전인 2026-11-0
 - **TPM**: 키를 TPM에 두면 기기 밖으로 복사할 수 없게 되어 토큰 도용에 더 강합니다(추정: 일반적인 TPM 설명이고 이 랩에서 확인한 것은 아님). 이 랩에서는 cl10에 가상 TPM이 없어서 소프트웨어 키로 조인되었습니다.
 
 ### 5. 절차
+
+<details markdown="1">
+<summary>절차 펼쳐 보기</summary>
 
 1. 도메인에 가입된 PC라면(cl11) 시스템 속성 → 컴퓨터 이름 → 변경에서 소속을 **작업 그룹**으로 바꾸고 재시작합니다. 로컬 관리자 암호를 알아야 로그인할 수 있다는 경고가 나옵니다.
 2. 설정 → 계정 → 회사 또는 학교 액세스 → **연결**을 누릅니다.
@@ -248,6 +261,8 @@ dsregcmd /status | Select-String 'AzureAdJoined|EnterpriseJoined|DomainJoined|De
 ④ Entra 관리 센터 → 디바이스 → 모든 디바이스에 조인 직후 새 레코드가 생겼습니다. 이름 `DESKTOP-…`(PC 기본 이름), 조인 유형 Microsoft Entra 조인, 소유자 Cloud Test01, 등록 시각 11월 4일 오후 3:01입니다(조회). 표에서 이름이 가려진 나머지 줄은 이 실습에서 만든 장치가 아니라 같은 테넌트에 이미 있던 다른 장치입니다(이름이 가려져 있어 목록에서 확인했습니다).
 
 [![Entra 모든 디바이스: cl10 Entra 조인 레코드가 새로 생김(GUI)]({{ "/assets/images/2026/11/en-join-gui-06-devices-after-cl10.png" | relative_url }})]({{ "/assets/images/2026/11/en-join-gui-06-devices-after-cl10.png" | relative_url }}){:target="_blank"}
+
+</details>
 
 ### 6. 막힌 곳
 

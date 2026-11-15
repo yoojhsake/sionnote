@@ -31,6 +31,8 @@ PC에서 Graph 스크립트를 돌린 창에서 이어서 Exchange 스크립트�
 
 문서에 따르면 PowerShell은 모든 어셈블리를 같은 Assembly Load Context에 올리므로, 서로 다른 모듈이 같은 어셈블리의 다른 버전을 요구하면 한 세션에서 충돌할 수 있습니다([Resolving PowerShell module assembly dependency conflicts](https://learn.microsoft.com/powershell/scripting/dev-cross-plat/resolving-dependency-conflicts)). 이번 오류가 어떤 DLL 때문인지는 비교하지 않았습니다(분리로 해결되어 시도하지 않음). 분리 후 5개 묶음 모두 경고 0건입니다.
 
+<picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/10/dll-dg-01-sessions-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/10/dll-dg-01-sessions.png" | relative_url }}" alt="한 창에서 이어 실행하면 충돌, 묶음마다 새 세션이면 충돌 0건" loading="lazy"></picture>
+
 <details markdown="1">
 <summary>확인 과정 자세히 보기</summary>
 

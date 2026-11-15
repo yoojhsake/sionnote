@@ -97,6 +97,9 @@ SharePoint 모듈 16.0.27612.12000 (5.1) : 불러오기 성공
 
 ### 4. 원인 확인 명령
 
+<details markdown="1">
+<summary>명령과 출력 펼쳐 보기</summary>
+
 차단 직후에 AppLocker 이벤트 로그 `Microsoft-Windows-AppLocker/MSI and Script`를 읽으면 무엇이 막혔는지 경로 단위로 나옵니다. 이벤트 ID 8007은 "실행할 수 없습니다"(차단), 8005는 "실행할 수 있습니다"(허용)입니다. 유효 정책(Effective)은 `Get-AppLockerPolicy -Effective`로 읽습니다. 그림 3의 출력은 VM에서 읽은 실제 값이고, 이미지에는 명령 줄이 찍히지 않아 아래 명령은 같은 내용을 읽는 표준 형태로 적었습니다.
 
 ```powershell
@@ -115,7 +118,12 @@ Get-WinEvent -LogName 'Microsoft-Windows-AppLocker/MSI and Script' -MaxEvents 20
 
 이 이벤트 로그가 있다는 것은 AppLocker가 그 파일을 판정했다는 뜻입니다. 회사 PC에서 같은 로그를 읽어 본 것은 아닙니다(접근 범위 밖). 로그에 8007이 없다고 해서 AppLocker가 아니라고 단정하지도 못합니다.
 
+</details>
+
 ### 5. 사용 가능하게 만드는 방법
+
+<details markdown="1">
+<summary>사용 가능하게 만드는 방법 펼쳐 보기</summary>
 
 **① 정책을 바꾸지 않는 우회: Program Files 모듈 경로에 설치합니다.** 관리자 권한 PowerShell에서 전체 사용자 위치에 설치하거나, 해당 경로로 직접 받습니다.
 
@@ -159,6 +167,8 @@ Set-ExecutionPolicy -Scope Process RemoteSigned
 ```
 
 VM의 시험에서 프로세스 범위로 바꾼 RemoteSigned는 AppLocker 규칙이 없을 때 두 위치 모두 통과시켰습니다. 반대로 AppLocker 규칙이 있을 때는 RemoteSigned여도 사용자 폴더 모듈이 차단되었습니다(그림 2). 따라서 ③은 실행 정책 때문에 막힌 경우에만 해당합니다.
+
+</details>
 
 ### 6. 결론
 

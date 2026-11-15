@@ -104,6 +104,9 @@ last_modified_at: 2026-11-04 22:00:00 +0900
 
 ### 5. 절차
 
+<details markdown="1">
+<summary>절차 펼쳐 보기</summary>
+
 #### 5-1. VM 만들기(ad01 예시)
 
 Hyper-V 관리자 → 동작 → 새로 만들기 → **가상 컴퓨터**로 마법사를 엽니다. ad01을 만들 때의 입력값입니다(조회: 당시 캡처).
@@ -153,6 +156,8 @@ ad01은 DC 한 대라 vCPU를 **프로세서** 화면에서 2개로 줄였습니
 
 [![sync01의 검사점 트리]({{ "/assets/images/2026/11/hv-02-checkpoints-sync01.png" | relative_url }})]({{ "/assets/images/2026/11/hv-02-checkpoints-sync01.png" | relative_url }}){:target="_blank"}
 
+</details>
+
 ### 6. 막힌 곳
 
 - 가상 스위치 관리자를 열려고 작업 창 링크를 눌렀는데 아무 창도 뜨지 않았습니다. 다른 창이 그 위치를 덮고 있었고, 상단 메뉴 **동작 → 가상 스위치 관리자**로 열자 해결됐습니다.
@@ -164,6 +169,9 @@ ad01은 DC 한 대라 vCPU를 **프로세서** 화면에서 2개로 줄였습니
 
 
 ### 부록. 사용한 명령과 출력
+
+<details markdown="1">
+<summary>명령과 출력 펼쳐 보기</summary>
 
 이 글의 VM·스위치 값은 모두 Hyper-V 관리자 GUI에서 읽었고 스크립트는 쓰지 않았습니다. 서버 안의 IP 구성만 아래 명령으로 읽었습니다(sync01에서 실행한 결과). 출력의 IP 값은 위 주소 계획의 변수 이름으로 바꿔 적었습니다(표기용 치환). 열 이름·인터페이스 이름·접두 길이는 원본 그대로입니다.
 
@@ -188,6 +196,8 @@ InterfaceAlias NextHop       RouteMetric
 -------------- -------       -----------
 Ethernet       <NAT_GW>                0
 ```
+
+</details>
 
 ## 근거 자료
 

@@ -63,6 +63,9 @@ dsregcmd /status | Select-String 'AzureAdJoined|DomainJoined|DeviceAuthStatus|Te
 dsregcmd /status
 ```
 
+<details markdown="1">
+<summary>출력 펼쳐 보기 (11줄)</summary>
+
 ```text
 [1] 하이브리드 조인                      [2] Entra 조인
  AzureAdJoined    : YES                   AzureAdJoined    : YES
@@ -76,6 +79,8 @@ dsregcmd /status
  WamDefaultSet    : NO                    AzureAdPrt       : NO
  AzureAdPrt       : NO
 ```
+
+</details>
 
 <details markdown="1">
 <summary>원본 캡처 보기 (PowerShell 화면, 해상도 낮음)</summary>
@@ -126,12 +131,17 @@ Entra 조인 상태에서는 "…의 Entra ID에 연결됨"과 연결한 계정�
 
 방식별 구성은 [Connect Sync 글]({{ "/iam/hybrid-join-connect-sync/" | relative_url }})과 [Cloud Sync 글]({{ "/iam/hybrid-join-cloud-sync/" | relative_url }})을 참고합니다. PC 쪽 작업은 둘 다 같습니다.
 
+<details markdown="1">
+<summary>명령 펼쳐 보기 (4줄)</summary>
+
 ```powershell
 $p = '\Microsoft\Windows\Workplace Join\'
 Start-ScheduledTask -TaskPath $p -TaskName 'Automatic-Device-Join'
 Start-Sleep 40
 dsregcmd /status | Select-String 'AzureAdJoined|DomainJoined|DeviceAuthStatus|AzureAdPrt '
 ```
+
+</details>
 
 #### Entra 조인 (GUI)
 

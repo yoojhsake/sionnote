@@ -77,6 +77,9 @@ cl11의 외부용 NIC에는 게이트웨이가 있고 lab-internal NIC에는 없
 
 ### 5. 절차
 
+<details markdown="1">
+<summary>절차 펼쳐 보기</summary>
+
 #### 5-1. 사전 작업: sync01에 Windows Server 설치
 
 도메인에 가입시키기 전에 VM에 OS를 설치합니다. Hyper-V 관리자에서 VM에 연결하면 설치 ISO로 부팅되어 아래 순서로 진행됩니다(2026-11-02 22:36~22:41, sync01).
@@ -123,6 +126,8 @@ Get-CimInstance Win32_ComputerSystem | Select Name,Domain,PartOfDomain
 nltest /sc_query:sionnote.local
 ```
 
+</details>
+
 ### 6. 막힌 곳
 
 - IP를 막 부여한 직후에는 `Test-NetConnection`의 LDAP 389가 실패했고, 잠시 뒤 재시험하자 성공했습니다(타이밍 문제로 보임, 추정: 당시 출력·캡처는 남기지 않음).
@@ -132,6 +137,9 @@ nltest /sc_query:sionnote.local
 - 다음 글: sync01에 Connect Sync를 설치하고 방화벽 규칙을 여는 과정.
 
 ### 부록. 사용한 명령과 출력
+
+<details markdown="1">
+<summary>명령과 출력 펼쳐 보기</summary>
 
 2026-11-04 11:30에 cl10·cl11 콘솔의 PowerShell에서 실행했습니다.
 
@@ -178,6 +186,8 @@ Get-ADComputer -Filter * -Properties PasswordLastSet | Select Name,Distinguished
 ```
 
 결과는 [AD 구성 글]({{ "/iam/ad-domain-build/" | relative_url }})의 부록 표와 같습니다.
+
+</details>
 
 ## 근거 자료
 

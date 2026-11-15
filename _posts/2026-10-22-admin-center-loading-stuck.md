@@ -97,7 +97,7 @@ DLP 화면은 도구 문제로 보고, 시도 횟수를 기록한 뒤 값은 열
 2. 조치 후 확인: 목록이 실제로 표시되면 해결입니다. 프로비전 안내나 PageLoadTimeout이 남으면 아직 측정 불가입니다.
 3. 하지 말아야 할 것: 멈춘 화면을 "0건", "문제 없음"으로 적는 것
 
-관련 글: [SharePoint·OneDrive·관리 센터 실측]({{ "/m365/measure-sharepoint-admin/" | relative_url }}) · [Purview·Azure 거버넌스 실측]({{ "/m365/measure-purview-azure/" | relative_url }}) · [읽기 전용 측정 방법과 4단계 판독]({{ "/m365/measurement-method/" | relative_url }})
+관련 글: [SharePoint·OneDrive·관리 센터 실측]({{ "/m365/measure-sharepoint-admin/" | relative_url }}) · [Purview·Azure 거버넌스 실측]({{ "/m365/measure-purview-azure/" | relative_url }}) · [읽기 전용 측정 방법과 등급 판독]({{ "/m365/measurement-method/" | relative_url }})
 
 ### 근거 자료
 

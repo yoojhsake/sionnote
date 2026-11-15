@@ -106,6 +106,9 @@ Program 열은 경로가 길어서 `C:\Progr…`로 잘립니다. 규칙 하나�
 
 **사용한 명령 (조회: sync01 PowerShell)** — 규칙 이름이 `LAB-`로 시작하는 것만 읽어 프로그램·포트·대상 주소를 함께 냅니다.
 
+<details markdown="1">
+<summary>명령 펼쳐 보기 (8줄)</summary>
+
 ```powershell
 Get-NetFirewallRule -DisplayName 'LAB-*' | ForEach-Object {
   $a  = $_ | Get-NetFirewallApplicationFilter
@@ -117,7 +120,12 @@ Get-NetFirewallRule -DisplayName 'LAB-*' | ForEach-Object {
 } | Format-Table -AutoSize
 ```
 
+</details>
+
 위 명령의 결과(대상 주소·포트 포함)는 다음과 같습니다(조회, 2026-11-04). 첫 줄의 대상 주소는 주소 계획의 변수 이름(`LAB_NET`)으로 바꿔 적었습니다(표기용 치환, 나머지는 원본).
+
+<details markdown="1">
+<summary>출력 펼쳐 보기 (5줄)</summary>
 
 ```text
 Name                              Dir      Act   On   Port      Prog                       Remote
@@ -126,6 +134,8 @@ LAB-AADConnect-Wizard-TCP80-443   Outbound Allow True {80,443}  AzureADConnect.e
 LAB-ADSync-Engine-TCP80-443       Outbound Allow True {80,443}  miiserver.exe              Any
 LAB-CloudSync-* 3개, LAB-ConnectHealth-* 1개 (뒤 글에서 만든 규칙)  — 모두 Outbound / Allow / True / {80,443} / Any
 ```
+
+</details>
 
 화면으로는 규칙 이름과 프로그램만 좁게 다시 뽑아 글자를 키웠습니다(`Get-NetFirewallRule -DisplayName 'LAB-*'`에 `Get-NetFirewallApplicationFilter`를 연결, 프로그램은 파일 이름만 표시).
 
@@ -147,6 +157,9 @@ LAB-CloudSync-* 3개, LAB-ConnectHealth-* 1개 (뒤 글에서 만든 규칙)  �
 
 ### 5. 절차
 
+<details markdown="1">
+<summary>절차 펼쳐 보기</summary>
+
 1. sync01에서 로컬 관리자로 `AzureADConnect.msi`를 실행합니다(문서).
    - 실행 전에 파일을 우클릭 → **속성** → **Digital Signatures** 탭에서 서명자가 Microsoft Corporation인지 확인할 수 있습니다. 아래는 DC(ad01)에 먼저 설치하려던 때(11-02 22:12)의 같은 파일 속성 화면입니다(조회).
 
@@ -158,6 +171,8 @@ LAB-CloudSync-* 3개, LAB-ConnectHealth-* 1개 (뒤 글에서 만든 규칙)  �
 5. Connect your directories에서 포리스트를 추가하고 AD forest account 창에서 Enterprise Admin 자격으로 새 AD 계정을 만들게 합니다.
 6. Microsoft Entra sign-in configuration에서 UPN 특성을 확인하고, Domain and OU filtering에서 **Sync selected domains and OUs → ConnectSync**를 선택합니다(문서).
 7. Ready to configure에서 **Install**. 완료 후 Synchronization Service Manager를 쓰려면 한 번 로그아웃했다가 다시 로그인합니다(문서).
+
+</details>
 
 ### 6. 막힌 곳
 
@@ -225,6 +240,9 @@ DC(ad01)에서 설치 파일을 실행하자 "SmartScreen can't be reached right
 
 ### 7. 차단 이벤트를 프로그램별로 집계하는 방법
 
+<details markdown="1">
+<summary>명령과 출력 펼쳐 보기</summary>
+
 GUI만으로는 "어느 프로그램이 막혔는지"를 한눈에 보기 어려워서, 방화벽의 감사 로그를 PowerShell로 집계했습니다. 순서는 세 단계입니다(감사 켜기, 이벤트 보기, 집계).
 
 1. **감사 켜기**: 차단된 연결을 보안 로그(이벤트 5157)에 남기려면 "Filtering Platform Connection" 감사의 실패를 켭니다.
@@ -279,6 +297,8 @@ $ev | ForEach-Object {
 | `microsoft.identity.health.agentv15.service.exe`, 5671 | 1 | 14:31 ~ 14:31 | Connect Health 에이전트의 서비스 버스 포트(별도 글) |
 
 `svchost.exe`·`System`·`msedgeupdate` 같은 윈도우 자체 프로세스의 차단 기록이 훨씬 많아서(수천 건) 건수만으로 규칙 대상을 고르면 안 됩니다. Microsoft Entra 구성요소와 이름이 맞는 항목만 보고, 그 항목이 언제 처음·마지막으로 막혔는지를 설치 화면의 오류 시각과 맞춰 봤습니다. 이 감사는 보안 로그를 계속 늘리므로 실습이 끝나면 끄는 것이 좋습니다(`/failure:disable`).
+
+</details>
 
 ### 8. 정리·남은 일
 

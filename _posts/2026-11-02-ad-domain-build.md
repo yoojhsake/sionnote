@@ -109,12 +109,17 @@ ad01에는 인터넷으로 나가는 NIC가 없어서, 포워더가 없어도 �
 
 cl11 계정을 다시 활성화한 뒤(10:54:21) 같은 날 14:06에 관리자 PowerShell에서 `dcdiag`를 다시 실행하자 SystemLog까지 모두 passed였습니다. 아래 화면은 같은 점검을 2026-11-04 21:31에 한 번 더 실행해 촬영한 것입니다(글꼴 20pt). 다만 SystemLog는 최근 60분만 읽으므로 원인 이벤트(10:46:30)가 이미 창 밖에 있던 시점의 결과이고, 이 통과만으로 조치 효과가 증명되지는 않습니다. 조치 뒤 상태는 6절 마지막 항목의 `nltest`·`dsregcmd` 조회로 확인했습니다. 화면의 맨 윗줄은 `whoami /groups`의 High Mandatory Level 줄로 관리자 권한 실행의 확인이고, 아래는 AD01 대상 테스트 16개와 전체 passed·failed 집계(passed 28, failed 0)입니다. 실행한 명령은 다음과 같습니다.
 
+<details markdown="1">
+<summary>명령 펼쳐 보기 (4줄)</summary>
+
 ```powershell
 whoami /groups | Select-String 'High Mandatory Level'
 $r = dcdiag
 $r | Select-String 'SIONNOTE-AD01 (passed|failed) test' | ForEach-Object { $_.Line.Trim() }
 'passed: ' + @($r | Select-String 'passed test').Count + '   failed: ' + @($r | Select-String 'failed test').Count
 ```
+
+</details>
 
 [![관리자 권한 dcdiag 재실행(2026-11-04 21:31 촬영): passed 28, failed 0]({{ "/assets/images/2026/11/ad-hires-04-dcdiag-after-fix.png" | relative_url }})]({{ "/assets/images/2026/11/ad-hires-04-dcdiag-after-fix.png" | relative_url }}){:target="_blank"}
 
@@ -126,6 +131,8 @@ $r | Select-String 'SIONNOTE-AD01 (passed|failed) test' | ForEach-Object { $_.Li
 
 ### 5. 절차
 
+<details markdown="1">
+<summary>절차 펼쳐 보기</summary>
 
 1. 서버 관리자 → 역할 및 기능 추가에서 **Active Directory 도메인 서비스**를 설치합니다(문서).
 2. 결과 화면의 **이 서버를 도메인 컨트롤러로 승격**을 눌러 마법사를 엽니다(문서).
@@ -133,6 +140,8 @@ $r | Select-String 'SIONNOTE-AD01 (passed|failed) test' | ForEach-Object { $_.Li
 4. 서버가 재시작되면 도메인 계정으로 로그인합니다. 이 랩에서 ad01의 컴퓨터 계정 암호가 마지막으로 설정된 시각이 2026-11-02 21:10이라, 승격은 그 무렵으로 보입니다(추정).
 
 이후 OU와 사용자는 Active Directory 사용자 및 컴퓨터(ADUC)에서 만들었습니다.
+
+</details>
 
 ### 6. 막힌 곳
 
@@ -142,12 +151,17 @@ $r | Select-String 'SIONNOTE-AD01 (passed|failed) test' | ForEach-Object { $_.Li
 
 이벤트 뷰어의 보안 로그에서도 4725를 필터로 볼 수 있지만, 대상 계정 이름은 이벤트를 하나씩 열어야 보여서 PowerShell로 이벤트 XML의 필드를 읽었습니다.
 
+<details markdown="1">
+<summary>명령 펼쳐 보기 (4줄)</summary>
+
 ```powershell
 Get-WinEvent -FilterHashtable @{LogName='Security';Id=4725,4722,4742} | Sort-Object TimeCreated | ForEach-Object {
   $x=[xml]$_.ToXml(); $d=@{}; $x.Event.EventData.Data | ForEach-Object { $d[$_.Name]=$_.'#text' }
   if ($d['TargetUserName'] -match 'CL1') { '{0}  ID={1}  Target={2}  By={3}  UAC={4}->{5}' -f $_.TimeCreated.ToString('MM-dd HH:mm:ss'), $_.Id, $d['TargetUserName'], $d['SubjectUserName'], $d['OldUacValue'], $d['NewUacValue'] }
 }
 ```
+
+</details>
 
 [![ad01 보안 로그의 SIONNOTE-CL10$·CL11$ 계정 이벤트(4722 활성화, 4725 비활성화, 4742 변경) 목록(PowerShell, 2026-11-04 21:26 다시 조회·촬영, 글꼴 24pt)]({{ "/assets/images/2026/11/ad-cl11-account-events.png" | relative_url }})]({{ "/assets/images/2026/11/ad-cl11-account-events.png" | relative_url }}){:target="_blank"}
 
@@ -161,6 +175,9 @@ Get-WinEvent -FilterHashtable @{LogName='Security';Id=4725,4722,4742} | Sort-Obj
 - 다음 글: 동기화 서버(sync01)를 도메인에 가입시키는 과정.
 
 ### 부록. 사용한 명령과 출력
+
+<details markdown="1">
+<summary>명령과 출력 펼쳐 보기</summary>
 
 ad01의 PowerShell에서 실행한 명령과 결과입니다(2026-11-04). 화면 캡처는 위 그림에 있고, 같은 내용을 복사할 수 있는 텍스트로 옮겼습니다. 출력의 IPv4 값은 [Hyper-V 실습 환경 글]({{ "/iam/hyperv-lab-environment/" | relative_url }})의 주소 계획 변수 이름(`DC_IP`)으로 바꿔 적었습니다(표기용 치환, 나머지는 원본).
 
@@ -310,6 +327,8 @@ SIONNOTE-CL11    True
 ```
 
 cl11 쪽에서 보안 채널을 확인한 명령은 [도메인 가입 글]({{ "/iam/ad-domain-join/" | relative_url }})의 부록에 있습니다.
+
+</details>
 
 ## 근거 자료
 

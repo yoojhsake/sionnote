@@ -32,6 +32,8 @@ toc: true
 
 접속을 "지금 열린 세션"에 맡기는 구조가 원인입니다. 대상 ID로 새로 접속하니 Graph, Azure, Teams, Exchange·Purview는 테넌트 ID가 일치했고, SharePoint는 관리 주소로만 확인했습니다.
 
+<picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/10/reuse-dg-01-tenant-check-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/10/reuse-dg-01-tenant-check.png" | relative_url }}" alt="대상 테넌트로 새로 접속하고 일치할 때만 실행" loading="lazy"></picture>
+
 <details markdown="1">
 <summary>확인 과정 자세히 보기</summary>
 

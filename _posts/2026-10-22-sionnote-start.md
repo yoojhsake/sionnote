@@ -10,6 +10,8 @@ excerpt: "요약만 읽어도 결과를 알 수 있게, 절차와 근거는 아�
 
 M365와 Azure 운영 실습, 그리고 검증 과정을 **같은 틀**로 남기려고 이 블로그를 만들었습니다.
 
+<picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/10/start-dg-01-post-structure-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/10/start-dg-01-post-structure.png" | relative_url }}" alt="글 한 편의 구조와 근거 표기" loading="lazy"></picture>
+
 ## 글을 쓰는 순서 (작업 한 건당 한 편)
 
 한 편 안에 상단 요약과 하단 풀버전(세부)을 구분해서 함께 올립니다. **중요한 것을 먼저** 두고, 세부는 아래로 내려가며 읽게 합니다.

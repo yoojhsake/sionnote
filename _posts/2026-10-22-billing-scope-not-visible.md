@@ -97,7 +97,7 @@ Azure 구독의 청구 계정 유형과 청구 역할을 확인하려고 비용 
 2. 조치 후 확인: 목록에 계정 유형과 내 역할이 채워진 행이 나오면 됩니다.
 3. 하지 말아야 할 것: 0건을 "문제 없음"으로 적기, 청구 역할을 직접 받기(권한 변경)
 
-관련 글: [Purview·Azure 거버넌스 실측]({{ "/m365/measure-purview-azure/" | relative_url }}) · [사전작업: 환경 점검]({{ "/m365/prework/" | relative_url }}) · [읽기 전용 측정 방법과 4단계 판독]({{ "/m365/measurement-method/" | relative_url }})
+관련 글: [Purview·Azure 거버넌스 실측]({{ "/m365/measure-purview-azure/" | relative_url }}) · [사전작업: 환경 점검]({{ "/m365/prework/" | relative_url }}) · [읽기 전용 측정 방법과 등급 판독]({{ "/m365/measurement-method/" | relative_url }})
 
 ### 근거 자료
 

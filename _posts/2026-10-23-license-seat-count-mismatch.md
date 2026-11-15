@@ -1,5 +1,5 @@
 ---
-title: "[Troubleshooting] 라이선스 사용 수가 기록(18/25)과 조회(20/25)로 다르다"
+title: "[Troubleshooting] 라이선스 사용 수가 이전 기록과 지금 조회 값이 다르다"
 date: 2026-10-23 11:00:00 +0900
 categories: [m365, troubleshooting]
 area: 라이선스·그룹

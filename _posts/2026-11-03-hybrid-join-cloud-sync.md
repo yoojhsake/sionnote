@@ -68,6 +68,9 @@ dsregcmd /status | Select-String 'AzureAdJoined|EnterpriseJoined|DomainJoined|Do
 
 **사용한 명령과 출력** — cl11의 관리자 PowerShell에서 아래 5절의 조인 작업 실행·확인 명령을 돌린 결과입니다(화면에서 옮겨 적음, 2026-11-03).
 
+<details markdown="1">
+<summary>출력 펼쳐 보기 (6줄)</summary>
+
 ```text
 LastRunTime    : 2026-11-03 오후 4:11:11
 LastTaskResult : 0
@@ -76,6 +79,8 @@ LastTaskResult : 0
        DomainJoined : YES
    DeviceAuthStatus : SUCCESS
 ```
+
+</details>
 
 `LastTaskResult`가 0이면 작업이 성공으로 끝났다는 뜻이고, 그 뒤 `dsregcmd`가 하이브리드 조인 상태를 보여 줍니다.
 
@@ -130,6 +135,9 @@ CN=SIONNOTE-CL11,OU=CloudSync,OU=CloudSyncLab,DC=sionnote,DC=local
 
 PC에서 쓰는 명령은 Connect Sync 글과 같습니다.
 
+<details markdown="1">
+<summary>명령 펼쳐 보기 (5줄)</summary>
+
 ```powershell
 $p = '\Microsoft\Windows\Workplace Join\'
 Start-ScheduledTask -TaskPath $p -TaskName 'Automatic-Device-Join'
@@ -137,6 +145,8 @@ Start-Sleep 40
 Get-ScheduledTaskInfo -TaskPath $p -TaskName 'Automatic-Device-Join' | fl LastRunTime,LastTaskResult   # 0 = 성공
 dsregcmd /status | Select-String 'AzureAdJoined|DomainJoined|DeviceAuthStatus'
 ```
+
+</details>
 
 ### 6. 막힌 곳
 

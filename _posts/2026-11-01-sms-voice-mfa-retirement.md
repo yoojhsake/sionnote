@@ -1,5 +1,5 @@
 ---
-title: "[Troubleshooting] SMS·음성으로만 MFA를 하는 사용자가 있을 때: 2027년 종료 전에 패스키로 옮기기"
+title: "[Troubleshooting] SMS·음성으로만 MFA를 하는 사용자가 있을 때: 종료 전에 패스키로 옮기기"
 date: 2026-11-01 09:09:00 +0900
 categories: [iam, troubleshooting]
 area: 로그인·권한
@@ -47,6 +47,8 @@ Microsoft 제공 SMS·음성이 단계적으로 끝납니다([Passkeys by defaul
 `SMS·음성만 등록 → 2027-02-01 종료 → 로그인 중 패스키 등록을 마쳐야 진행`
 
 일정은 문서 기준이며 테넌트에서 재현하지는 않았습니다.
+
+<picture><source media="(max-width: 640px)" srcset="{{ "/assets/images/2026/11/sms-dg-01-timeline-m.png" | relative_url }}"><img src="{{ "/assets/images/2026/11/sms-dg-01-timeline.png" | relative_url }}" alt="SMS·음성 MFA 종료 일정과 옮기는 순서" loading="lazy"></picture>
 
 ### 4. 권고방안
 
